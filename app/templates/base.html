@@ -57,6 +57,23 @@
         .instance-card:not(.disabled) {
             border-left-color: #28a745;
         }
+        
+        /* 实例列表样式 */
+        .instance-list-item {
+            transition: all 0.2s ease;
+            border-left: 3px solid #28a745;
+        }
+        .instance-list-item:hover {
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .instance-list-item .form-check-input:not(:checked) ~ * {
+            opacity: 0.6;
+        }
+        .instance-list-item .form-check-input:not(:checked) {
+            border-left-color: #dc3545;
+        }
+        
         .empty-state {
             border: 2px dashed #dee2e6;
             border-radius: 8px;
@@ -76,6 +93,18 @@
         }
         .polling-settings {
             background-color: #e7f3ff;
+        }
+        
+        /* 弹框样式 */
+        .modal-lg {
+            max-width: 800px;
+        }
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .required {
+            color: #dc3545;
         }
     </style>
 </head>
@@ -111,6 +140,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
+        // 格式化速度显示
+        function formatSpeed(kbps) {
+            if (!kbps || kbps == 0) return '无限制';
+            
+            const kb = parseInt(kbps);
+            if (kb >= 1024 * 1024) {
+                // GB/s
+                return (kb / (1024 * 1024)).toFixed(1) + 'GB/s';
+            } else if (kb >= 1024) {
+                // MB/s
+                return (kb / 1024).toFixed(1) + 'MB/s';
+            } else {
+                // KB/s
+                return kb + 'KB/s';
+            }
+        }
+
         // Toast通知系统
         function showToast(message, type = 'info', title = '') {
             const toastContainer = document.getElementById('toast-container');

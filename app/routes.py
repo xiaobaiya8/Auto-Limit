@@ -230,4 +230,54 @@ def save_instance():
         current_app.logger.error(f"保存实例配置时出错: {e}")
         return jsonify({'status': 'error', 'message': f'保存失败: {str(e)}'}), 500
 
+
+@main.route('/delete_instance', methods=['POST'])
+def delete_instance():
+    """删除单个实例配置"""
+    try:
+        instance_id = request.json.get('instance_id', '')
+        instance_type = request.json.get('instance_type', '')
+        
+        if not instance_id or not instance_type:
+            return jsonify({'status': 'error', 'message': '无效的请求数据'}), 400
+        
+        # 获取当前设置
+        settings = config_manager.get_settings()
+        
+        # 确保实例类型存在
+        if instance_type not in settings:
+            return jsonify({'status': 'error', 'message': '实例类型不存在'}), 404
+        
+        # 查找并删除实例
+        found_index = -1
+        instance_name = '未知实例'
+        
+        for i, existing in enumerate(settings[instance_type]):
+            if existing.get('id') == instance_id:
+                found_index = i
+                instance_name = existing.get('name', '未命名')
+                break
+        
+        if found_index >= 0:
+            # 删除实例
+            settings[instance_type].pop(found_index)
+            
+            # 保存设置
+            if config_manager.save_settings(settings):
+                log_manager.log_event("CONFIG", f"删除了{instance_name}实例")
+                # 重启调度器以应用新配置
+                scheduler.restart()
+                return jsonify({
+                    'status': 'success', 
+                    'message': '实例删除成功'
+                })
+            else:
+                return jsonify({'status': 'error', 'message': '保存配置文件失败'}), 500
+        else:
+            return jsonify({'status': 'error', 'message': '未找到要删除的实例'}), 404
+            
+    except Exception as e:
+        current_app.logger.error(f"删除实例配置时出错: {e}")
+        return jsonify({'status': 'error', 'message': f'删除失败: {str(e)}'}), 500
+
  

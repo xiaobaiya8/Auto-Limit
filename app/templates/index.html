@@ -78,11 +78,8 @@
                     {% for downloader in enabled_downloaders %}
                     <div class="mb-2 p-2 bg-light rounded">
                         <div class="fw-bold">{{ downloader.name or '未命名' }}</div>
-                        <div>默认：
-                            {% if downloader.default_download_limit == 0 %}无限制{% else %}{{ downloader.default_download_limit }}KB/s{% endif %} / 
-                            {% if downloader.default_upload_limit == 0 %}无限制{% else %}{{ downloader.default_upload_limit }}KB/s{% endif %}
-                        </div>
-                        <div>播放时：{{ downloader.backup_download_limit }}KB/s / {{ downloader.backup_upload_limit }}KB/s</div>
+                        <div>默认：<span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}"></span></div>
+                        <div>播放时：<span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}"></span></div>
                     </div>
                     {% endfor %}
                 </div>
@@ -209,8 +206,24 @@ function testInstance(button) {
     });
 }
 
+// 格式化速度显示
+function formatSpeedDisplays() {
+    document.querySelectorAll('.speed-display').forEach(element => {
+        const downloadSpeed = element.getAttribute('data-download');
+        const uploadSpeed = element.getAttribute('data-upload');
+        
+        const formattedDownload = formatSpeed(downloadSpeed);
+        const formattedUpload = formatSpeed(uploadSpeed);
+        
+        element.textContent = `${formattedDownload} / ${formattedUpload}`;
+    });
+}
+
 // 页面加载时和每10秒更新一次状态
 updateStatus();
 setInterval(updateStatus, 10000);
+
+// 格式化速度显示
+formatSpeedDisplays();
 </script>
 {% endblock %} 

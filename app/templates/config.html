@@ -13,18 +13,52 @@
                 <!-- 媒体服务器 -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="mb-0 text-primary"><i class="bi bi-server"></i> 媒体服务器</h5>
-                    <button type="button" class="btn btn-success btn-sm" onclick="addInstance('media_servers')">
+                    <button type="button" class="btn btn-success btn-sm" onclick="openAddModal('media_servers')">
                         <i class="bi bi-plus-circle"></i> 添加媒体服务器
                     </button>
                 </div>
                 
-                <div id="media_servers-container" class="mb-4">
-                    {% for server in settings.media_servers %}
-                        {% with instance_type='media_servers', instance=server, index=loop.index0, is_template=False %}
-                            {% include 'partials/instance_card.html' %}
-                        {% endwith %}
-                    {% endfor %}
-                    {% if not settings.media_servers %}
+                <div id="media_servers-list" class="mb-4">
+                    {% if settings.media_servers %}
+                        {% for server in settings.media_servers %}
+                        <div class="card mb-2 instance-list-item" data-instance-id="{{ server.id }}" data-instance-type="media_servers">
+                            <div class="card-body py-2">
+                                <div class="row align-items-center">
+                                    <div class="col-md-1">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="server-{{ server.id }}-enabled" 
+                                                   {% if server.enabled %}checked{% endif %} 
+                                                   onchange="toggleInstance(this, 'media_servers', '{{ server.id }}')">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="fw-bold">{{ server.name or '未命名' }}</div>
+                                        <small class="text-muted">{{ server.type | title }}</small>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted">{{ server.url or 'URL未配置' }}</small>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <small class="text-info">{{ server.poll_interval or 15 }}秒轮询</small>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-primary" onclick="testInstanceFromList(this)" title="测试连接">
+                                                <i class="bi bi-wifi"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary" onclick="editInstance(this, 'media_servers', '{{ server.id }}')" title="编辑">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger" onclick="deleteInstance(this, 'media_servers', '{{ server.id }}')" title="删除">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
                     <div class="text-center py-4 text-muted empty-state" id="media-servers-empty">
                         <i class="bi bi-server display-4"></i>
                         <p class="mt-2">还没有配置媒体服务器</p>
@@ -38,18 +72,55 @@
                 <!-- 下载器 -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="mb-0 text-primary"><i class="bi bi-download"></i> 下载器</h5>
-                    <button type="button" class="btn btn-success btn-sm" onclick="addInstance('downloaders')">
+                    <button type="button" class="btn btn-success btn-sm" onclick="openAddModal('downloaders')">
                         <i class="bi bi-plus-circle"></i> 添加下载器
                     </button>
                 </div>
                 
-                <div id="downloaders-container" class="mb-4">
-                    {% for downloader in settings.downloaders %}
-                         {% with instance_type='downloaders', instance=downloader, index=loop.index0, is_template=False %}
-                            {% include 'partials/instance_card.html' %}
-                         {% endwith %}
-                    {% endfor %}
-                    {% if not settings.downloaders %}
+                <div id="downloaders-list" class="mb-4">
+                    {% if settings.downloaders %}
+                        {% for downloader in settings.downloaders %}
+                        <div class="card mb-2 instance-list-item" data-instance-id="{{ downloader.id }}" data-instance-type="downloaders">
+                            <div class="card-body py-2">
+                                <div class="row align-items-center">
+                                    <div class="col-md-1">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="downloader-{{ downloader.id }}-enabled" 
+                                                   {% if downloader.enabled %}checked{% endif %} 
+                                                   onchange="toggleInstance(this, 'downloaders', '{{ downloader.id }}')">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="fw-bold">{{ downloader.name or '未命名' }}</div>
+                                        <small class="text-muted">{{ downloader.type | title }}</small>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <small class="text-muted">{{ downloader.url or 'URL未配置' }}</small>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <small class="text-success">
+                                            <div>默认：<span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}"></span></div>
+                                            <div>播放：<span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}"></span></div>
+                                        </small>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-primary" onclick="testInstanceFromList(this)" title="测试连接">
+                                                <i class="bi bi-wifi"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary" onclick="editInstance(this, 'downloaders', '{{ downloader.id }}')" title="编辑">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger" onclick="deleteInstance(this, 'downloaders', '{{ downloader.id }}')" title="删除">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
                     <div class="text-center py-4 text-muted empty-state" id="downloaders-empty">
                         <i class="bi bi-download display-4"></i>
                         <p class="mt-2">还没有配置下载器</p>
@@ -72,23 +143,129 @@
     </div>
 </div>
 
-<!-- 隐藏的模板 -->
-<div id="templates" style="display: none;">
-    <!-- Media Server Template -->
-    {% set server_template = {'id': '__INDEX__', 'name': '', 'type': 'emby', 'enabled': True, 'url': '', 'api_key': '', 'token': '', 'poll_interval': 15} %}
-    {% with instance_type='media_servers', instance=server_template, index='__INDEX__', is_template=True %}
-        {% include 'partials/instance_card.html' %}
-    {% endwith %}
-    
-    <!-- Downloader Template -->
-    {% set downloader_template = {'id': '__INDEX__', 'name': '', 'type': 'qbittorrent', 'enabled': True, 'url': '', 'username': '', 'password': '', 'default_download_limit': 0, 'default_upload_limit': 0, 'backup_download_limit': 1024, 'backup_upload_limit': 512} %}
-    {% with instance_type='downloaders', instance=downloader_template, index='__INDEX__', is_template=True %}
-        {% include 'partials/instance_card.html' %}
-    {% endwith %}
+<!-- 添加/编辑实例的弹框 -->
+<div class="modal fade" id="instanceModal" tabindex="-1" aria-labelledby="instanceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="instanceModalLabel">添加实例</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="instanceForm">
+                    <input type="hidden" id="instanceId" name="id">
+                    <input type="hidden" id="instanceType" name="instance_type">
+                    <input type="hidden" id="isEdit" name="is_edit" value="false">
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">实例名称 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="instanceName" name="name" placeholder="例如：主服务器" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">插件类型 <span class="text-danger">*</span></label>
+                            <select class="form-select" id="instanceTypeSelect" name="type" onchange="updateModalFields()" required>
+                                <!-- 选项将通过JavaScript动态填充 -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <!-- 通用字段：URL（所有插件都需要） -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">服务器地址 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="instanceUrl" name="url" placeholder="http://192.168.1.10:8096" required>
+                        </div>
+                        
+                        <!-- 特定字段容器 -->
+                        <div id="specificFields">
+                            <!-- API Key (Emby/Jellyfin) -->
+                            <div class="mb-3 field-api_key" style="display: none;">
+                                <label class="form-label fw-bold">API 密钥 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="instanceApiKey" name="api_key">
+                            </div>
+                            
+                            <!-- Token (Plex) -->
+                            <div class="mb-3 field-token" style="display: none;">
+                                <label class="form-label fw-bold">X-Plex-Token <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="instanceToken" name="token">
+                            </div>
+                            
+                            <!-- Username/Password (qBittorrent/Transmission) -->
+                            <div class="mb-3 field-username" style="display: none;">
+                                <label class="form-label fw-bold">用户名 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="instanceUsername" name="username">
+                            </div>
+                            <div class="mb-3 field-password" style="display: none;">
+                                <label class="form-label fw-bold">密码 <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="instancePassword" name="password">
+                            </div>
+                        </div>
+
+                        <!-- 媒体服务器特有设置 -->
+                        <div id="mediaServerSettings" style="display: none;">
+                            <div class="polling-settings bg-light p-3 rounded">
+                                <h6 class="fw-bold text-info mb-2">
+                                    <i class="bi bi-clock-history"></i> 轮询设置
+                                </h6>
+                                <div class="mb-3">
+                                    <label class="form-label">轮询间隔 (秒)</label>
+                                    <input type="number" class="form-control" id="instancePollInterval" name="poll_interval" value="15" min="5" max="300">
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle"></i> 检查此服务器播放状态的频率，建议5-60秒
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 下载器特有设置 -->
+                        <div id="downloaderSettings" style="display: none;">
+                            <div class="speed-settings bg-light p-3 rounded">
+                                <h6 class="fw-bold text-primary mb-2">
+                                    <i class="bi bi-speedometer2"></i> 限速设置 (KB/s)
+                                </h6>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <label class="form-label">默认下载</label>
+                                        <input type="number" class="form-control" id="instanceDefaultDownload" name="default_download_limit" value="0" min="0" placeholder="0=无限制">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">默认上传</label>
+                                        <input type="number" class="form-control" id="instanceDefaultUpload" name="default_upload_limit" value="0" min="0" placeholder="0=无限制">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">播放时下载</label>
+                                        <input type="number" class="form-control" id="instanceBackupDownload" name="backup_download_limit" value="1024" min="0">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">播放时上传</label>
+                                        <input type="number" class="form-control" id="instanceBackupUpload" name="backup_upload_limit" value="512" min="0">
+                                    </div>
+                                </div>
+                                <div class="form-text mt-2">
+                                    <i class="bi bi-info-circle"></i> 当有媒体播放时，自动切换到"播放时"限速
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="testConnectionBtn" onclick="testConnectionInModal()">
+                    <i class="bi bi-wifi"></i> 测试连接
+                </button>
+                <button type="button" class="btn btn-success" id="saveInstanceBtn" onclick="saveInstanceFromModal()">
+                    <i class="bi bi-check-lg"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
+<script type="application/json" id="app-config">{{ settings | tojson | safe }}</script>
 <script>
 // 插件的字段定义
 const PLUGIN_FIELDS = {
@@ -103,84 +280,333 @@ const PLUGIN_FIELDS = {
     }
 };
 
-function addInstance(type) {
-    const container = document.getElementById(type + '-container');
-    if (!container) {
-        console.error(`Error: Container element with id '${type}-container' not found.`);
-        showToast(`发生脚本错误：无法找到用于添加新实例的容器。请检查浏览器控制台。`, 'error');
-        return;
-    }
+// 插件类型选项
+const PLUGIN_TYPES = {
+    media_servers: [
+        { value: 'emby', label: 'Emby' },
+        { value: 'jellyfin', label: 'Jellyfin' },
+        { value: 'plex', label: 'Plex' }
+    ],
+    downloaders: [
+        { value: 'qbittorrent', label: 'qBittorrent' },
+        { value: 'transmission', label: 'Transmission' }
+    ]
+};
 
-    const index = container.children.length;
-    const templateNode = document.getElementById(type + '-__INDEX__-card');
-     if (!templateNode) {
-        console.error(`Error: Template element with id '${type}-__INDEX__-card' not found.`);
-        showToast(`发生脚本错误：无法找到用于添加新实例的模板。请检查浏览器控制台。`, 'error');
-        return;
-    }
-    const template = templateNode.cloneNode(true);
+// 当前弹框状态
+let currentModal = {
+    type: null,
+    isEdit: false,
+    instanceId: null
+};
+
+// 打开添加实例弹框
+function openAddModal(instanceType) {
+    currentModal = {
+        type: instanceType,
+        isEdit: false,
+        instanceId: null
+    };
     
-    // 替换模板中的占位符
-    template.id = template.id.replace(/__INDEX__/g, index);
-    template.innerHTML = template.innerHTML.replace(/__INDEX__/g, index);
+    const modal = document.getElementById('instanceModal');
+    const modalTitle = document.getElementById('instanceModalLabel');
+    const form = document.getElementById('instanceForm');
     
-    // 隐藏空状态提示
-    const emptyState = document.getElementById(`${type.replace('_', '-')}-empty`);
-    if (emptyState) {
-        emptyState.style.display = 'none';
-    }
+    // 设置标题
+    modalTitle.textContent = instanceType === 'media_servers' ? '添加媒体服务器' : '添加下载器';
     
-    container.appendChild(template);
+    // 重置表单
+    form.reset();
+    document.getElementById('instanceType').value = instanceType;
+    document.getElementById('isEdit').value = 'false';
+    document.getElementById('instanceId').value = '';
     
-    // 重新初始化事件监听器
-    const newCard = document.getElementById(`${type}-${index}-card`);
-    newCard.style.display = 'block';
-    initializeCard(newCard);
+    // 填充插件类型选项
+    populateTypeOptions(instanceType);
     
-    showToast('新实例已添加，请填写配置并保存', 'success');
+    // 显示对应的设置区域
+    updateModalSettings(instanceType);
+    
+    // 初始化字段显示
+    updateModalFields();
+    
+    // 显示弹框
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
 }
 
-function removeInstance(button, type, index) {
-    const card = document.getElementById(`${type}-${index}-card`);
-    if (card) {
-        if (confirm('确定要删除这个实例吗？')) {
-            card.remove();
-            
-            // 检查是否需要显示空状态
-            const container = document.getElementById(type + '-container');
-            if (container.children.length === 0) {
-                const emptyState = document.getElementById(`${type.replace('_', '-')}-empty`);
-                if (emptyState) {
-                    emptyState.style.display = 'block';
-                }
-            }
-            
-            showToast('实例已删除', 'success');
-        }
-    }
-}
-
-function updateInstanceTitle(input) {
-    const card = input.closest('.instance-card');
-    const titleSpan = card.querySelector('.instance-title');
-    if (titleSpan) {
-        titleSpan.textContent = input.value || '新实例';
-    }
-}
-
-function testInstanceInCard(button) {
-    const card = button.closest('.instance-card');
-    const instanceConfig = getInstanceConfigFromCard(card);
+// 打开编辑实例弹框
+function editInstance(button, instanceType, instanceId) {
+    const listItem = button.closest('.instance-list-item');
     
+    // 从全局配置中获取实例数据
+    const instanceConfig = getInstanceConfigById(instanceType, instanceId);
     if (!instanceConfig) {
-        showToast('无法获取实例配置信息', 'error');
+        showToast('无法找到实例配置', 'error');
         return;
     }
+    
+    currentModal = {
+        type: instanceType,
+        isEdit: true,
+        instanceId: instanceId
+    };
+    
+    const modal = document.getElementById('instanceModal');
+    const modalTitle = document.getElementById('instanceModalLabel');
+    const form = document.getElementById('instanceForm');
+    
+    // 设置标题
+    modalTitle.textContent = instanceType === 'media_servers' ? '编辑媒体服务器' : '编辑下载器';
+    
+    // 填充表单数据
+    document.getElementById('instanceType').value = instanceType;
+    document.getElementById('isEdit').value = 'true';
+    document.getElementById('instanceId').value = instanceId;
+    document.getElementById('instanceName').value = instanceConfig.name || '';
+    document.getElementById('instanceUrl').value = instanceConfig.url || '';
+    
+    // 填充插件类型选项
+    populateTypeOptions(instanceType);
+    document.getElementById('instanceTypeSelect').value = instanceConfig.type || '';
+    
+    // 填充特定字段
+    if (instanceConfig.api_key) document.getElementById('instanceApiKey').value = instanceConfig.api_key;
+    if (instanceConfig.token) document.getElementById('instanceToken').value = instanceConfig.token;
+    if (instanceConfig.username) document.getElementById('instanceUsername').value = instanceConfig.username;
+    if (instanceConfig.password) document.getElementById('instancePassword').value = instanceConfig.password;
+    
+    // 填充特定设置
+    if (instanceType === 'media_servers') {
+        document.getElementById('instancePollInterval').value = instanceConfig.poll_interval || 15;
+    } else {
+        document.getElementById('instanceDefaultDownload').value = instanceConfig.default_download_limit || 0;
+        document.getElementById('instanceDefaultUpload').value = instanceConfig.default_upload_limit || 0;
+        document.getElementById('instanceBackupDownload').value = instanceConfig.backup_download_limit || 1024;
+        document.getElementById('instanceBackupUpload').value = instanceConfig.backup_upload_limit || 512;
+    }
+    
+    // 显示对应的设置区域
+    updateModalSettings(instanceType);
+    
+    // 更新字段显示
+    updateModalFields();
+    
+    // 显示弹框
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+}
 
+// 填充插件类型选项
+function populateTypeOptions(instanceType) {
+    const typeSelect = document.getElementById('instanceTypeSelect');
+    typeSelect.innerHTML = '';
+    
+    PLUGIN_TYPES[instanceType].forEach(type => {
+        const option = document.createElement('option');
+        option.value = type.value;
+        option.textContent = type.label;
+        typeSelect.appendChild(option);
+    });
+    
+    // 设置默认值
+    if (typeSelect.options.length > 0) {
+        typeSelect.value = typeSelect.options[0].value;
+    }
+}
+
+// 更新弹框设置区域显示
+function updateModalSettings(instanceType) {
+    const mediaServerSettings = document.getElementById('mediaServerSettings');
+    const downloaderSettings = document.getElementById('downloaderSettings');
+    
+    if (instanceType === 'media_servers') {
+        mediaServerSettings.style.display = 'block';
+        downloaderSettings.style.display = 'none';
+    } else {
+        mediaServerSettings.style.display = 'none';
+        downloaderSettings.style.display = 'block';
+    }
+}
+
+// 更新弹框字段显示
+function updateModalFields() {
+    const selectedType = document.getElementById('instanceTypeSelect').value;
+    const instanceType = document.getElementById('instanceType').value;
+    
+    // 首先隐藏所有特有字段
+    const allFields = ['api_key', 'token', 'username', 'password'];
+    allFields.forEach(field => {
+        const fieldContainer = document.querySelector(`.field-${field}`);
+        if (fieldContainer) fieldContainer.style.display = 'none';
+    });
+    
+    // 根据选择的类型显示相应的字段
+    if (PLUGIN_FIELDS[instanceType] && PLUGIN_FIELDS[instanceType][selectedType]) {
+        PLUGIN_FIELDS[instanceType][selectedType].forEach(field => {
+            const fieldContainer = document.querySelector(`.field-${field}`);
+            if (fieldContainer) fieldContainer.style.display = 'block';
+        });
+    }
+}
+
+// 弹框中测试连接
+function testConnectionInModal() {
+    const form = document.getElementById('instanceForm');
+    const formData = new FormData(form);
+    
+    const instanceConfig = {
+        name: formData.get('name'),
+        type: formData.get('type'),
+        url: formData.get('url'),
+        api_key: formData.get('api_key'),
+        token: formData.get('token'),
+        username: formData.get('username'),
+        password: formData.get('password')
+    };
+    
+    // 基本验证
+    if (!instanceConfig.name.trim()) {
+        showToast('请填写实例名称', 'warning');
+        document.getElementById('instanceName').focus();
+        return;
+    }
+    if (!instanceConfig.url.trim()) {
+        showToast('请填写服务器地址', 'warning');
+        document.getElementById('instanceUrl').focus();
+        return;
+    }
+    
+    // 验证特定字段
+    if (!validateRequiredFields(instanceConfig)) {
+        return;
+    }
+    
+    const testBtn = document.getElementById('testConnectionBtn');
+    testBtn.disabled = true;
+    testBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> 测试中...';
+    
+    fetch('/test_connection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            instance_config: instanceConfig,
+            instance_type: currentModal.type
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showToast(`${instanceConfig.name} 连接成功`, 'success', '连接测试');
+        } else {
+            showToast(`${instanceConfig.name} 连接失败: ${data.message}`, 'error', '连接测试');
+        }
+    })
+    .catch(error => {
+        showToast(`连接测试时发生网络错误: ${error.message}`, 'error', '网络错误');
+    })
+    .finally(() => {
+        testBtn.disabled = false;
+        testBtn.innerHTML = '<i class="bi bi-wifi"></i> 测试连接';
+    });
+}
+
+// 从弹框保存实例
+function saveInstanceFromModal() {
+    const form = document.getElementById('instanceForm');
+    const formData = new FormData(form);
+    
+    const instanceConfig = {
+        id: formData.get('id') || null,
+        name: formData.get('name'),
+        type: formData.get('type'),
+        url: formData.get('url'),
+        api_key: formData.get('api_key'),
+        token: formData.get('token'),
+        username: formData.get('username'),
+        password: formData.get('password'),
+        enabled: true
+    };
+    
+    // 添加特定设置
+    if (currentModal.type === 'media_servers') {
+        instanceConfig.poll_interval = parseInt(formData.get('poll_interval')) || 15;
+    } else {
+        instanceConfig.default_download_limit = parseInt(formData.get('default_download_limit')) || 0;
+        instanceConfig.default_upload_limit = parseInt(formData.get('default_upload_limit')) || 0;
+        instanceConfig.backup_download_limit = parseInt(formData.get('backup_download_limit')) || 1024;
+        instanceConfig.backup_upload_limit = parseInt(formData.get('backup_upload_limit')) || 512;
+    }
+    
+    // 基本验证
+    if (!instanceConfig.name.trim()) {
+        showToast('请填写实例名称', 'warning');
+        document.getElementById('instanceName').focus();
+        return;
+    }
+    if (!instanceConfig.url.trim()) {
+        showToast('请填写服务器地址', 'warning');
+        document.getElementById('instanceUrl').focus();
+        return;
+    }
+    
+    // 验证特定字段
+    if (!validateRequiredFields(instanceConfig)) {
+        return;
+    }
+    
+    const saveBtn = document.getElementById('saveInstanceBtn');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> 保存中...';
+    
+    fetch('/save_instance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            instance_config: instanceConfig,
+            instance_type: currentModal.type
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showToast(`${instanceConfig.name} 保存成功`, 'success', '配置保存');
+            
+            // 关闭弹框
+            const modal = bootstrap.Modal.getInstance(document.getElementById('instanceModal'));
+            modal.hide();
+            
+            // 刷新页面以显示更新后的列表
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        } else {
+            showToast(`保存失败: ${data.message}`, 'error', '配置保存');
+        }
+    })
+    .catch(error => {
+        showToast(`保存时发生网络错误: ${error.message}`, 'error', '网络错误');
+    })
+    .finally(() => {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> 保存';
+    });
+}
+
+// 从列表测试实例
+function testInstanceFromList(button) {
+    const listItem = button.closest('.instance-list-item');
+    const instanceId = listItem.dataset.instanceId;
+    const instanceType = listItem.dataset.instanceType;
+    
+    const instanceConfig = getInstanceConfigById(instanceType, instanceId);
+    if (!instanceConfig) {
+        showToast('无法找到实例配置', 'error');
+        return;
+    }
+    
     button.disabled = true;
     button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
-    
-    const instanceType = card.id.includes('media_servers') ? 'media_servers' : 'downloaders';
     
     fetch('/test_connection', {
         method: 'POST',
@@ -207,29 +633,16 @@ function testInstanceInCard(button) {
     });
 }
 
-function saveInstance(button) {
-    const card = button.closest('.instance-card');
-    const instanceConfig = getInstanceConfigFromCard(card);
-    
+// 切换实例启用状态
+function toggleInstance(checkbox, instanceType, instanceId) {
+    const instanceConfig = getInstanceConfigById(instanceType, instanceId);
     if (!instanceConfig) {
-        showToast('无法获取实例配置信息', 'error');
+        showToast('无法找到实例配置', 'error');
+        checkbox.checked = !checkbox.checked; // 恢复原状态
         return;
     }
-
-    // 基本验证
-    if (!instanceConfig.name.trim()) {
-        showToast('请填写实例名称', 'warning');
-        return;
-    }
-    if (!instanceConfig.url.trim()) {
-        showToast('请填写服务器地址', 'warning');
-        return;
-    }
-
-    button.disabled = true;
-    button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
     
-    const instanceType = card.id.includes('media_servers') ? 'media_servers' : 'downloaders';
+    instanceConfig.enabled = checkbox.checked;
     
     fetch('/save_instance', {
         method: 'POST',
@@ -242,86 +655,137 @@ function saveInstance(button) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            showToast(`${instanceConfig.name} 保存成功`, 'success', '配置保存');
-            // 更新实例ID（如果是新创建的）
-            if (data.instance_id) {
-                const idInput = card.querySelector('input[name*="[id]"]');
-                if (idInput) idInput.value = data.instance_id;
-            }
+            showToast(`${instanceConfig.name} ${checkbox.checked ? '已启用' : '已禁用'}`, 'success');
         } else {
-            showToast(`保存失败: ${data.message}`, 'error', '配置保存');
+            showToast(`状态更新失败: ${data.message}`, 'error');
+            checkbox.checked = !checkbox.checked; // 恢复原状态
         }
     })
     .catch(error => {
-        showToast(`保存时发生网络错误: ${error.message}`, 'error', '网络错误');
-    })
-    .finally(() => {
-        button.disabled = false;
-        button.innerHTML = '<i class="bi bi-check-lg"></i>';
+        showToast(`状态更新时发生网络错误: ${error.message}`, 'error');
+        checkbox.checked = !checkbox.checked; // 恢复原状态
     });
 }
 
-function getInstanceConfigFromCard(card) {
-    const formData = new FormData();
-    const inputs = card.querySelectorAll('input, select');
+// 删除实例
+function deleteInstance(button, instanceType, instanceId) {
+    const listItem = button.closest('.instance-list-item');
+    const instanceConfig = getInstanceConfigById(instanceType, instanceId);
     
-    const config = {};
-    inputs.forEach(input => {
-        if (input.type === 'checkbox') {
-            config.enabled = input.checked;
-        } else if (input.name) {
-            const fieldName = input.name.split('[').pop().replace(']', '');
-            config[fieldName] = input.value;
+    if (!instanceConfig) {
+        showToast('无法找到实例配置', 'error');
+        return;
+    }
+    
+    if (confirm(`确定要删除 "${instanceConfig.name || '未命名'}" 吗？`)) {
+        fetch('/delete_instance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                instance_id: instanceId,
+                instance_type: instanceType
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                showToast(`${instanceConfig.name} 已删除`, 'success');
+                listItem.remove();
+                
+                // 检查是否需要显示空状态
+                const listContainer = document.getElementById(`${instanceType.replace('_', '-')}-list`);
+                if (listContainer.children.length === 0) {
+                    const emptyState = document.getElementById(`${instanceType.replace('_', '-')}-empty`);
+                    if (emptyState) {
+                        emptyState.style.display = 'block';
+                    }
+                }
+            } else {
+                showToast(`删除失败: ${data.message}`, 'error');
+            }
+        })
+        .catch(error => {
+            showToast(`删除时发生网络错误: ${error.message}`, 'error');
+        });
+    }
+}
+
+// 全局配置数据
+window.APP_CONFIG = JSON.parse(document.getElementById('app-config').textContent);
+
+// 从全局配置中获取实例配置
+function getInstanceConfigById(instanceType, instanceId) {
+    if (!window.APP_CONFIG || !window.APP_CONFIG[instanceType]) {
+        return null;
+    }
+    
+    return window.APP_CONFIG[instanceType].find(instance => instance.id === instanceId);
+}
+
+// 验证必需字段
+function validateRequiredFields(instanceConfig) {
+    const instanceType = document.getElementById('instanceType').value;
+    const selectedType = instanceConfig.type;
+    
+    // 根据插件类型验证特定字段
+    if (instanceType === 'media_servers') {
+        if (selectedType === 'emby' || selectedType === 'jellyfin') {
+            if (!instanceConfig.api_key || !instanceConfig.api_key.trim()) {
+                showToast('请填写API密钥', 'warning');
+                document.getElementById('instanceApiKey').focus();
+                return false;
+            }
+        } else if (selectedType === 'plex') {
+            if (!instanceConfig.token || !instanceConfig.token.trim()) {
+                showToast('请填写X-Plex-Token', 'warning');
+                document.getElementById('instanceToken').focus();
+                return false;
+            }
         }
-    });
+    } else if (instanceType === 'downloaders') {
+        if (selectedType === 'qbittorrent' || selectedType === 'transmission') {
+            if (!instanceConfig.username || !instanceConfig.username.trim()) {
+                showToast('请填写用户名', 'warning');
+                document.getElementById('instanceUsername').focus();
+                return false;
+            }
+            if (!instanceConfig.password || !instanceConfig.password.trim()) {
+                showToast('请填写密码', 'warning');
+                document.getElementById('instancePassword').focus();
+                return false;
+            }
+        }
+    }
     
-    return config;
+    return true;
 }
 
-function updateFields(card) {
-    const typeSelector = card.querySelector('.type-selector');
-    const selectedType = typeSelector.value;
-    const instanceType = typeSelector.name.split('[')[0];
-    
-    // 首先隐藏所有特有字段
-    const allFields = ['api_key', 'token', 'username', 'password'];
-    allFields.forEach(field => {
-        const fieldContainer = card.querySelector(`.field-${field}`);
-        if (fieldContainer) fieldContainer.style.display = 'none';
-    });
-    
-    // 根据选择的类型显示相应的字段
-    if (PLUGIN_FIELDS[instanceType] && PLUGIN_FIELDS[instanceType][selectedType]) {
-        PLUGIN_FIELDS[instanceType][selectedType].forEach(field => {
-            const fieldContainer = card.querySelector(`.field-${field}`);
-            if (fieldContainer) fieldContainer.style.display = 'block';
-        });
-    }
-}
-
-function initializeCard(card) {
-    const checkbox = card.querySelector('.form-check-input');
-    const inputs = card.querySelectorAll('input:not([type=checkbox]), select, textarea');
-    const typeSelector = card.querySelector('.type-selector');
-
-    function toggleCardState() {
-        const isChecked = checkbox.checked;
-        card.classList.toggle('disabled', !isChecked);
-        inputs.forEach(input => {
-            if (input !== checkbox) input.disabled = !isChecked;
-        });
-    }
-
-    checkbox.addEventListener('change', toggleCardState);
-    if (typeSelector) {
-        typeSelector.addEventListener('change', () => updateFields(card));
-        updateFields(card);
-    }
-    toggleCardState();
-}
-
+// 页面加载完成后的初始化
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.instance-card').forEach(initializeCard);
+    // 初始化完成
+    console.log('配置页面已加载');
+    
+    // 初始化弹框字段显示
+    const instanceTypeSelect = document.getElementById('instanceTypeSelect');
+    if (instanceTypeSelect) {
+        instanceTypeSelect.addEventListener('change', updateModalFields);
+    }
+    
+    // 格式化所有速度显示
+    formatSpeedDisplays();
 });
+
+// 格式化速度显示
+function formatSpeedDisplays() {
+    document.querySelectorAll('.speed-display').forEach(element => {
+        const downloadSpeed = element.getAttribute('data-download');
+        const uploadSpeed = element.getAttribute('data-upload');
+        
+        const formattedDownload = formatSpeed(downloadSpeed);
+        const formattedUpload = formatSpeed(uploadSpeed);
+        
+        element.textContent = `${formattedDownload} / ${formattedUpload}`;
+    });
+}
 </script>
 {% endblock %} 
