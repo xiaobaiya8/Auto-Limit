@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-12">
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title mb-0">
@@ -10,107 +10,156 @@
                 </h5>
             </div>
             <div class="card-body">
+                <!-- 播放状态概览 -->
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <div id="playback-status-indicator" class="status-indicator status-inactive me-2"></div>
+                            <div>
+                                <h6 class="mb-0">播放状态</h6>
+                                <span id="playback-status-text" class="text-muted">加载中...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-server text-primary me-2" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0">媒体服务器</h6>
+                                <span class="text-muted">{{ settings.media_servers | selectattr('enabled') | list | length }} 个已启用</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-download text-success me-2" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0">下载器</h6>
+                                <span class="text-muted">{{ settings.downloaders | selectattr('enabled') | list | length }} 个已启用</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 当前播放详情 -->
+                <div id="session-details" class="mb-4"></div>
+                
+                <hr>
+                
+                <!-- 实例状态 -->
                 <div class="row">
                     <div class="col-md-6 mb-3 mb-md-0">
-                        <h6><i class="bi bi-server"></i> 媒体服务器</h6>
+                        <h6><i class="bi bi-server"></i> 媒体服务器实例</h6>
                         <div class="list-group list-group-flush">
                             {% set enabled_servers = settings.media_servers | selectattr('enabled') | list %}
                             {% if enabled_servers %}
                                 {% for server in enabled_servers %}
                                     <div class="list-group-item d-flex justify-content-between align-items-center px-0" data-instance-id="{{ server.id }}" data-instance-type="media_servers">
-                                        <div>
-                                            <span class="fw-bold">{{ server.name or '未命名' }}</span> <span class="badge bg-secondary">{{ server.type }}</span><br>
-                                            <small class="text-muted">{{ server.url or 'URL未配置' }}</small>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center">
+                                                <span class="fw-bold">{{ server.name or '未命名' }}</span> 
+                                                <span class="badge bg-secondary ms-2">{{ server.type | title }}</span>
+                                            </div>
+                                            <small class="text-muted d-block">{{ server.url or 'URL未配置' }}</small>
+                                            <small class="text-info">轮询间隔: {{ server.poll_interval or 15 }}秒</small>
                                         </div>
-                                        <button class="btn btn-sm btn-outline-secondary test-btn" onclick="testInstance(this)">测试</button>
+                                        <button class="btn btn-sm btn-outline-secondary test-btn" onclick="testInstance(this)">
+                                            <i class="bi bi-wifi"></i> 测试
+                                        </button>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <p class="text-muted small mt-2">没有已启用的媒体服务器。<a href="{{ url_for('main.config') }}">前往配置</a></p>
+                                <div class="text-center py-3">
+                                    <i class="bi bi-server text-muted" style="font-size: 2rem;"></i>
+                                    <p class="text-muted mt-2 mb-1">没有已启用的媒体服务器</p>
+                                    <a href="{{ url_for('main.config') }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-gear"></i> 前往配置
+                                    </a>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <h6><i class="bi bi-download"></i> 下载器</h6>
+                        <h6><i class="bi bi-download"></i> 下载器实例</h6>
                         <div class="list-group list-group-flush">
                             {% set enabled_downloaders = settings.downloaders | selectattr('enabled') | list %}
                             {% if enabled_downloaders %}
                                 {% for downloader in enabled_downloaders %}
                                     <div class="list-group-item d-flex justify-content-between align-items-center px-0" data-instance-id="{{ downloader.id }}" data-instance-type="downloaders">
-                                        <div>
-                                            <span class="fw-bold">{{ downloader.name or '未命名' }}</span> <span class="badge bg-secondary">{{ downloader.type }}</span><br>
-                                            <small class="text-muted">{{ downloader.url or 'URL未配置' }}</small>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center">
+                                                <span class="fw-bold">{{ downloader.name or '未命名' }}</span> 
+                                                <span class="badge bg-secondary ms-2">{{ downloader.type | title }}</span>
+                                            </div>
+                                            <small class="text-muted d-block">{{ downloader.url or 'URL未配置' }}</small>
+                                            <div class="d-flex gap-3 mt-1">
+                                                <small class="text-success">
+                                                    默认: <span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}"></span>
+                                                </small>
+                                                <small class="text-warning">
+                                                    播放时: <span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}"></span>
+                                                </small>
+                                            </div>
                                         </div>
-                                        <button class="btn btn-sm btn-outline-secondary test-btn" onclick="testInstance(this)">测试</button>
+                                        <button class="btn btn-sm btn-outline-secondary test-btn" onclick="testInstance(this)">
+                                            <i class="bi bi-wifi"></i> 测试
+                                        </button>
                                     </div>
                                 {% endfor %}
                             {% else %}
-                                <p class="text-muted small mt-2">没有已启用的下载器。<a href="{{ url_for('main.config') }}">前往配置</a></p>
+                                <div class="text-center py-3">
+                                    <i class="bi bi-download text-muted" style="font-size: 2rem;"></i>
+                                    <p class="text-muted mt-2 mb-1">没有已启用的下载器</p>
+                                    <a href="{{ url_for('main.config') }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-gear"></i> 前往配置
+                                    </a>
+                                </div>
                             {% endif %}
                         </div>
                     </div>
                 </div>
                 
+                <!-- 系统信息 -->
                 <hr>
-                
-                <h6>当前播放状态</h6>
-                <div class="d-flex align-items-center">
-                    <div id="playback-status-indicator" class="status-indicator status-inactive"></div>
-                    <span id="playback-status-text">加载中...</span>
-                </div>
-                <div id="session-details" class="mt-2 small"></div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-speedometer2"></i> 速率设置
-                </h5>
-            </div>
-            <div class="card-body">
-                {% set enabled_downloaders = settings.downloaders | selectattr('enabled') | list %}
-                {% if enabled_downloaders %}
-                <div class="small">
-                    <strong>各下载器限速设置：</strong>
-                    {% for downloader in enabled_downloaders %}
-                    <div class="mb-2 p-2 bg-light rounded">
-                        <div class="fw-bold">{{ downloader.name or '未命名' }}</div>
-                        <div>默认：<span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}"></span></div>
-                        <div>播放时：<span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}"></span></div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="bi bi-clock-history text-info" style="font-size: 1.5rem;"></i>
+                            <div class="mt-1">
+                                <small class="text-muted d-block">调度器状态</small>
+                                <span id="scheduler-status" class="badge bg-success">运行中</span>
+                            </div>
+                        </div>
                     </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <p class="text-muted">没有已启用的下载器</p>
-                {% endif %}
-            </div>
-        </div>
-        
-        <div class="card mt-3">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-info-circle"></i> 轮询配置
-                </h5>
-            </div>
-            <div class="card-body">
-                {% set enabled_servers = settings.media_servers | selectattr('enabled') | list %}
-                {% if enabled_servers %}
-                <div class="small">
-                    <strong>各服务器轮询间隔：</strong>
-                    {% for server in enabled_servers %}
-                    <div class="mb-1 p-1 bg-light rounded">
-                        <span class="fw-bold">{{ server.name or '未命名' }}</span>：{{ server.poll_interval or 15 }}秒
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="bi bi-speedometer2 text-warning" style="font-size: 1.5rem;"></i>
+                            <div class="mt-1">
+                                <small class="text-muted d-block">当前限速模式</small>
+                                <span id="speed-mode" class="badge bg-secondary">检测中</span>
+                            </div>
+                        </div>
                     </div>
-                    {% endfor %}
-                </div>
-                {% else %}
-                <p class="text-muted small">没有已启用的媒体服务器</p>
-                {% endif %}
-                <div class="alert alert-info small p-2 mt-2 mb-0">
-                    <i class="bi bi-info-circle"></i> 每个服务器独立轮询，统一控制所有下载器
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="bi bi-arrow-repeat text-primary" style="font-size: 1.5rem;"></i>
+                            <div class="mt-1">
+                                <small class="text-muted d-block">最后更新</small>
+                                <span id="last-update" class="small text-muted">--</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="text-center">
+                            <i class="bi bi-journal-text text-secondary" style="font-size: 1.5rem;"></i>
+                            <div class="mt-1">
+                                <small class="text-muted d-block">快速操作</small>
+                                <a href="{{ url_for('main.logs_page') }}" class="btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-journal-text"></i> 查看日志
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -124,6 +173,7 @@
 <script>
 // 全局配置数据
 window.APP_CONFIG = JSON.parse(document.getElementById('app-config').textContent);
+
 function updateStatus() {
     fetch('/api/media_server/sessions')
         .then(response => response.json())
@@ -131,34 +181,68 @@ function updateStatus() {
             const indicator = document.getElementById('playback-status-indicator');
             const statusText = document.getElementById('playback-status-text');
             const sessionDetails = document.getElementById('session-details');
+            const speedMode = document.getElementById('speed-mode');
+            const lastUpdate = document.getElementById('last-update');
+            
+            // 更新最后更新时间
+            lastUpdate.textContent = new Date().toLocaleTimeString();
             
             if (data.status === 'success' && data.sessions.length > 0) {
                 indicator.className = 'status-indicator status-active';
                 statusText.textContent = `有 ${data.count} 个活跃播放`;
+                speedMode.className = 'badge bg-warning';
+                speedMode.textContent = '播放时限速';
                 
-                let detailsHtml = '<ul class="list-unstyled mb-0">';
-                data.sessions.forEach(session => {
+                let detailsHtml = '<div class="alert alert-info py-2"><h6 class="mb-2"><i class="bi bi-play-circle"></i> 当前播放详情</h6><div class="row">';
+                data.sessions.forEach((session, index) => {
                     detailsHtml += `
-                        <li class="mb-1">
-                            <i class="bi bi-person"></i> ${session.user_name} 
-                            <span class="text-muted">正在看</span> 
-                            <i class="bi bi-play-circle"></i> ${session.item_name}
-                            <span class="badge bg-info text-dark">${session.source_server}</span>
-                        </li>
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle text-primary me-2"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">${session.user_name}</div>
+                                    <small class="text-muted">${session.item_name}</small>
+                                    <span class="badge bg-info ms-2">${session.source_server}</span>
+                                </div>
+                            </div>
+                        </div>
                     `;
                 });
-                detailsHtml += '</ul>';
+                detailsHtml += '</div></div>';
                 sessionDetails.innerHTML = detailsHtml;
 
             } else {
                 indicator.className = 'status-indicator status-inactive';
                 statusText.textContent = '无播放活动';
+                speedMode.className = 'badge bg-success';
+                speedMode.textContent = '默认限速';
                 sessionDetails.innerHTML = '';
             }
         })
         .catch(error => {
             console.error('Error fetching status:', error);
             document.getElementById('playback-status-text').textContent = '状态获取失败';
+            document.getElementById('scheduler-status').className = 'badge bg-danger';
+            document.getElementById('scheduler-status').textContent = '连接失败';
+        });
+    
+    // 检查调度器状态
+    fetch('/health')
+        .then(response => response.json())
+        .then(data => {
+            const schedulerStatus = document.getElementById('scheduler-status');
+            if (data.status === 'healthy') {
+                schedulerStatus.className = 'badge bg-success';
+                schedulerStatus.textContent = '运行中';
+            } else {
+                schedulerStatus.className = 'badge bg-danger';
+                schedulerStatus.textContent = '异常';
+            }
+        })
+        .catch(error => {
+            const schedulerStatus = document.getElementById('scheduler-status');
+            schedulerStatus.className = 'badge bg-danger';
+            schedulerStatus.textContent = '连接失败';
         });
 }
 
@@ -202,7 +286,7 @@ function testInstance(button) {
     })
     .finally(() => {
         btn.disabled = false;
-        btn.textContent = '测试';
+        btn.innerHTML = '<i class="bi bi-wifi"></i> 测试';
     });
 }
 

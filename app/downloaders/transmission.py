@@ -108,7 +108,7 @@ class Transmission(DownloaderBase):
             response = self._make_rpc_request("session-set", arguments)
             
             if response and response.get("result") == "success":
-                log_manager.log_event("SPEED_CHANGE", f"Transmission速率限制设置成功: 下载 {download_limit_kb} KB/s, 上传 {upload_limit_kb} KB/s")
+                # 不再记录成功日志，由调度器统一记录
                 return True
             else:
                 log_manager.log_event("TRANSMISSION_ERROR", f"Transmission速率限制设置失败: {response}")

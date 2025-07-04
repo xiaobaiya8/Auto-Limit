@@ -13,7 +13,8 @@ class CloudDrive2(DownloaderBase):
         self.url = self.config.get('url', '').rstrip('/')
         self.username = self.config.get('username')
         self.password = self.config.get('password')
-        self.token = None
+        # 从配置中读取保存的token
+        self.token = self.config.get('saved_token')
         self.session = requests.Session()
         
         # 设置默认headers
@@ -144,9 +145,50 @@ class CloudDrive2(DownloaderBase):
             return self._decode_protobuf_response(message_data)
             
         except requests.exceptions.RequestException as e:
+            # 检查是否是401错误（token过期）
+            try:
+                if hasattr(e, 'response') and e.response and e.response.status_code == 401 and service_method != 'GetToken':
+                    log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2 token已过期，需要重新登录")
+                    # 清除过期的token
+                    self.token = None
+                    self._save_token_to_config(None)
+                elif 'response' in locals() and response.status_code == 401 and service_method != 'GetToken':
+                    log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2 token已过期，需要重新登录")
+                    # 清除过期的token
+                    self.token = None
+                    self._save_token_to_config(None)
+            except:
+                pass
+            
             log_manager.log_event("CLOUDDRIVE2_ERROR", f"gRPC请求失败: {str(e)}")
             return {}
     
+    def _save_token_to_config(self, token):
+        """保存token到配置文件"""
+        try:
+            from ..services.config_manager import config_manager
+            
+            # 获取当前配置
+            settings = config_manager.get_settings()
+            
+            # 查找当前实例并更新token
+            instance_id = self.config.get('id')
+            if instance_id:
+                for downloader in settings.get('downloaders', []):
+                    if downloader.get('id') == instance_id:
+                        if token:
+                            downloader['saved_token'] = token
+                        else:
+                            # 清除过期的token
+                            downloader.pop('saved_token', None)
+                        break
+                
+                # 保存配置（静默保存，不记录日志）
+                config_manager.save_settings(settings)
+            
+        except Exception as e:
+            log_manager.log_event("CLOUDDRIVE2_ERROR", f"保存CloudDrive2 token时出错: {str(e)}")
+
     def login(self):
         """登录获取Token"""
         if not self.url or not self.username or not self.password:
@@ -161,8 +203,17 @@ class CloudDrive2(DownloaderBase):
             response = self._make_grpc_request('GetToken', message)
             
             if response.get(1) == 1:  # success field
-                self.token = response.get(3)  # token field
-                log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2登录成功")
+                old_token = self.token
+                new_token = response.get(3)  # token field
+                self.token = new_token
+                
+                # 保存token到配置文件
+                self._save_token_to_config(new_token)
+                
+                if old_token:
+                    log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2重新登录成功")
+                else:
+                    log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2登录成功")
                 return True
             else:
                 error_msg = response.get(2, '未知错误')
@@ -175,10 +226,14 @@ class CloudDrive2(DownloaderBase):
     
     def set_speed_limits(self, download_limit_kb, upload_limit_kb):
         """设置速度限制"""
-        if not self.login():
-            return False
+        # 检查token状态
+        if not self.token:
+            # 无token，需要登录
+            if not self.login():
+                return False
         
-        try:
+        def _try_set_speed_with_retry():
+            """尝试设置速度，失败时重新登录重试一次"""
             success = True
             
             # 设置下载速度限制
@@ -199,8 +254,21 @@ class CloudDrive2(DownloaderBase):
                 if not upload_response and upload_response != {}:
                     success = False
             
+            return success
+        
+        try:
+            # 第一次尝试（使用现有token）
+            success = _try_set_speed_with_retry()
+            
+            # 如果失败，可能是token过期，重新登录后再试一次
+            if not success:
+                # 清除当前token，强制重新登录
+                self.token = None
+                if self.login():
+                    success = _try_set_speed_with_retry()
+            
             if success:
-                log_manager.log_event("SPEED_CHANGE", f"CloudDrive2速率限制设置成功: 下载 {download_limit_kb} KB/s, 上传 {upload_limit_kb} KB/s")
+                # 不再记录成功日志，由调度器统一记录
                 return True
             else:
                 log_manager.log_event("CLOUDDRIVE2_ERROR", f"CloudDrive2速率限制设置失败")

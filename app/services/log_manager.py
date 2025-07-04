@@ -7,7 +7,7 @@ class LogManager:
     """
     管理JSON格式的日志文件。
     """
-    def __init__(self, max_entries=200):
+    def __init__(self, max_entries=500):
         self.log_path = None
         self.max_entries = max_entries
 

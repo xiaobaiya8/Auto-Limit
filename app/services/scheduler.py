@@ -12,6 +12,7 @@ class Scheduler:
     def __init__(self):
         self.timers = {}  # 存储每个媒体服务器的定时器 {server_id: timer}
         self.active_session_ids = set()  # 所有活跃会话的合并集合
+        self.last_speed_state = {}  # 记录每个下载器的最后速率状态 {downloader_id: (dl_limit, ul_limit)}
         self.running = False
         self.lock = RLock()
         self.app = None
@@ -40,6 +41,9 @@ class Scheduler:
                 if timer:
                     timer.cancel()
             self.timers.clear()
+            # 清理状态记录
+            self.last_speed_state.clear()
+            self.active_session_ids.clear()
             self.running = False
         
         # 仅在app上下文可用时记录日志
@@ -49,8 +53,14 @@ class Scheduler:
 
     def restart(self):
         """重启调度器以应用新配置"""
+        # 保存当前的速率状态，避免重启后重复设置相同速率
+        saved_speed_state = self.last_speed_state.copy()
+        
         self.stop()
         self.start()
+        
+        # 恢复速率状态
+        self.last_speed_state = saved_speed_state
 
     def _schedule_all_servers(self):
         """为所有启用的媒体服务器创建独立的定时器"""
@@ -184,18 +194,36 @@ class Scheduler:
         # 遍历所有已启用的下载器实例并应用各自的速率设置
         for downloader_instance in settings.get('downloaders', []):
             if downloader_instance.get('enabled'):
-                downloader = self._get_plugin_instance('downloaders', downloader_instance)
-                if downloader:
-                    # 根据是否有播放活动确定要使用的速率
-                    if len(self.active_session_ids) > 0:
-                        # 使用播放时的速率
-                        dl_limit = downloader_instance.get('backup_download_limit', 1024)
-                        ul_limit = downloader_instance.get('backup_upload_limit', 512)
-                    else:
-                        # 使用默认速率
-                        dl_limit = downloader_instance.get('default_download_limit', 0)
-                        ul_limit = downloader_instance.get('default_upload_limit', 0)
-                    
-                    downloader.set_speed_limits(dl_limit, ul_limit)
+                downloader_id = downloader_instance.get('id')
+                downloader_name = downloader_instance.get('name', downloader_id)
+                
+                # 根据是否有播放活动确定要使用的速率
+                if len(self.active_session_ids) > 0:
+                    # 使用播放时的速率
+                    dl_limit = downloader_instance.get('backup_download_limit', 1024)
+                    ul_limit = downloader_instance.get('backup_upload_limit', 512)
+                else:
+                    # 使用默认速率
+                    dl_limit = downloader_instance.get('default_download_limit', 0)
+                    ul_limit = downloader_instance.get('default_upload_limit', 0)
+                
+                # 检查速率是否有变化，避免重复设置
+                current_speed = (dl_limit, ul_limit)
+                last_speed = self.last_speed_state.get(downloader_id)
+                
+                if last_speed != current_speed:
+                    downloader = self._get_plugin_instance('downloaders', downloader_instance)
+                    if downloader:
+                        success = downloader.set_speed_limits(dl_limit, ul_limit)
+                        if success:
+                            # 记录成功日志，使用实例名称
+                            log_manager.log_event("SPEED_CHANGE", f"{downloader_name} 速率限制设置成功: 下载 {dl_limit} KB/s, 上传 {ul_limit} KB/s")
+                            # 只有成功设置后才更新状态记录
+                            self.last_speed_state[downloader_id] = current_speed
+                        else:
+                            log_manager.log_event("SPEED_ERROR", f"{downloader_name} 速率设置失败")
+                # else:
+                #     # 速率未变化，跳过设置（可选：记录调试日志）
+                #     log_manager.log_event("SPEED_DEBUG", f"{downloader_name} 速率未变化，跳过设置")
 
 scheduler = Scheduler() 

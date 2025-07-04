@@ -40,7 +40,6 @@ class Qbittorrent(DownloaderBase):
             })}
             response = self.session.post(preferences_url, data=data)
             if response.status_code == 200:
-                log_manager.log_event("SPEED_CHANGE", f"速率限制设置成功: 下载 {download_limit_kb} KB/s, 上传 {upload_limit_kb} KB/s")
                 return True
             else:
                 log_manager.log_event("QB_ERROR", f"速率限制设置失败: {response.text}")
