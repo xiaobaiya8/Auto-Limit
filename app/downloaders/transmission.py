@@ -145,4 +145,27 @@ class Transmission(DownloaderBase):
             return None
         except Exception as e:
             log_manager.log_event("TRANSMISSION_ERROR", f"获取Transmission统计信息时出错: {str(e)}")
+            return None
+
+    def get_current_speeds(self):
+        """获取当前实际下载和上传速度"""
+        try:
+            # 获取会话统计信息
+            response = self._make_rpc_request("session-stats")
+            
+            if response and response.get("result") == "success":
+                stats = response.get("arguments", {})
+                current_stats = stats.get("current-stats", {})
+                
+                # Transmission返回的速度单位是字节/秒，需要转换为KB/s
+                return {
+                    'download_speed': current_stats.get('downloadSpeed', 0) / 1024,  # 转换为KB/s
+                    'upload_speed': current_stats.get('uploadSpeed', 0) / 1024       # 转换为KB/s
+                }
+            else:
+                log_manager.log_event("TRANSMISSION_ERROR", f"获取Transmission速度信息失败: {response}")
+                return None
+                
+        except Exception as e:
+            log_manager.log_event("TRANSMISSION_ERROR", f"获取Transmission速度信息时出错: {str(e)}")
             return None 

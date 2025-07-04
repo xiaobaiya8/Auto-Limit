@@ -106,6 +106,29 @@
         .required {
             color: #dc3545;
         }
+        
+        /* Logo样式 */
+        .instance-logo {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+        .instance-logo-large {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 6px;
+            margin-right: 12px;
+        }
+        .instance-logo-small {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+            border-radius: 3px;
+            margin-right: 6px;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +163,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // 格式化速度显示
+        // 获取logo路径
+        function getLogoPath(type) {
+            const logoMap = {
+                'emby': '/static/img/logos/emby.png',
+                'jellyfin': '/static/img/logos/emby.png', // 暂时使用emby的logo
+                'plex': '/static/img/logos/emby.png', // 暂时使用emby的logo
+                'qbittorrent': '/static/img/logos/qbittorrent.png',
+                'transmission': '/static/img/logos/transmission.png',
+                'clouddrive2': '/static/img/logos/clouddrive2.png'
+            };
+            
+            return logoMap[type.toLowerCase()] || null;
+        }
+
+        // 格式化速度显示（用于限速配置）
         function formatSpeed(kbps) {
             if (!kbps || kbps == 0) return '无限制';
             
@@ -154,6 +191,25 @@
             } else {
                 // KB/s
                 return kb + 'KB/s';
+            }
+        }
+
+        // 格式化实际速度显示（用于实时速度）
+        function formatActualSpeed(kbps) {
+            if (!kbps && kbps !== 0) return '未知';
+            
+            const kb = parseFloat(kbps);
+            if (kb === 0) return '0 KB/s';
+            
+            if (kb >= 1024 * 1024) {
+                // GB/s
+                return (kb / (1024 * 1024)).toFixed(1) + 'GB/s';
+            } else if (kb >= 1024) {
+                // MB/s
+                return (kb / 1024).toFixed(1) + 'MB/s';
+            } else {
+                // KB/s
+                return kb.toFixed(1) + 'KB/s';
             }
         }
 

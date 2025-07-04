@@ -151,6 +151,58 @@ def api_media_server_sessions():
     else:
         return jsonify({'status': 'success', 'sessions': [], 'count': 0})
 
+@main.route('/api/downloaders/status')
+def api_downloaders_status():
+    """获取所有下载器的状态信息"""
+    downloaders_status = []
+    settings = config_manager.get_settings()
+    
+    # 判断当前是否有播放活动
+    has_active_sessions = len(scheduler.active_session_ids) > 0
+    
+    for downloader_instance in settings.get('downloaders', []):
+        if downloader_instance.get('enabled'):
+            downloader = scheduler._get_plugin_instance('downloaders', downloader_instance)
+            if downloader:
+                # 安全地获取当前实际速度
+                current_speeds = None
+                try:
+                    current_speeds = downloader.get_current_speeds()
+                except Exception as e:
+                    current_app.logger.warning(f"获取下载器 {downloader_instance.get('name', '未知')} 速度失败: {e}")
+                
+                # 确定当前应该使用的限速配置
+                if has_active_sessions:
+                    # 播放时限速
+                    active_download_limit = downloader_instance.get('backup_download_limit', 1024)
+                    active_upload_limit = downloader_instance.get('backup_upload_limit', 512)
+                    speed_mode = 'playing'
+                else:
+                    # 默认限速
+                    active_download_limit = downloader_instance.get('default_download_limit', 0)
+                    active_upload_limit = downloader_instance.get('default_upload_limit', 0)
+                    speed_mode = 'default'
+                
+                downloader_status = {
+                    'id': downloader_instance.get('id'),
+                    'name': downloader_instance.get('name', '未命名'),
+                    'type': downloader_instance.get('type'),
+                    'speed_mode': speed_mode,
+                    'active_limits': {
+                        'download': active_download_limit,
+                        'upload': active_upload_limit
+                    },
+                    'current_speeds': current_speeds
+                }
+                
+                downloaders_status.append(downloader_status)
+    
+    return jsonify({
+        'status': 'success', 
+        'downloaders': downloaders_status,
+        'has_active_sessions': has_active_sessions
+    })
+
 @main.route('/health')
 def health_check():
     return jsonify({

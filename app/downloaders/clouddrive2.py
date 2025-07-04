@@ -294,4 +294,10 @@ class CloudDrive2(DownloaderBase):
             except Exception as e:
                 return False, f"连接测试失败: {str(e)}"
         else:
-            return False, "连接失败，请检查URL、用户名和密码" 
+            return False, "连接失败，请检查URL、用户名和密码"
+
+    def get_current_speeds(self):
+        """获取当前实际下载和上传速度"""
+        # CloudDrive2暂时不支持获取实时速度，返回None
+        # 后续可以通过GetSystemInfo或其他API实现
+        return None 

@@ -55,4 +55,29 @@ class Qbittorrent(DownloaderBase):
         if self.login():
             return True, "连接成功"
         else:
-            return False, "连接失败，请检查URL、用户名和密码" 
+            return False, "连接失败，请检查URL、用户名和密码"
+
+    def get_current_speeds(self):
+        """获取当前实际下载和上传速度"""
+        if not self.login():
+            return None
+        
+        try:
+            # 获取全局统计信息
+            stats_url = f"{self.url}/api/v2/transfer/info"
+            response = self.session.get(stats_url, timeout=10)
+            
+            if response.status_code == 200:
+                data = response.json()
+                # qBittorrent返回的速度单位是字节/秒，需要转换为KB/s
+                return {
+                    'download_speed': data.get('dl_info_speed', 0) / 1024,  # 转换为KB/s
+                    'upload_speed': data.get('up_info_speed', 0) / 1024     # 转换为KB/s
+                }
+            else:
+                log_manager.log_event("QB_ERROR", f"获取qBittorrent速度信息失败: HTTP {response.status_code}")
+                return None
+                
+        except requests.exceptions.RequestException as e:
+            log_manager.log_event("QB_ERROR", f"获取qBittorrent速度信息时出错: {str(e)}")
+            return None 

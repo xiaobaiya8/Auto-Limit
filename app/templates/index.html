@@ -57,6 +57,9 @@
                                     <div class="list-group-item d-flex justify-content-between align-items-center px-0" data-instance-id="{{ server.id }}" data-instance-type="media_servers">
                                         <div class="flex-grow-1">
                                             <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('static', filename='img/logos/' + server.type + '.png') }}" 
+                                                     alt="{{ server.type }}" class="instance-logo"
+                                                     onerror="this.style.display='none'">
                                                 <span class="fw-bold">{{ server.name or '未命名' }}</span> 
                                                 <span class="badge bg-secondary ms-2">{{ server.type | title }}</span>
                                             </div>
@@ -88,17 +91,15 @@
                                     <div class="list-group-item d-flex justify-content-between align-items-center px-0" data-instance-id="{{ downloader.id }}" data-instance-type="downloaders">
                                         <div class="flex-grow-1">
                                             <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('static', filename='img/logos/' + downloader.type + '.png') }}" 
+                                                     alt="{{ downloader.type }}" class="instance-logo"
+                                                     onerror="this.style.display='none'">
                                                 <span class="fw-bold">{{ downloader.name or '未命名' }}</span> 
                                                 <span class="badge bg-secondary ms-2">{{ downloader.type | title }}</span>
                                             </div>
                                             <small class="text-muted d-block">{{ downloader.url or 'URL未配置' }}</small>
-                                            <div class="d-flex gap-3 mt-1">
-                                                <small class="text-success">
-                                                    默认: <span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}"></span>
-                                                </small>
-                                                <small class="text-warning">
-                                                    播放时: <span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}"></span>
-                                                </small>
+                                            <div class="mt-1" id="downloader-{{ downloader.id }}-status">
+                                                <small class="text-muted">加载状态中...</small>
                                             </div>
                                         </div>
                                         <button class="btn btn-sm btn-outline-secondary test-btn" onclick="testInstance(this)">
@@ -175,6 +176,7 @@
 window.APP_CONFIG = JSON.parse(document.getElementById('app-config').textContent);
 
 function updateStatus() {
+    // 获取播放状态
     fetch('/api/media_server/sessions')
         .then(response => response.json())
         .then(data => {
@@ -225,6 +227,9 @@ function updateStatus() {
             document.getElementById('scheduler-status').className = 'badge bg-danger';
             document.getElementById('scheduler-status').textContent = '连接失败';
         });
+
+    // 获取下载器状态
+    updateDownloadersStatus();
     
     // 检查调度器状态
     fetch('/health')
@@ -243,6 +248,62 @@ function updateStatus() {
             const schedulerStatus = document.getElementById('scheduler-status');
             schedulerStatus.className = 'badge bg-danger';
             schedulerStatus.textContent = '连接失败';
+        });
+}
+
+function updateDownloadersStatus() {
+    fetch('/api/downloaders/status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                data.downloaders.forEach(downloader => {
+                    const statusElement = document.getElementById(`downloader-${downloader.id}-status`);
+                    if (statusElement) {
+                        let statusHtml = '';
+                        
+                        // 显示当前激活的限速模式
+                        const modeColor = downloader.speed_mode === 'playing' ? 'text-warning' : 'text-success';
+                        const modeText = downloader.speed_mode === 'playing' ? '播放时限速' : '默认限速';
+                        const activeLimits = downloader.active_limits;
+                        
+                        statusHtml += `<small class="${modeColor}">`;
+                        statusHtml += `<i class="bi bi-speedometer2"></i> ${modeText}: `;
+                        statusHtml += `${formatSpeed(activeLimits.download)} / ${formatSpeed(activeLimits.upload)}`;
+                        statusHtml += `</small>`;
+                        
+                        // 显示实际速度（如果支持）
+                        if (downloader.current_speeds && (downloader.type === 'qbittorrent' || downloader.type === 'transmission')) {
+                            const currentSpeeds = downloader.current_speeds;
+                            statusHtml += '<br>';
+                            statusHtml += `<small class="text-info">`;
+                            statusHtml += `<i class="bi bi-activity"></i> 实际速度: `;
+                            statusHtml += `${formatActualSpeed(currentSpeeds.download_speed)} / ${formatActualSpeed(currentSpeeds.upload_speed)}`;
+                            statusHtml += `</small>`;
+                        } else if (downloader.type === 'qbittorrent' || downloader.type === 'transmission') {
+                            // 支持获取速度但当前无法获取
+                            statusHtml += '<br>';
+                            statusHtml += `<small class="text-muted">`;
+                            statusHtml += `<i class="bi bi-activity"></i> 实际速度: 获取中...`;
+                            statusHtml += `</small>`;
+                        } else if (downloader.type === 'clouddrive2') {
+                            // CloudDrive2暂不支持实时速度获取
+                            statusHtml += '<br>';
+                            statusHtml += `<small class="text-muted">`;
+                            statusHtml += `<i class="bi bi-info-circle"></i> 暂不支持实时速度显示`;
+                            statusHtml += `</small>`;
+                        }
+                        
+                        statusElement.innerHTML = statusHtml;
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching downloaders status:', error);
+            // 在错误情况下显示基本信息
+            document.querySelectorAll('[id^="downloader-"][id$="-status"]').forEach(element => {
+                element.innerHTML = '<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> 状态获取失败</small>';
+            });
         });
 }
 
@@ -290,24 +351,84 @@ function testInstance(button) {
     });
 }
 
-// 格式化速度显示
-function formatSpeedDisplays() {
-    document.querySelectorAll('.speed-display').forEach(element => {
-        const downloadSpeed = element.getAttribute('data-download');
-        const uploadSpeed = element.getAttribute('data-upload');
-        
-        const formattedDownload = formatSpeed(downloadSpeed);
-        const formattedUpload = formatSpeed(uploadSpeed);
-        
-        element.textContent = `${formattedDownload} / ${formattedUpload}`;
-    });
-}
-
-// 页面加载时和每10秒更新一次状态
+// 页面加载时立即更新状态
 updateStatus();
-setInterval(updateStatus, 10000);
 
-// 格式化速度显示
-formatSpeedDisplays();
+// 播放状态每10秒更新一次（不需要太频繁）
+setInterval(() => {
+    // 获取播放状态
+    fetch('/api/media_server/sessions')
+        .then(response => response.json())
+        .then(data => {
+            const indicator = document.getElementById('playback-status-indicator');
+            const statusText = document.getElementById('playback-status-text');
+            const sessionDetails = document.getElementById('session-details');
+            const speedMode = document.getElementById('speed-mode');
+            const lastUpdate = document.getElementById('last-update');
+            
+            // 更新最后更新时间
+            lastUpdate.textContent = new Date().toLocaleTimeString();
+            
+            if (data.status === 'success' && data.sessions.length > 0) {
+                indicator.className = 'status-indicator status-active';
+                statusText.textContent = `有 ${data.count} 个活跃播放`;
+                speedMode.className = 'badge bg-warning';
+                speedMode.textContent = '播放时限速';
+                
+                let detailsHtml = '<div class="alert alert-info py-2"><h6 class="mb-2"><i class="bi bi-play-circle"></i> 当前播放详情</h6><div class="row">';
+                data.sessions.forEach((session, index) => {
+                    detailsHtml += `
+                        <div class="col-md-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person-circle text-primary me-2"></i>
+                                <div class="flex-grow-1">
+                                    <div class="fw-bold">${session.user_name}</div>
+                                    <small class="text-muted">${session.item_name}</small>
+                                    <span class="badge bg-info ms-2">${session.source_server}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                detailsHtml += '</div></div>';
+                sessionDetails.innerHTML = detailsHtml;
+
+            } else {
+                indicator.className = 'status-indicator status-inactive';
+                statusText.textContent = '无播放活动';
+                speedMode.className = 'badge bg-success';
+                speedMode.textContent = '默认限速';
+                sessionDetails.innerHTML = '';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching status:', error);
+            document.getElementById('playback-status-text').textContent = '状态获取失败';
+            document.getElementById('scheduler-status').className = 'badge bg-danger';
+            document.getElementById('scheduler-status').textContent = '连接失败';
+        });
+
+    // 检查调度器状态
+    fetch('/health')
+        .then(response => response.json())
+        .then(data => {
+            const schedulerStatus = document.getElementById('scheduler-status');
+            if (data.status === 'healthy') {
+                schedulerStatus.className = 'badge bg-success';
+                schedulerStatus.textContent = '运行中';
+            } else {
+                schedulerStatus.className = 'badge bg-danger';
+                schedulerStatus.textContent = '异常';
+            }
+        })
+        .catch(error => {
+            const schedulerStatus = document.getElementById('scheduler-status');
+            schedulerStatus.className = 'badge bg-danger';
+            schedulerStatus.textContent = '连接失败';
+        });
+}, 10000);
+
+// 下载器状态每3秒更新一次（需要更实时）
+setInterval(updateDownloadersStatus, 3000);
 </script>
 {% endblock %} 

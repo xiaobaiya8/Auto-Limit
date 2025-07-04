@@ -32,8 +32,15 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <div class="fw-bold">{{ server.name or '未命名' }}</div>
-                                        <small class="text-muted">{{ server.type | title }}</small>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ url_for('static', filename='img/logos/' + server.type + '.png') }}" 
+                                                 alt="{{ server.type }}" class="instance-logo-small"
+                                                 onerror="this.style.display='none'">
+                                            <div>
+                                                <div class="fw-bold">{{ server.name or '未命名' }}</div>
+                                                <small class="text-muted">{{ server.type | title }}</small>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
                                         <small class="text-muted">{{ server.url or 'URL未配置' }}</small>
@@ -91,8 +98,15 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <div class="fw-bold">{{ downloader.name or '未命名' }}</div>
-                                        <small class="text-muted">{{ downloader.type | title }}</small>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ url_for('static', filename='img/logos/' + downloader.type + '.png') }}" 
+                                                 alt="{{ downloader.type }}" class="instance-logo-small"
+                                                 onerror="this.style.display='none'">
+                                            <div>
+                                                <div class="fw-bold">{{ downloader.name or '未命名' }}</div>
+                                                <small class="text-muted">{{ downloader.type | title }}</small>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="col-md-4">
                                         <small class="text-muted">{{ downloader.url or 'URL未配置' }}</small>
@@ -164,9 +178,12 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold">插件类型 <span class="text-danger">*</span></label>
-                            <select class="form-select" id="instanceTypeSelect" name="type" onchange="updateModalFields()" required>
-                                <!-- 选项将通过JavaScript动态填充 -->
-                            </select>
+                            <div class="d-flex align-items-center">
+                                <img id="selectedTypeLogo" src="" alt="" class="instance-logo" style="display: none;">
+                                <select class="form-select" id="instanceTypeSelect" name="type" onchange="updateModalFields()" required>
+                                    <!-- 选项将通过JavaScript动态填充 -->
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -435,6 +452,17 @@ function updateModalSettings(instanceType) {
 function updateModalFields() {
     const selectedType = document.getElementById('instanceTypeSelect').value;
     const instanceType = document.getElementById('instanceType').value;
+    
+    // 更新logo显示
+    const logoImg = document.getElementById('selectedTypeLogo');
+    if (selectedType) {
+        logoImg.src = `/static/img/logos/${selectedType}.png`;
+        logoImg.alt = selectedType;
+        logoImg.style.display = 'inline-block';
+        logoImg.onerror = function() { this.style.display = 'none'; };
+    } else {
+        logoImg.style.display = 'none';
+    }
     
     // 首先隐藏所有特有字段
     const allFields = ['api_key', 'token', 'username', 'password'];

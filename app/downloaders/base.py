@@ -24,4 +24,12 @@ class DownloaderBase(ABC):
         测试与下载器的连接。
         :return: (bool, str) -> (连接是否成功, 消息)
         """
+        pass
+
+    @abstractmethod
+    def get_current_speeds(self):
+        """
+        获取当前实际下载和上传速度。
+        :return: dict -> {'download_speed': KB/s, 'upload_speed': KB/s} 或 None
+        """
         pass 
