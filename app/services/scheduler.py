@@ -156,8 +156,19 @@ class Scheduler:
         try:
             # e.g., 'app.media_servers.emby'
             module_name = f'app.{plugin_type_plural}.{plugin_type_single}'
-            # e.g., 'Emby'
-            class_name = ''.join(word.capitalize() for word in plugin_type_single.split('_'))
+            
+            # 特殊处理一些插件的类名
+            class_name_mapping = {
+                'clouddrive2': 'CloudDrive2',
+                'qbittorrent': 'Qbittorrent',
+                'transmission': 'Transmission'
+            }
+            
+            if plugin_type_single in class_name_mapping:
+                class_name = class_name_mapping[plugin_type_single]
+            else:
+                # e.g., 'Emby'
+                class_name = ''.join(word.capitalize() for word in plugin_type_single.split('_'))
             
             module = importlib.import_module(module_name)
             plugin_class = getattr(module, class_name)

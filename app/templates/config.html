@@ -20,7 +20,7 @@
                 
                 <div id="media_servers-list" class="mb-4">
                     {% if settings.media_servers %}
-                        {% for server in settings.media_servers %}
+                    {% for server in settings.media_servers %}
                         <div class="card mb-2 instance-list-item" data-instance-id="{{ server.id }}" data-instance-type="media_servers">
                             <div class="card-body py-2">
                                 <div class="row align-items-center">
@@ -57,7 +57,7 @@
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
+                    {% endfor %}
                     {% else %}
                     <div class="text-center py-4 text-muted empty-state" id="media-servers-empty">
                         <i class="bi bi-server display-4"></i>
@@ -79,7 +79,7 @@
                 
                 <div id="downloaders-list" class="mb-4">
                     {% if settings.downloaders %}
-                        {% for downloader in settings.downloaders %}
+                    {% for downloader in settings.downloaders %}
                         <div class="card mb-2 instance-list-item" data-instance-id="{{ downloader.id }}" data-instance-type="downloaders">
                             <div class="card-body py-2">
                                 <div class="row align-items-center">
@@ -119,7 +119,7 @@
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
+                    {% endfor %}
                     {% else %}
                     <div class="text-center py-4 text-muted empty-state" id="downloaders-empty">
                         <i class="bi bi-download display-4"></i>
@@ -276,7 +276,8 @@ const PLUGIN_FIELDS = {
     },
     downloaders: {
         qbittorrent: ['url', 'username', 'password'],
-        transmission: ['url', 'username', 'password']
+        transmission: ['url', 'username', 'password'],
+        clouddrive2: ['url', 'username', 'password']
     }
 };
 
@@ -289,7 +290,8 @@ const PLUGIN_TYPES = {
     ],
     downloaders: [
         { value: 'qbittorrent', label: 'qBittorrent' },
-        { value: 'transmission', label: 'Transmission' }
+        { value: 'transmission', label: 'Transmission' },
+        { value: 'clouddrive2', label: 'CloudDrive2' }
     ]
 };
 
@@ -345,7 +347,7 @@ function editInstance(button, instanceType, instanceId) {
         showToast('无法找到实例配置', 'error');
         return;
     }
-    
+
     currentModal = {
         type: instanceType,
         isEdit: true,
@@ -604,7 +606,7 @@ function testInstanceFromList(button) {
         showToast('无法找到实例配置', 'error');
         return;
     }
-    
+
     button.disabled = true;
     button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
     
@@ -641,7 +643,7 @@ function toggleInstance(checkbox, instanceType, instanceId) {
         checkbox.checked = !checkbox.checked; // 恢复原状态
         return;
     }
-    
+
     instanceConfig.enabled = checkbox.checked;
     
     fetch('/save_instance', {
@@ -743,7 +745,7 @@ function validateRequiredFields(instanceConfig) {
             }
         }
     } else if (instanceType === 'downloaders') {
-        if (selectedType === 'qbittorrent' || selectedType === 'transmission') {
+        if (selectedType === 'qbittorrent' || selectedType === 'transmission' || selectedType === 'clouddrive2') {
             if (!instanceConfig.username || !instanceConfig.username.trim()) {
                 showToast('请填写用户名', 'warning');
                 document.getElementById('instanceUsername').focus();

@@ -87,7 +87,7 @@ def config():
     # 为模板提供一些上下文，例如可用的插件类型
     available_plugins = {
         'media_servers': ['emby', 'jellyfin', 'plex'],
-        'downloaders': ['qbittorrent', 'transmission']
+        'downloaders': ['qbittorrent', 'transmission', 'clouddrive2']
     }
     return render_template('config.html', settings=settings, available_plugins=available_plugins)
 
