@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  controller:
+    build: .
+    container_name: autolimit_controller
+    environment:
+      - TZ=Asia/Shanghai
+      - SECRET_KEY=a-very-secret-key-that-you-should-change
+      # FLASK_ENV=development # 取消注释以开启Debug模式
+    volumes:
+      - ./app/data:/app/app/data # 将主机上的data目录映射到容器内的正确位置
+    ports:
+      - "9190:9190"
+    restart: unless-stopped
+
+networks: {} 

@@ -1,0 +1,327 @@
+{% extends "base.html" %}
+
+{% block title %}配置 - AutoLimit{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-gear-wide-connected"></i> 系统配置</h5>
+            </div>
+            <div class="card-body">
+                <!-- 媒体服务器 -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-primary"><i class="bi bi-server"></i> 媒体服务器</h5>
+                    <button type="button" class="btn btn-success btn-sm" onclick="addInstance('media_servers')">
+                        <i class="bi bi-plus-circle"></i> 添加媒体服务器
+                    </button>
+                </div>
+                
+                <div id="media_servers-container" class="mb-4">
+                    {% for server in settings.media_servers %}
+                        {% with instance_type='media_servers', instance=server, index=loop.index0, is_template=False %}
+                            {% include 'partials/instance_card.html' %}
+                        {% endwith %}
+                    {% endfor %}
+                    {% if not settings.media_servers %}
+                    <div class="text-center py-4 text-muted empty-state" id="media-servers-empty">
+                        <i class="bi bi-server display-4"></i>
+                        <p class="mt-2">还没有配置媒体服务器</p>
+                        <p class="small">点击上方"添加媒体服务器"开始配置</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <hr>
+
+                <!-- 下载器 -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 text-primary"><i class="bi bi-download"></i> 下载器</h5>
+                    <button type="button" class="btn btn-success btn-sm" onclick="addInstance('downloaders')">
+                        <i class="bi bi-plus-circle"></i> 添加下载器
+                    </button>
+                </div>
+                
+                <div id="downloaders-container" class="mb-4">
+                    {% for downloader in settings.downloaders %}
+                         {% with instance_type='downloaders', instance=downloader, index=loop.index0, is_template=False %}
+                            {% include 'partials/instance_card.html' %}
+                         {% endwith %}
+                    {% endfor %}
+                    {% if not settings.downloaders %}
+                    <div class="text-center py-4 text-muted empty-state" id="downloaders-empty">
+                        <i class="bi bi-download display-4"></i>
+                        <p class="mt-2">还没有配置下载器</p>
+                        <p class="small">点击上方"添加下载器"开始配置</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="alert alert-info mt-4">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>配置说明：</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>每个媒体服务器可以设置独立的轮询间隔</li>
+                        <li>每个下载器可以设置独立的限速策略</li>
+                        <li>系统会根据所有启用服务器的播放状态，统一控制所有启用下载器的速率</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 隐藏的模板 -->
+<div id="templates" style="display: none;">
+    <!-- Media Server Template -->
+    {% set server_template = {'id': '__INDEX__', 'name': '', 'type': 'emby', 'enabled': True, 'url': '', 'api_key': '', 'token': '', 'poll_interval': 15} %}
+    {% with instance_type='media_servers', instance=server_template, index='__INDEX__', is_template=True %}
+        {% include 'partials/instance_card.html' %}
+    {% endwith %}
+    
+    <!-- Downloader Template -->
+    {% set downloader_template = {'id': '__INDEX__', 'name': '', 'type': 'qbittorrent', 'enabled': True, 'url': '', 'username': '', 'password': '', 'default_download_limit': 0, 'default_upload_limit': 0, 'backup_download_limit': 1024, 'backup_upload_limit': 512} %}
+    {% with instance_type='downloaders', instance=downloader_template, index='__INDEX__', is_template=True %}
+        {% include 'partials/instance_card.html' %}
+    {% endwith %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 插件的字段定义
+const PLUGIN_FIELDS = {
+    media_servers: {
+        emby: ['url', 'api_key'],
+        jellyfin: ['url', 'api_key'],
+        plex: ['url', 'token']
+    },
+    downloaders: {
+        qbittorrent: ['url', 'username', 'password'],
+        transmission: ['url', 'username', 'password']
+    }
+};
+
+function addInstance(type) {
+    const container = document.getElementById(type + '-container');
+    if (!container) {
+        console.error(`Error: Container element with id '${type}-container' not found.`);
+        showToast(`发生脚本错误：无法找到用于添加新实例的容器。请检查浏览器控制台。`, 'error');
+        return;
+    }
+
+    const index = container.children.length;
+    const templateNode = document.getElementById(type + '-__INDEX__-card');
+     if (!templateNode) {
+        console.error(`Error: Template element with id '${type}-__INDEX__-card' not found.`);
+        showToast(`发生脚本错误：无法找到用于添加新实例的模板。请检查浏览器控制台。`, 'error');
+        return;
+    }
+    const template = templateNode.cloneNode(true);
+    
+    // 替换模板中的占位符
+    template.id = template.id.replace(/__INDEX__/g, index);
+    template.innerHTML = template.innerHTML.replace(/__INDEX__/g, index);
+    
+    // 隐藏空状态提示
+    const emptyState = document.getElementById(`${type.replace('_', '-')}-empty`);
+    if (emptyState) {
+        emptyState.style.display = 'none';
+    }
+    
+    container.appendChild(template);
+    
+    // 重新初始化事件监听器
+    const newCard = document.getElementById(`${type}-${index}-card`);
+    newCard.style.display = 'block';
+    initializeCard(newCard);
+    
+    showToast('新实例已添加，请填写配置并保存', 'success');
+}
+
+function removeInstance(button, type, index) {
+    const card = document.getElementById(`${type}-${index}-card`);
+    if (card) {
+        if (confirm('确定要删除这个实例吗？')) {
+            card.remove();
+            
+            // 检查是否需要显示空状态
+            const container = document.getElementById(type + '-container');
+            if (container.children.length === 0) {
+                const emptyState = document.getElementById(`${type.replace('_', '-')}-empty`);
+                if (emptyState) {
+                    emptyState.style.display = 'block';
+                }
+            }
+            
+            showToast('实例已删除', 'success');
+        }
+    }
+}
+
+function updateInstanceTitle(input) {
+    const card = input.closest('.instance-card');
+    const titleSpan = card.querySelector('.instance-title');
+    if (titleSpan) {
+        titleSpan.textContent = input.value || '新实例';
+    }
+}
+
+function testInstanceInCard(button) {
+    const card = button.closest('.instance-card');
+    const instanceConfig = getInstanceConfigFromCard(card);
+    
+    if (!instanceConfig) {
+        showToast('无法获取实例配置信息', 'error');
+        return;
+    }
+
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+    
+    const instanceType = card.id.includes('media_servers') ? 'media_servers' : 'downloaders';
+    
+    fetch('/test_connection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            instance_config: instanceConfig,
+            instance_type: instanceType
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showToast(`${instanceConfig.name || instanceConfig.type} 连接成功`, 'success', '连接测试');
+        } else {
+            showToast(`${instanceConfig.name || instanceConfig.type} 连接失败: ${data.message}`, 'error', '连接测试');
+        }
+    })
+    .catch(error => {
+        showToast(`连接测试时发生网络错误: ${error.message}`, 'error', '网络错误');
+    })
+    .finally(() => {
+        button.disabled = false;
+        button.innerHTML = '<i class="bi bi-wifi"></i>';
+    });
+}
+
+function saveInstance(button) {
+    const card = button.closest('.instance-card');
+    const instanceConfig = getInstanceConfigFromCard(card);
+    
+    if (!instanceConfig) {
+        showToast('无法获取实例配置信息', 'error');
+        return;
+    }
+
+    // 基本验证
+    if (!instanceConfig.name.trim()) {
+        showToast('请填写实例名称', 'warning');
+        return;
+    }
+    if (!instanceConfig.url.trim()) {
+        showToast('请填写服务器地址', 'warning');
+        return;
+    }
+
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span>';
+    
+    const instanceType = card.id.includes('media_servers') ? 'media_servers' : 'downloaders';
+    
+    fetch('/save_instance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            instance_config: instanceConfig,
+            instance_type: instanceType
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            showToast(`${instanceConfig.name} 保存成功`, 'success', '配置保存');
+            // 更新实例ID（如果是新创建的）
+            if (data.instance_id) {
+                const idInput = card.querySelector('input[name*="[id]"]');
+                if (idInput) idInput.value = data.instance_id;
+            }
+        } else {
+            showToast(`保存失败: ${data.message}`, 'error', '配置保存');
+        }
+    })
+    .catch(error => {
+        showToast(`保存时发生网络错误: ${error.message}`, 'error', '网络错误');
+    })
+    .finally(() => {
+        button.disabled = false;
+        button.innerHTML = '<i class="bi bi-check-lg"></i>';
+    });
+}
+
+function getInstanceConfigFromCard(card) {
+    const formData = new FormData();
+    const inputs = card.querySelectorAll('input, select');
+    
+    const config = {};
+    inputs.forEach(input => {
+        if (input.type === 'checkbox') {
+            config.enabled = input.checked;
+        } else if (input.name) {
+            const fieldName = input.name.split('[').pop().replace(']', '');
+            config[fieldName] = input.value;
+        }
+    });
+    
+    return config;
+}
+
+function updateFields(card) {
+    const typeSelector = card.querySelector('.type-selector');
+    const selectedType = typeSelector.value;
+    const instanceType = typeSelector.name.split('[')[0];
+    
+    // 首先隐藏所有特有字段
+    const allFields = ['api_key', 'token', 'username', 'password'];
+    allFields.forEach(field => {
+        const fieldContainer = card.querySelector(`.field-${field}`);
+        if (fieldContainer) fieldContainer.style.display = 'none';
+    });
+    
+    // 根据选择的类型显示相应的字段
+    if (PLUGIN_FIELDS[instanceType] && PLUGIN_FIELDS[instanceType][selectedType]) {
+        PLUGIN_FIELDS[instanceType][selectedType].forEach(field => {
+            const fieldContainer = card.querySelector(`.field-${field}`);
+            if (fieldContainer) fieldContainer.style.display = 'block';
+        });
+    }
+}
+
+function initializeCard(card) {
+    const checkbox = card.querySelector('.form-check-input');
+    const inputs = card.querySelectorAll('input:not([type=checkbox]), select, textarea');
+    const typeSelector = card.querySelector('.type-selector');
+
+    function toggleCardState() {
+        const isChecked = checkbox.checked;
+        card.classList.toggle('disabled', !isChecked);
+        inputs.forEach(input => {
+            if (input !== checkbox) input.disabled = !isChecked;
+        });
+    }
+
+    checkbox.addEventListener('change', toggleCardState);
+    if (typeSelector) {
+        typeSelector.addEventListener('change', () => updateFields(card));
+        updateFields(card);
+    }
+    toggleCardState();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.instance-card').forEach(initializeCard);
+});
+</script>
+{% endblock %} 
