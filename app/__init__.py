@@ -19,8 +19,8 @@ def create_app():
     
     # 从环境变量或默认值加载配置
     app.config.from_mapping(
-        # 定义数据目录，所有配置文件将存储在这里
-        DATA_DIR=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data'),
+        # 定义数据目录，优先使用环境变量，否则使用默认路径
+        DATA_DIR=os.environ.get('DATA_DIR', '/app/data'),
         # 国际化配置
         LANGUAGES=['zh', 'en'],
         BABEL_DEFAULT_LOCALE='zh',

@@ -22,10 +22,14 @@ coverage.xml
 .pytest_cache
 .hypothesis
 
-# Data files
+# Data files - 排除配置和数据文件
+app/data/
 data/
 *.db
 *.sqlite
+*.json
+config.json
+logs.json
 
 # OS
 .DS_Store

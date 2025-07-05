@@ -7,7 +7,7 @@ services:
       - TZ=Asia/Shanghai
       # FLASK_ENV=development # 取消注释以开启Debug模式
     volumes:
-      - ./app/data:/app/app/data # 将主机上的data目录映射到容器内的正确位置
+      - ./data:/app/data # 将主机上的data目录映射到容器内的data目录
     ports:
       - "9190:9190"
     restart: unless-stopped

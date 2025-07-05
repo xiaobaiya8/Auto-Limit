@@ -15,12 +15,23 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 复制整个应用代码到镜像中
 COPY . .
 
-# 创建数据目录
-RUN mkdir -p /app/data
+# 复制并设置启动脚本权限
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# 创建非root用户
+RUN adduser --disabled-password --gecos '' appuser
+
+# 创建数据目录并设置正确权限
+RUN mkdir -p /app/data && \
+    chown -R appuser:appuser /app
 
 # 设置环境变量
 ENV PYTHONUNBUFFERED=1
 ENV FLASK_APP=app.py
+ENV DATA_DIR=/app/data
+
+# 注意：不切换用户，保持为 root，让启动脚本处理权限
 
 # 暴露端口
 EXPOSE 9190
@@ -29,10 +40,5 @@ EXPOSE 9190
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD curl -f http://localhost:9190/health || exit 1
 
-# 创建非root用户
-RUN adduser --disabled-password --gecos '' appuser && \
-    chown -R appuser:appuser /app
-USER appuser
-
 # 启动命令
-CMD ["python", "run.py"] 
+CMD ["/entrypoint.sh"] 

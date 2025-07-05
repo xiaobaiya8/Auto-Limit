@@ -52,11 +52,27 @@ class ConfigManager:
                         # 合并默认设置和加载的设置
                         self.settings = self.get_default_settings()
                         self._merge_settings(self.settings, loaded_settings)
+                        print(f"成功加载配置文件: {self.config_path}")
                 else:
+                    print(f"配置文件不存在，创建默认配置: {self.config_path}")
                     self.settings = self.get_default_settings()
-                    self.save_settings(self.settings)
+                    # 确保数据目录存在
+                    data_dir = os.path.dirname(self.config_path)
+                    if not os.path.exists(data_dir):
+                        os.makedirs(data_dir, exist_ok=True)
+                        print(f"创建数据目录: {data_dir}")
+                    
+                    # 尝试创建配置文件
+                    try:
+                        with open(self.config_path, 'w', encoding='utf-8') as f:
+                            json.dump(self.settings, f, indent=4, ensure_ascii=False)
+                        print(f"成功创建默认配置文件: {self.config_path}")
+                    except IOError as e:
+                        print(f"警告：无法创建配置文件 {self.config_path}: {e}")
+                        print("应用程序将使用内存中的默认配置继续运行")
             except (json.JSONDecodeError, IOError) as e:
                 print(f"加载配置文件失败: {e}")
+                print("使用默认配置继续运行")
                 self.settings = self.get_default_settings()
 
     def _merge_settings(self, default, loaded):
@@ -85,8 +101,11 @@ class ConfigManager:
             try:
                 with open(self.config_path, 'w', encoding='utf-8') as f:
                     json.dump(self.settings, f, indent=4, ensure_ascii=False)
+                print(f"成功保存配置文件: {self.config_path}")
+                return True
             except IOError as e:
                 print(f"保存配置文件失败: {e}")
+                return False
 
     def get_language(self):
         """获取当前UI语言设置"""
@@ -103,8 +122,11 @@ class ConfigManager:
             try:
                 with open(self.config_path, 'w', encoding='utf-8') as f:
                     json.dump(self.settings, f, indent=4, ensure_ascii=False)
+                print(f"成功保存语言设置: {language}")
+                return True
             except IOError as e:
                 print(f"保存语言设置失败: {e}")
+                return False
 
     def _needs_migration(self, settings):
         """检查配置是否是需要迁移的旧格式（基于字典）"""
