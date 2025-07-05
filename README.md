@@ -50,13 +50,6 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
 docker run -d --name autolimit-controller -p 9190:9190 xiaobaiya000/auto-limit:latest
 ```
 
-**镜像特点**:
-- 📦 **镜像大小**: 约 187MB
-- 🐧 **基础镜像**: python:3.11-slim
-- 🛡️ **安全**: 使用非 root 用户运行
-- 🔧 **完整功能**: 包含所有依赖和配置
-- 📱 **多架构**: 支持 x86_64 架构
-
 ### 🚀 快速开始
 
 #### 方法一：Docker Compose 启动（推荐）
@@ -212,13 +205,6 @@ Auto-Limit is an intelligent download speed management tool designed specificall
 ```bash
 docker run -d --name autolimit-controller -p 9190:9190 xiaobaiya000/auto-limit:latest
 ```
-
-**Image Features**:
-- 📦 **Image Size**: ~187MB
-- 🐧 **Base Image**: python:3.11-slim
-- 🛡️ **Security**: Runs as non-root user
-- 🔧 **Complete**: Includes all dependencies and configurations
-- 📱 **Multi-arch**: Supports x86_64 architecture
 
 ### 🚀 Quick Start
 
