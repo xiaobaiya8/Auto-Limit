@@ -1,10 +1,10 @@
 # Auto-Limit - 智能下载限速管理工具
 
-[![GitHub stars](https://img.shields.io/github/stars/username/Auto-Limit?style=flat-square)](https://github.com/username/Auto-Limit)
-[![GitHub forks](https://img.shields.io/github/forks/username/Auto-Limit?style=flat-square)](https://github.com/username/Auto-Limit)
-[![GitHub issues](https://img.shields.io/github/issues/username/Auto-Limit?style=flat-square)](https://github.com/username/Auto-Limit)
-[![Docker Pulls](https://img.shields.io/docker/pulls/username/auto-limit?style=flat-square)](https://hub.docker.com/r/username/auto-limit)
-[![License](https://img.shields.io/github/license/username/Auto-Limit?style=flat-square)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
+[![GitHub forks](https://img.shields.io/github/forks/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
+[![GitHub issues](https://img.shields.io/github/issues/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
+[![Docker Pulls](https://img.shields.io/docker/pulls/xiaobaiya8/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya8/auto-limit)
+[![License](https://img.shields.io/github/license/xiaobaiya8/Auto-Limit?style=flat-square)](LICENSE)
 
 [English](#english) | [中文](#中文)
 
@@ -43,7 +43,7 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
 
 1. **下载项目文件**
    ```bash
-   git clone https://github.com/username/Auto-Limit.git
+   git clone https://github.com/xiaobaiya8/Auto-Limit.git
    cd Auto-Limit
    ```
 
@@ -53,7 +53,7 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
    ```
 
 3. **访问 Web 界面**
-   - 打开浏览器访问：`http://你的NAS地址:5000`
+   - 打开浏览器访问：`http://你的NAS地址:9190`
    - 开始配置你的媒体服务器和下载器
 
 #### 方法二：Docker 运行
@@ -61,16 +61,16 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
 ```bash
 docker run -d \
   --name auto-limit \
-  -p 5000:5000 \
+  -p 9190:9190 \
   -v auto-limit-data:/app/data \
-  username/auto-limit:latest
+  xiaobaiya8/auto-limit:latest
 ```
 
 #### 方法三：源码运行
 
 ```bash
 # 克隆项目
-git clone https://github.com/username/Auto-Limit.git
+git clone https://github.com/xiaobaiya8/Auto-Limit.git
 cd Auto-Limit
 
 # 安装依赖
@@ -124,7 +124,7 @@ python run.py
 DATA_DIR=/app/data
 
 # Web 服务端口
-PORT=5000
+PORT=9190
 
 # 日志级别
 LOG_LEVEL=INFO
@@ -136,10 +136,10 @@ LOG_LEVEL=INFO
 version: '3.8'
 services:
   auto-limit:
-    image: username/auto-limit:latest
+    image: xiaobaiya8/auto-limit:latest
     container_name: auto-limit
     ports:
-      - "5000:5000"
+      - "9190:9190"
     volumes:
       - ./data:/app/data
     environment:
@@ -230,7 +230,7 @@ Auto-Limit is an intelligent download speed management tool designed specificall
 
 1. **Download project files**
    ```bash
-   git clone https://github.com/username/Auto-Limit.git
+   git clone https://github.com/xiaobaiya8/Auto-Limit.git
    cd Auto-Limit
    ```
 
@@ -240,7 +240,7 @@ Auto-Limit is an intelligent download speed management tool designed specificall
    ```
 
 3. **Access Web Interface**
-   - Open browser and visit: `http://your-nas-ip:5000`
+   - Open browser and visit: `http://your-nas-ip:9190`
    - Start configuring your media servers and downloaders
 
 #### Method 2: Docker Run
@@ -248,16 +248,16 @@ Auto-Limit is an intelligent download speed management tool designed specificall
 ```bash
 docker run -d \
   --name auto-limit \
-  -p 5000:5000 \
+  -p 9190:9190 \
   -v auto-limit-data:/app/data \
-  username/auto-limit:latest
+  xiaobaiya8/auto-limit:latest
 ```
 
 #### Method 3: Source Code
 
 ```bash
 # Clone project
-git clone https://github.com/username/Auto-Limit.git
+git clone https://github.com/xiaobaiya8/Auto-Limit.git
 cd Auto-Limit
 
 # Install dependencies
@@ -311,7 +311,7 @@ Main interface shows:
 DATA_DIR=/app/data
 
 # Web service port
-PORT=5000
+PORT=9190
 
 # Log level
 LOG_LEVEL=INFO
@@ -323,10 +323,10 @@ LOG_LEVEL=INFO
 version: '3.8'
 services:
   auto-limit:
-    image: username/auto-limit:latest
+    image: xiaobaiya8/auto-limit:latest
     container_name: auto-limit
     ports:
-      - "5000:5000"
+      - "9190:9190"
     volumes:
       - ./data:/app/data
     environment:
@@ -386,8 +386,8 @@ Thanks to these open source projects:
 
 ### 📞 联系我们 | Contact Us
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/username/Auto-Limit/issues)
-- **Discussions**: [Join community discussions](https://github.com/username/Auto-Limit/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/xiaobaiya8/Auto-Limit/issues)
+- **Discussions**: [Join community discussions](https://github.com/xiaobaiya8/Auto-Limit/discussions)
 
 ### 🏷️ 标签 | Tags
 
