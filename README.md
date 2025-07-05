@@ -3,7 +3,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
 [![GitHub forks](https://img.shields.io/github/forks/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
 [![GitHub issues](https://img.shields.io/github/issues/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
-[![Docker Pulls](https://img.shields.io/docker/pulls/xiaobaiya8/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya8/auto-limit)
+[![Docker Pulls](https://img.shields.io/docker/pulls/xiaobaiya000/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
 [![License](https://img.shields.io/github/license/xiaobaiya8/Auto-Limit?style=flat-square&cache=none)](https://github.com/xiaobaiya8/Auto-Limit/blob/main/LICENSE)
 
 [English](#english) | [中文](#中文)
@@ -38,24 +38,43 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
 - **Transmission** - 完整支持限速和实时速度监控
 - **CloudDrive2** - 支持限速和实时速度监控
 
+### 🐳 Docker 镜像
+
+[![Docker Image Size](https://img.shields.io/docker/image-size/xiaobaiya000/auto-limit/latest?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
+[![Docker Image Version](https://img.shields.io/docker/v/xiaobaiya000/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
+
+**Docker Hub 地址**: [xiaobaiya000/auto-limit](https://hub.docker.com/r/xiaobaiya000/auto-limit)
+
+**快速运行命令**:
+```bash
+docker run -d --name autolimit-controller -p 9190:9190 xiaobaiya000/auto-limit:latest
+```
+
+**镜像特点**:
+- 📦 **镜像大小**: 约 187MB
+- 🐧 **基础镜像**: python:3.11-slim
+- 🛡️ **安全**: 使用非 root 用户运行
+- 🔧 **完整功能**: 包含所有依赖和配置
+- 📱 **多架构**: 支持 x86_64 架构
+
 ### 🚀 快速开始
 
-#### 方法一：Docker Compose（推荐）
+#### 方法一：Docker Compose 启动（推荐）
 
-1. **下载项目文件**
-   ```bash
-   git clone https://github.com/xiaobaiya8/Auto-Limit.git
-   cd Auto-Limit
-   ```
-
-2. **启动服务**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **访问 Web 界面**
-   - 打开浏览器访问：`http://你的NAS地址:9190`
-   - 开始配置你的媒体服务器和下载器
+```yaml
+version: '3.8'
+services:
+  auto-limit:
+    image: xiaobaiya000/auto-limit:latest
+    container_name: auto-limit
+    ports:
+      - "9190:9190"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+```
 
 #### 方法二：Docker 运行
 
@@ -64,7 +83,7 @@ docker run -d \
   --name auto-limit \
   -p 9190:9190 \
   -v auto-limit-data:/app/data \
-  xiaobaiya8/auto-limit:latest
+  xiaobaiya000/auto-limit:latest
 ```
 
 #### 方法三：源码运行
@@ -116,38 +135,6 @@ python run.py
 - **下载器状态** - 显示当前限速模式和实时速度
 - **全局速度统计** - 所有下载器的总速度
 
-### 🔧 高级配置
-
-#### 环境变量
-
-```bash
-# 数据存储目录
-DATA_DIR=/app/data
-
-# Web 服务端口
-PORT=9190
-
-# 日志级别
-LOG_LEVEL=INFO
-```
-
-#### Docker Compose 自定义
-
-```yaml
-version: '3.8'
-services:
-  auto-limit:
-    image: xiaobaiya8/auto-limit:latest
-    container_name: auto-limit
-    ports:
-      - "9190:9190"
-    volumes:
-      - ./data:/app/data
-    environment:
-      - TZ=Asia/Shanghai
-    restart: unless-stopped
-```
-
 ### 🛠️ 故障排除
 
 #### 常见问题
@@ -156,23 +143,11 @@ services:
 A: 检查 API 密钥是否正确，确保 Emby 地址可以访问
 
 **Q: qBittorrent 连接失败？**
-A: 确认 qBittorrent 开启了 Web UI，用户名密码正确
+A: 确认 qBittorrent 开启了 Web UI，用户名密码正确，且为内网地址，外网地址需要关闭某些安全设定
 
 **Q: 限速不生效？**
 A: 检查下载器是否正在下载任务，无任务时限速不会显示效果
 
-**Q: Docker 容器无法访问 NAS 上的服务？**
-A: 使用 `--network host` 模式或确保容器网络配置正确
-
-#### 日志查看
-
-```bash
-# Docker 日志
-docker logs auto-limit
-
-# 源码运行日志
-tail -f logs/app.log
-```
 
 ### 🤝 贡献指南
 
@@ -226,24 +201,43 @@ Auto-Limit is an intelligent download speed management tool designed specificall
 - **Transmission** - Full support for speed limiting and real-time monitoring
 - **CloudDrive2** - Support for speed limiting and real-time monitoring
 
+### 🐳 Docker Image
+
+[![Docker Image Size](https://img.shields.io/docker/image-size/xiaobaiya000/auto-limit/latest?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
+[![Docker Image Version](https://img.shields.io/docker/v/xiaobaiya000/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
+
+**Docker Hub Repository**: [xiaobaiya000/auto-limit](https://hub.docker.com/r/xiaobaiya000/auto-limit)
+
+**Quick Run Command**:
+```bash
+docker run -d --name autolimit-controller -p 9190:9190 xiaobaiya000/auto-limit:latest
+```
+
+**Image Features**:
+- 📦 **Image Size**: ~187MB
+- 🐧 **Base Image**: python:3.11-slim
+- 🛡️ **Security**: Runs as non-root user
+- 🔧 **Complete**: Includes all dependencies and configurations
+- 📱 **Multi-arch**: Supports x86_64 architecture
+
 ### 🚀 Quick Start
 
-#### Method 1: Docker Compose (Recommended)
+#### Method 1: Docker Compose Startup (Recommended)
 
-1. **Download project files**
-   ```bash
-   git clone https://github.com/xiaobaiya8/Auto-Limit.git
-   cd Auto-Limit
-   ```
-
-2. **Start services**
-   ```bash
-   docker-compose up -d
-   ```
-
-3. **Access Web Interface**
-   - Open browser and visit: `http://your-nas-ip:9190`
-   - Start configuring your media servers and downloaders
+```yaml
+version: '3.8'
+services:
+  auto-limit:
+    image: xiaobaiya000/auto-limit:latest
+    container_name: auto-limit
+    ports:
+      - "9190:9190"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+```
 
 #### Method 2: Docker Run
 
@@ -252,7 +246,7 @@ docker run -d \
   --name auto-limit \
   -p 9190:9190 \
   -v auto-limit-data:/app/data \
-  xiaobaiya8/auto-limit:latest
+  xiaobaiya000/auto-limit:latest
 ```
 
 #### Method 3: Source Code
@@ -304,38 +298,6 @@ Main interface shows:
 - **Downloader Status** - Shows current speed limit mode and real-time speeds
 - **Global Speed Statistics** - Total speeds from all downloaders
 
-### 🔧 Advanced Configuration
-
-#### Environment Variables
-
-```bash
-# Data storage directory
-DATA_DIR=/app/data
-
-# Web service port
-PORT=9190
-
-# Log level
-LOG_LEVEL=INFO
-```
-
-#### Custom Docker Compose
-
-```yaml
-version: '3.8'
-services:
-  auto-limit:
-    image: xiaobaiya8/auto-limit:latest
-    container_name: auto-limit
-    ports:
-      - "9190:9190"
-    volumes:
-      - ./data:/app/data
-    environment:
-      - TZ=Asia/Shanghai
-    restart: unless-stopped
-```
-
 ### 🛠️ Troubleshooting
 
 #### Common Issues
@@ -344,23 +306,10 @@ services:
 A: Check if the API key is correct and ensure Emby URL is accessible
 
 **Q: qBittorrent connection failed?**
-A: Confirm qBittorrent Web UI is enabled and credentials are correct
+A: Confirm qBittorrent Web UI is enabled and credentials are correct, and use internal network address. For external addresses, certain security settings need to be disabled
 
 **Q: Speed limiting not working?**
 A: Check if downloader has active tasks, speed limits won't show effect without downloads
-
-**Q: Docker container can't access NAS services?**
-A: Use `--network host` mode or ensure container network is configured correctly
-
-#### View Logs
-
-```bash
-# Docker logs
-docker logs auto-limit
-
-# Source code logs
-tail -f logs/app.log
-```
 
 ### 🤝 Contributing
 
@@ -390,6 +339,8 @@ Thanks to these open source projects:
 
 - **GitHub Issues**: [Report bugs or request features](https://github.com/xiaobaiya8/Auto-Limit/issues)
 - **Discussions**: [Join community discussions](https://github.com/xiaobaiya8/Auto-Limit/discussions)
+- **Telegram 交流群**: [加入 Telegram 群组讨论](https://t.me/douban_rss)
+- **Telegram Group**: [Join Telegram group for discussions](https://t.me/douban_rss)
 
 ### 🏷️ 标签 | Tags
 
