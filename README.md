@@ -4,6 +4,8 @@
 [![GitHub forks](https://img.shields.io/github/forks/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
 [![GitHub issues](https://img.shields.io/github/issues/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
 [![Docker Pulls](https://img.shields.io/docker/pulls/xiaobaiya000/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
+[![Docker Image Size](https://img.shields.io/docker/image-size/xiaobaiya000/auto-limit/latest?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
+[![Docker Image Version](https://img.shields.io/docker/v/xiaobaiya000/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
 [![License](https://img.shields.io/github/license/xiaobaiya8/Auto-Limit?style=flat-square&cache=none)](https://github.com/xiaobaiya8/Auto-Limit/blob/main/LICENSE)
 
 [English](#english) | [中文](#中文)
@@ -39,9 +41,6 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
 - **CloudDrive2** - 支持限速和实时速度监控
 
 ### 🐳 Docker 镜像
-
-[![Docker Image Size](https://img.shields.io/docker/image-size/xiaobaiya000/auto-limit/latest?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
-[![Docker Image Version](https://img.shields.io/docker/v/xiaobaiya000/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
 
 **Docker Hub 地址**: [xiaobaiya000/auto-limit](https://hub.docker.com/r/xiaobaiya000/auto-limit)
 
@@ -195,9 +194,6 @@ Auto-Limit is an intelligent download speed management tool designed specificall
 - **CloudDrive2** - Support for speed limiting and real-time monitoring
 
 ### 🐳 Docker Image
-
-[![Docker Image Size](https://img.shields.io/docker/image-size/xiaobaiya000/auto-limit/latest?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
-[![Docker Image Version](https://img.shields.io/docker/v/xiaobaiya000/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
 
 **Docker Hub Repository**: [xiaobaiya000/auto-limit](https://hub.docker.com/r/xiaobaiya000/auto-limit)
 
