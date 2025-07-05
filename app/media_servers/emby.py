@@ -52,4 +52,103 @@ class Emby(MediaServerBase):
             else:
                 return False, f"连接失败: HTTP {response.status_code}"
         except Exception as e:
-            return False, f"连接失败: {str(e)}" 
+            return False, f"连接失败: {str(e)}"
+
+    def get_network_speeds(self):
+        """
+        获取当前网络速度信息
+        注意：Emby的比特率信息通常是静态的媒体文件信息，不是实时网络速度
+        :return: {'total_bitrate': float, 'sessions': [{'user_name': str, 'bitrate': float}]} 或 None
+        """
+        if not self.url or not self.api_key:
+            return None
+            
+        try:
+            sessions_url = f"{self.url}/emby/Sessions"
+            params = {'api_key': self.api_key}
+            response = self.session.get(sessions_url, params=params, timeout=10)
+            
+            if response.status_code == 200:
+                sessions = response.json()
+                total_bitrate = 0
+                session_speeds = []
+                
+                for session in sessions:
+                    if 'NowPlayingItem' in session and session.get('NowPlayingItem'):
+                        play_state = session.get('PlayState', {})
+                        is_paused = play_state.get('IsPaused', False)
+                        
+                        if not is_paused:  # 只统计正在播放的会话
+                            user_name = session.get('UserName', 'Unknown')
+                            bitrate = 0
+                            is_transcoding = False
+                            
+                            # 优先从TranscodingInfo获取实时转码比特率
+                            transcoding_info = session.get('TranscodingInfo')
+                            if transcoding_info:
+                                is_transcoding = True
+                                # 转码时的比特率更接近实际网络使用
+                                bitrate = transcoding_info.get('Bitrate', 0)
+                                if not bitrate:
+                                    # 有些版本可能使用不同的字段名
+                                    video_bitrate = transcoding_info.get('VideoBitrate', 0)
+                                    audio_bitrate = transcoding_info.get('AudioBitrate', 0)
+                                    if video_bitrate or audio_bitrate:
+                                        bitrate = video_bitrate + audio_bitrate
+                            
+                            # 如果没有转码，尝试从其他地方获取比特率
+                            if not bitrate:
+                                # 从Media信息获取当前播放的比特率
+                                media_info = session.get('NowPlayingItem', {})
+                                
+                                # 尝试从当前选择的媒体流获取
+                                media_sources = media_info.get('MediaSources', [])
+                                if media_sources:
+                                    # 获取当前播放的媒体源
+                                    current_media = media_sources[0]  # 通常第一个是当前播放的
+                                    bitrate = current_media.get('Bitrate', 0)
+                                
+                                # 如果还是没有，从NowPlayingItem获取
+                                if not bitrate:
+                                    bitrate = media_info.get('Bitrate', 0)
+                                
+                                # 最后尝试从MediaStreams计算总比特率
+                                if not bitrate:
+                                    media_streams = media_info.get('MediaStreams', [])
+                                    for stream in media_streams:
+                                        stream_bitrate = stream.get('BitRate', 0)
+                                        if stream_bitrate:
+                                            bitrate += stream_bitrate
+                            
+                            # 转换单位：确保统一为Kbps
+                            if bitrate > 100000:  # 大于100Kbps，可能是bps单位
+                                bitrate = bitrate / 1000  # 转换为Kbps
+                            # 如果bitrate小于1000，可能已经是Kbps或者是很小的bps值
+                            # 保持原值不变
+                            
+                            # 对于非转码的直播，应用一个动态因子来模拟网络波动
+                            if not is_transcoding and bitrate > 0:
+                                # 注意：这里的比特率是媒体文件的原始比特率，不是实时网络速度
+                                # 我们添加一个标记来区分这种情况
+                                pass
+                            
+                            if bitrate > 0:
+                                total_bitrate += bitrate
+                                session_speeds.append({
+                                    'user_name': user_name,
+                                    'item_name': session.get('NowPlayingItem', {}).get('Name', 'Unknown'),
+                                    'bitrate': bitrate,
+                                    'is_transcoding': is_transcoding,
+                                    'is_estimated': not is_transcoding  # 标记是否为估算值
+                                })
+                
+                return {
+                    'total_bitrate': total_bitrate,  # 单位：Kbps
+                    'sessions': session_speeds
+                }
+            else:
+                log_manager.log_event("EMBY_ERROR", f"获取Emby网络速度失败: HTTP {response.status_code}")
+                return None
+        except requests.exceptions.RequestException as e:
+            log_manager.log_event("EMBY_ERROR", f"获取Emby网络速度时出错: {str(e)}")
+            return None 

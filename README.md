@@ -1,172 +1,394 @@
-# 模块化自动速率控制器
+# Auto-Limit - 智能下载限速管理工具
 
-这是一个基于插件化架构的Web应用，用于监控媒体服务器（如Emby, Jellyfin, Plex）的播放状态，并自动调节下载器（如qBittorrent, Transmission）的速率。
+[![GitHub stars](https://img.shields.io/github/stars/username/Auto-Limit?style=flat-square)](https://github.com/username/Auto-Limit)
+[![GitHub forks](https://img.shields.io/github/forks/username/Auto-Limit?style=flat-square)](https://github.com/username/Auto-Limit)
+[![GitHub issues](https://img.shields.io/github/issues/username/Auto-Limit?style=flat-square)](https://github.com/username/Auto-Limit)
+[![Docker Pulls](https://img.shields.io/docker/pulls/username/auto-limit?style=flat-square)](https://hub.docker.com/r/username/auto-limit)
+[![License](https://img.shields.io/github/license/username/Auto-Limit?style=flat-square)](LICENSE)
 
-当有用户在媒体服务器上播放内容时，系统会自动将下载器切换到"备用速率"模式，以保障观看流畅；当所有播放停止后，则恢复为"默认速率"。
+[English](#english) | [中文](#中文)
 
-## 核心优势
+---
 
-- 🔌 **插件化架构**: 轻松扩展，可支持多种媒体服务器和下载器。
-- 🌐 **统一Web界面**: 通过一个界面管理所有插件的配置和状态。
-- 🚀 **动态加载**: 根据用户选择动态加载和配置相应模块。
-- 📊 **实时状态与日志**: 提供清晰的播放状态、会话详情和事件日志。
-- 🐳 **Docker化部署**: 使用Docker和Docker Compose快速部署和管理。
-- 🔧 **开发者友好**: 清晰的基类和文件结构，方便开发者贡献新插件。
+## 中文
 
-## 工作原理
+### 🎯 什么是 Auto-Limit？
 
-应用的核心是一个调度器，它按固定的时间间隔执行以下任务：
-1.  **加载插件**: 根据Web界面上的配置，动态加载选定的媒体服务器和下载器插件。
-2.  **查询状态**: 调用媒体服务器插件的 `get_active_sessions()` 方法，获取当前活跃的播放会话。
-3.  **状态比较**: 将当前会话与上一轮的状态进行比较。
-4.  **触发调整**: 如果活跃会话数量发生变化（从0到有，或从有到0），则调用下载器插件的 `set_speed_limits()` 方法来更新速率。
+Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计的智能下载限速管理工具。当家人在观看 Emby、Jellyfin 等媒体服务器上的电影时，自动降低 qBittorrent、Transmission 等下载器的速度，确保观影体验流畅不卡顿。
 
-```mermaid
-graph TD
-    subgraph "用户"
-        A[Web界面配置] --> B{选择 Emby + qBittorrent};
-    end
+### 🌟 核心功能
 
-    subgraph "后端应用"
-        C[调度器] -->|定时轮询| D(加载Emby插件);
-        D --> E{获取播放状态};
-        E -->|有播放| F(加载qBittorrent插件);
-        F --> G[设置备用速率];
-        E -->|无播放| F;
-        F --> H[设置默认速率];
-    end
+- **🎬 智能检测播放状态** - 自动监控 Emby/Jellyfin 的播放活动
+- **⚡ 自动限速切换** - 播放时自动降速，停止播放时恢复正常速度
+- **📊 实时速度监控** - 显示下载器实时上传下载速度和媒体服务器比特率
+- **🔧 简单易用配置** - Web 界面配置，无需命令行操作
+- **🐳 Docker 一键部署** - 支持 Docker 和 Docker Compose 快速部署
+- **📱 响应式界面** - 支持手机、平板、电脑访问
+- **🔄 多实例支持** - 同时管理多个下载器和媒体服务器
 
-    B --> C;
-```
+### 🎮 支持的软件
 
-## 快速开始
+#### 媒体服务器
+- **Emby** - 完整支持播放检测和比特率监控
+- **Jellyfin** - 计划支持中
 
-### 1. 准备文件
+#### 下载器
+- **qBittorrent** - 完整支持限速和实时速度监控
+- **Transmission** - 完整支持限速和实时速度监控
+- **CloudDrive2** - 支持限速和实时速度监控
 
-将项目所有文件下载到你的服务器上。
+### 🚀 快速开始
 
-### 2. 启动服务
+#### 方法一：Docker Compose（推荐）
+
+1. **下载项目文件**
+   ```bash
+   git clone https://github.com/username/Auto-Limit.git
+   cd Auto-Limit
+   ```
+
+2. **启动服务**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **访问 Web 界面**
+   - 打开浏览器访问：`http://你的NAS地址:5000`
+   - 开始配置你的媒体服务器和下载器
+
+#### 方法二：Docker 运行
 
 ```bash
-# 构建并以分离模式启动服务
-docker-compose up -d --build
-
-# 查看实时日志
-docker-compose logs -f
+docker run -d \
+  --name auto-limit \
+  -p 5000:5000 \
+  -v auto-limit-data:/app/data \
+  username/auto-limit:latest
 ```
 
-### 3. 配置系统
+#### 方法三：源码运行
 
-1.  在浏览器中访问 `http://你的服务器IP:5002`。
-2.  点击"配置"进入配置页面。
-3.  **选择插件**:
-    *   在"媒体服务器"下拉菜单中选择 `Emby`。
-    *   在"下载器"下拉菜单中选择 `qBittorrent`。
-4.  **填写配置**:
-    *   填写所选插件（Emby和qBittorrent）的URL、API密钥、用户名和密码。
-    *   设置默认速率和备用速率。
-    *   设置轮询间隔。
-5.  点击"保存配置"。系统将自动重启后台任务以应用新配置。
+```bash
+# 克隆项目
+git clone https://github.com/username/Auto-Limit.git
+cd Auto-Limit
 
-## 文件结构
+# 安装依赖
+pip install -r requirements.txt
 
-```
-.
-├── app/
-│   ├── downloaders/         # 下载器插件目录
-│   │   ├── base.py          # 下载器基类
-│   │   └── qbittorrent.py   # qBittorrent实现
-│   ├── media_servers/       # 媒体服务器插件目录
-│   │   ├── base.py          # 媒体服务器基类
-│   │   └── emby.py          # Emby实现
-│   ├── services/            # 核心服务目录
-│   │   ├── config_manager.py # 配置管理器
-│   │   ├── log_manager.py    # 日志管理器
-│   │   └── scheduler.py      # 核心调度器
-│   ├── templates/           # Web模板
-│   ├── static/              # 静态文件(CSS, JS)
-│   ├── __init__.py          # 应用工厂
-│   └── routes.py            # Web路由
-├── data/                    # (自动创建) 数据目录
-│   ├── config.json
-│   └── logs.json
-├── run.py                   # 应用启动脚本
-├── Dockerfile
-├── docker-compose.yml
-└── README.md
+# 启动服务
+python run.py
 ```
 
-## 插件开发指南
+### ⚙️ 配置指南
 
-要添加一个新的媒体服务器或下载器非常简单：
+#### 1. 添加媒体服务器
 
-### 1. 创建新插件文件
+1. 在 Web 界面点击"配置"
+2. 添加 Emby 服务器：
+   - **名称**：自定义名称（如：客厅 Emby）
+   - **地址**：`http://你的NAS地址:8096`
+   - **API 密钥**：在 Emby 控制台 → API 密钥中生成
+   - **轮询间隔**：建议 15 秒
 
--   **媒体服务器**: 在 `app/media_servers/` 目录下创建一个新文件，例如 `plex.py`。
--   **下载器**: 在 `app/downloaders/` 目录下创建一个新文件，例如 `transmission.py`。
+#### 2. 添加下载器
 
-### 2. 实现插件类
+1. 添加 qBittorrent：
+   - **名称**：自定义名称（如：主下载器）
+   - **地址**：`http://你的NAS地址:8080`
+   - **用户名/密码**：qBittorrent 的登录账号
+   - **默认限速**：正常下载速度（如：下载 0 KB/s，上传 1024 KB/s）
+   - **播放时限速**：观影时的限制速度（如：下载 1024 KB/s，上传 512 KB/s）
 
-在新文件中，创建一个类并继承自相应的基类 (`MediaServerBase` 或 `DownloaderBase`)。
+#### 3. 开始使用
 
-**示例: `plex.py`**
-```python
-from .base import MediaServerBase
-from ..services.log_manager import log_manager
+配置完成后，Auto-Limit 会自动：
+- 监控 Emby 的播放状态
+- 当有人开始观看时，自动降低下载速度
+- 当播放停止时，恢复正常下载速度
 
-class Plex(MediaServerBase):
-    def __init__(self, config):
-        super().__init__(config)
-        # 从config字典中获取Plex特有的配置
-        self.url = self.config.get('plex_url')
-        self.token = self.config.get('plex_token')
+### 📊 界面预览
 
-    def get_active_sessions(self):
-        # 实现获取Plex活跃会话的逻辑...
-        pass
+主界面显示：
+- **播放状态概览** - 当前是否有人在观看
+- **媒体服务器状态** - 显示活跃播放和比特率信息
+- **下载器状态** - 显示当前限速模式和实时速度
+- **全局速度统计** - 所有下载器的总速度
 
-    def test_connection(self):
-        # 实现测试Plex连接的逻辑...
-        pass
+### 🔧 高级配置
+
+#### 环境变量
+
+```bash
+# 数据存储目录
+DATA_DIR=/app/data
+
+# Web 服务端口
+PORT=5000
+
+# 日志级别
+LOG_LEVEL=INFO
 ```
 
-### 3. 更新前端界面
+#### Docker Compose 自定义
 
-1.  **`app/templates/config.html`**:
-    *   在媒体服务器/下载器的 `<select>` 下拉菜单中添加新的 `<option>`。
-    *   仿照 `emby-settings` 或 `qbittorrent-settings` 的 `<div>`，为你的新插件创建一个配置块，并赋予一个匹配的ID（例如 `id="plex-settings"`）。
-2.  **`app/services/config_manager.py`**:
-    *   在 `get_settings` 方法返回的默认字典中，为新插件添加配置字段（例如 `'plex_url': ''`）。
-3.  **`app/routes.py`**:
-    *   在 `config()` 路由的 `POST` 逻辑中，添加从 `request.form` 获取新插件配置的代码。
+```yaml
+version: '3.8'
+services:
+  auto-limit:
+    image: username/auto-limit:latest
+    container_name: auto-limit
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+```
 
-完成以上步骤后，你的新插件就可以被系统动态加载和使用了。
+### 🛠️ 故障排除
 
-## 故障排查
+#### 常见问题
 
-- **插件加载失败**: 检查 `docker-compose logs -f`，查看是否有 `PLUGIN_ERROR` 日志。通常是由于文件名和类名不匹配（例如 `plex.py` 文件需要一个 `Plex` 类）。
-- **连接测试失败**: 使用Web界面的"测试连接"功能，并查看日志页面或Docker日志中的详细错误信息。
-- **速率不切换**: 检查配置是否正确保存，并查看日志中是否有 `PLAY_START`/`PLAY_STOP` 和 `SPEED_CHANGE` 事件。
-- **容器健康状态**:
-  ```bash
-  docker-compose ps
-  # 检查容器状态详情
-  docker inspect autolimit_controller | grep Health -A 10
-  ```
+**Q: 为什么检测不到 Emby 播放状态？**
+A: 检查 API 密钥是否正确，确保 Emby 地址可以访问
 
-## 安全建议
-- 修改 `docker-compose.yml` 中的 `SECRET_KEY`。
-- 如果需要公网访问，强烈建议使用反向代理（如Nginx Proxy Manager）并配置HTTPS。
-- 定期备份 `app/data` 目录。
+**Q: qBittorrent 连接失败？**
+A: 确认 qBittorrent 开启了 Web UI，用户名密码正确
 
-## 许可证
+**Q: 限速不生效？**
+A: 检查下载器是否正在下载任务，无任务时限速不会显示效果
 
-MIT License
+**Q: Docker 容器无法访问 NAS 上的服务？**
+A: 使用 `--network host` 模式或确保容器网络配置正确
 
-## 支持
+#### 日志查看
 
-如果遇到问题，请检查：
-1. 系统日志页面的错误信息
-2. Docker容器日志
-3. 网络连通性
-4. 配置参数是否正确 
+```bash
+# Docker 日志
+docker logs auto-limit
+
+# 源码运行日志
+tail -f logs/app.log
+```
+
+### 🤝 贡献指南
+
+欢迎提交 Issue 和 Pull Request！
+
+1. Fork 本项目
+2. 创建功能分支 (`git checkout -b feature/新功能`)
+3. 提交更改 (`git commit -am '添加新功能'`)
+4. 推送到分支 (`git push origin feature/新功能`)
+5. 创建 Pull Request
+
+### 📄 许可证
+
+本项目采用 [MIT 许可证](LICENSE)
+
+### 🙏 致谢
+
+感谢以下开源项目：
+- [Flask](https://flask.palletsprojects.com/) - Web 框架
+- [Bootstrap](https://getbootstrap.com/) - UI 框架
+- [qBittorrent](https://www.qbittorrent.org/) - BitTorrent 客户端
+- [Emby](https://emby.media/) - 媒体服务器
+
+---
+
+## English
+
+### 🎯 What is Auto-Limit?
+
+Auto-Limit is an intelligent download speed management tool designed specifically for **NAS users** and **home media server** enthusiasts. It automatically reduces the speed of downloaders like qBittorrent and Transmission when family members are watching movies on media servers like Emby or Jellyfin, ensuring smooth streaming without buffering.
+
+### 🌟 Key Features
+
+- **🎬 Smart Playback Detection** - Automatically monitors Emby/Jellyfin playback activities
+- **⚡ Automatic Speed Switching** - Reduces speed during playback, restores normal speed when stopped
+- **📊 Real-time Speed Monitoring** - Shows real-time upload/download speeds and media server bitrates
+- **🔧 Easy Web Configuration** - Web interface setup, no command line required
+- **🐳 One-Click Docker Deployment** - Supports Docker and Docker Compose for quick deployment
+- **📱 Responsive Interface** - Works on phones, tablets, and computers
+- **🔄 Multi-Instance Support** - Manage multiple downloaders and media servers simultaneously
+
+### 🎮 Supported Software
+
+#### Media Servers
+- **Emby** - Full support for playback detection and bitrate monitoring
+- **Jellyfin** - Planned support
+
+#### Downloaders
+- **qBittorrent** - Full support for speed limiting and real-time monitoring
+- **Transmission** - Full support for speed limiting and real-time monitoring
+- **CloudDrive2** - Support for speed limiting and real-time monitoring
+
+### 🚀 Quick Start
+
+#### Method 1: Docker Compose (Recommended)
+
+1. **Download project files**
+   ```bash
+   git clone https://github.com/username/Auto-Limit.git
+   cd Auto-Limit
+   ```
+
+2. **Start services**
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Access Web Interface**
+   - Open browser and visit: `http://your-nas-ip:5000`
+   - Start configuring your media servers and downloaders
+
+#### Method 2: Docker Run
+
+```bash
+docker run -d \
+  --name auto-limit \
+  -p 5000:5000 \
+  -v auto-limit-data:/app/data \
+  username/auto-limit:latest
+```
+
+#### Method 3: Source Code
+
+```bash
+# Clone project
+git clone https://github.com/username/Auto-Limit.git
+cd Auto-Limit
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start service
+python run.py
+```
+
+### ⚙️ Configuration Guide
+
+#### 1. Add Media Server
+
+1. Click "Configuration" in the web interface
+2. Add Emby server:
+   - **Name**: Custom name (e.g., Living Room Emby)
+   - **URL**: `http://your-nas-ip:8096`
+   - **API Key**: Generate in Emby Dashboard → API Keys
+   - **Poll Interval**: Recommended 15 seconds
+
+#### 2. Add Downloader
+
+1. Add qBittorrent:
+   - **Name**: Custom name (e.g., Main Downloader)
+   - **URL**: `http://your-nas-ip:8080`
+   - **Username/Password**: qBittorrent login credentials
+   - **Default Limits**: Normal download speeds (e.g., Download 0 KB/s, Upload 1024 KB/s)
+   - **Playback Limits**: Speeds during streaming (e.g., Download 1024 KB/s, Upload 512 KB/s)
+
+#### 3. Start Using
+
+After configuration, Auto-Limit will automatically:
+- Monitor Emby playback status
+- Reduce download speeds when someone starts watching
+- Restore normal speeds when playback stops
+
+### 📊 Interface Preview
+
+Main interface shows:
+- **Playback Status Overview** - Whether someone is currently watching
+- **Media Server Status** - Shows active playback and bitrate information
+- **Downloader Status** - Shows current speed limit mode and real-time speeds
+- **Global Speed Statistics** - Total speeds from all downloaders
+
+### 🔧 Advanced Configuration
+
+#### Environment Variables
+
+```bash
+# Data storage directory
+DATA_DIR=/app/data
+
+# Web service port
+PORT=5000
+
+# Log level
+LOG_LEVEL=INFO
+```
+
+#### Custom Docker Compose
+
+```yaml
+version: '3.8'
+services:
+  auto-limit:
+    image: username/auto-limit:latest
+    container_name: auto-limit
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+```
+
+### 🛠️ Troubleshooting
+
+#### Common Issues
+
+**Q: Why can't it detect Emby playback status?**
+A: Check if the API key is correct and ensure Emby URL is accessible
+
+**Q: qBittorrent connection failed?**
+A: Confirm qBittorrent Web UI is enabled and credentials are correct
+
+**Q: Speed limiting not working?**
+A: Check if downloader has active tasks, speed limits won't show effect without downloads
+
+**Q: Docker container can't access NAS services?**
+A: Use `--network host` mode or ensure container network is configured correctly
+
+#### View Logs
+
+```bash
+# Docker logs
+docker logs auto-limit
+
+# Source code logs
+tail -f logs/app.log
+```
+
+### 🤝 Contributing
+
+Issues and Pull Requests are welcome!
+
+1. Fork this project
+2. Create feature branch (`git checkout -b feature/new-feature`)
+3. Commit changes (`git commit -am 'Add new feature'`)
+4. Push to branch (`git push origin feature/new-feature`)
+5. Create Pull Request
+
+### 📄 License
+
+This project is licensed under the [MIT License](LICENSE)
+
+### 🙏 Acknowledgments
+
+Thanks to these open source projects:
+- [Flask](https://flask.palletsprojects.com/) - Web framework
+- [Bootstrap](https://getbootstrap.com/) - UI framework
+- [qBittorrent](https://www.qbittorrent.org/) - BitTorrent client
+- [Emby](https://emby.media/) - Media server
+
+---
+
+### 📞 联系我们 | Contact Us
+
+- **GitHub Issues**: [Report bugs or request features](https://github.com/username/Auto-Limit/issues)
+- **Discussions**: [Join community discussions](https://github.com/username/Auto-Limit/discussions)
+
+### 🏷️ 标签 | Tags
+
+`NAS` `媒体服务器` `下载管理` `限速` `Emby` `qBittorrent` `Transmission` `Docker` `家庭影院` `智能限速` `media-server` `download-manager` `speed-limit` `home-theater` `smart-throttling` 

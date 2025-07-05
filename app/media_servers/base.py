@@ -23,4 +23,11 @@ class MediaServerBase(ABC):
         测试与媒体服务器的连接。
         :return: (bool, str) -> (连接是否成功, 消息)
         """
-        pass 
+        pass
+
+    def get_network_speeds(self):
+        """
+        获取当前网络速度信息（可选实现）。
+        :return: {'total_bitrate': float, 'sessions': [{'user_name': str, 'bitrate': float}]} 或 None
+        """
+        return None 

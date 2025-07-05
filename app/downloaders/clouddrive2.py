@@ -298,6 +298,50 @@ class CloudDrive2(DownloaderBase):
 
     def get_current_speeds(self):
         """获取当前实际下载和上传速度"""
-        # CloudDrive2暂时不支持获取实时速度，返回None
-        # 后续可以通过GetSystemInfo或其他API实现
-        return None 
+        # 检查token状态
+        if not self.token:
+            # 无token，需要登录
+            if not self.login():
+                return None
+        
+        def _try_get_speeds_with_retry():
+            """尝试获取速度，失败时重新登录重试一次"""
+            try:
+                # 获取下载速度
+                download_response = self._make_grpc_request('GetDownloadFileList')
+                download_speed = 0
+                if download_response and 1 in download_response:
+                    # field 1 是 globalBytesPerSecond (double)
+                    download_speed = download_response[1] / 1024  # 转换为KB/s
+                
+                # 获取上传速度
+                upload_response = self._make_grpc_request('GetUploadFileList', {'1': True})  # getAll = true
+                upload_speed = 0
+                if upload_response and 3 in upload_response:
+                    # field 3 是 globalBytesPerSecond (double)
+                    upload_speed = upload_response[3] / 1024  # 转换为KB/s
+                
+                return {
+                    'download_speed': download_speed,
+                    'upload_speed': upload_speed
+                }
+            except Exception as e:
+                log_manager.log_event("CLOUDDRIVE2_ERROR", f"获取CloudDrive2速度信息时出错: {str(e)}")
+                return None
+        
+        try:
+            # 第一次尝试（使用现有token）
+            speeds = _try_get_speeds_with_retry()
+            
+            # 如果失败，可能是token过期，重新登录后再试一次
+            if speeds is None:
+                # 清除当前token，强制重新登录
+                self.token = None
+                if self.login():
+                    speeds = _try_get_speeds_with_retry()
+            
+            return speeds
+            
+        except Exception as e:
+            log_manager.log_event("CLOUDDRIVE2_ERROR", f"获取CloudDrive2速度信息时出错: {str(e)}")
+            return None 

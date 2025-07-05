@@ -151,6 +151,36 @@ def api_media_server_sessions():
     else:
         return jsonify({'status': 'success', 'sessions': [], 'count': 0})
 
+@main.route('/api/media_server/speeds')
+def api_media_server_speeds():
+    """获取所有媒体服务器的网络速度信息"""
+    total_bitrate = 0
+    all_sessions = []
+    settings = config_manager.get_settings()
+    
+    for server_instance in settings.get('media_servers', []):
+        if server_instance.get('enabled'):
+            media_server = scheduler._get_plugin_instance('media_servers', server_instance)
+            if media_server and hasattr(media_server, 'get_network_speeds'):
+                try:
+                    speed_info = media_server.get_network_speeds()
+                    if speed_info:
+                        server_name = server_instance.get('name', server_instance.get('id', '未知服务器'))
+                        total_bitrate += speed_info.get('total_bitrate', 0)
+                        
+                        # 为每个会话添加服务器信息
+                        for session in speed_info.get('sessions', []):
+                            session['source_server'] = server_name
+                            all_sessions.append(session)
+                except Exception as e:
+                    current_app.logger.warning(f"获取媒体服务器 {server_instance.get('name', '未知')} 网络速度失败: {e}")
+    
+    return jsonify({
+        'status': 'success',
+        'total_bitrate': total_bitrate,
+        'sessions': all_sessions
+    })
+
 @main.route('/api/downloaders/status')
 def api_downloaders_status():
     """获取所有下载器的状态信息"""
