@@ -1,6 +1,6 @@
 import re
 import uuid
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, current_app, session
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, current_app
 from flask_babel import _, get_locale
 from .services.config_manager import config_manager
 from .services.log_manager import log_manager
@@ -17,8 +17,7 @@ def index():
 def set_language(language=None):
     """设置用户语言偏好"""
     if language and language in current_app.config['LANGUAGES']:
-        session['language'] = language
-        # 同时更新配置文件中的语言设置，用于后台任务
+        # 更新配置文件中的语言设置
         config_manager.set_language(language)
     return redirect(request.referrer or url_for('main.index'))
 

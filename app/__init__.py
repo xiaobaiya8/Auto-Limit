@@ -1,4 +1,4 @@
-from flask import Flask, request, session
+from flask import Flask, request
 from flask_babel import Babel, get_locale
 import os
 
@@ -19,7 +19,6 @@ def create_app():
     
     # 从环境变量或默认值加载配置
     app.config.from_mapping(
-        SECRET_KEY=os.environ.get('SECRET_KEY', 'dev-secret-key'),
         # 定义数据目录，所有配置文件将存储在这里
         DATA_DIR=os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data'),
         # 国际化配置
@@ -33,9 +32,13 @@ def create_app():
 
     # 定义语言选择器函数
     def locale_selector():
-        # 1. 如果用户手动选择了语言，使用用户选择的语言
-        if 'language' in session:
-            return session['language']
+        # 1. 优先使用配置文件中的语言设置
+        try:
+            config_language = config_manager.get_language()
+            if config_language in app.config['LANGUAGES']:
+                return config_language
+        except:
+            pass
         # 2. 否则根据浏览器的Accept-Language头部自动选择
         return request.accept_languages.best_match(app.config['LANGUAGES']) or app.config['BABEL_DEFAULT_LOCALE']
 
