@@ -42,11 +42,11 @@ class Transmission(DownloaderBase):
                 # 某些版本可能不需要会话ID
                 return True
                 
-            log_manager.log_event("TRANSMISSION_ERROR", f"获取Transmission会话ID失败: HTTP {response.status_code}")
+            log_manager.log_formatted_event("TRANSMISSION_ERROR", "获取Transmission会话ID失败: HTTP {0}", response.status_code)
             return False
             
         except requests.exceptions.RequestException as e:
-            log_manager.log_event("TRANSMISSION_ERROR", f"获取Transmission会话ID时出错: {str(e)}")
+            log_manager.log_formatted_event("TRANSMISSION_ERROR", "获取Transmission会话ID时出错: {0}", str(e))
             return False
 
     def _make_rpc_request(self, method, arguments=None):
@@ -76,11 +76,11 @@ class Transmission(DownloaderBase):
                     log_manager.log_event("TRANSMISSION_ERROR", "Transmission响应不是有效的JSON")
                     return None
             else:
-                log_manager.log_event("TRANSMISSION_ERROR", f"Transmission RPC请求失败: HTTP {response.status_code}")
+                log_manager.log_formatted_event("TRANSMISSION_ERROR", "Transmission RPC请求失败: HTTP {0}", response.status_code)
                 return None
                 
         except requests.exceptions.RequestException as e:
-            log_manager.log_event("TRANSMISSION_ERROR", f"Transmission RPC请求时出错: {str(e)}")
+            log_manager.log_formatted_event("TRANSMISSION_ERROR", "Transmission RPC请求时出错: {0}", str(e))
             return None
 
     def set_speed_limits(self, download_limit_kb, upload_limit_kb):
@@ -111,11 +111,11 @@ class Transmission(DownloaderBase):
                 # 不再记录成功日志，由调度器统一记录
                 return True
             else:
-                log_manager.log_event("TRANSMISSION_ERROR", f"Transmission速率限制设置失败: {response}")
+                log_manager.log_formatted_event("TRANSMISSION_ERROR", "Transmission速率限制设置失败: {0}", response)
                 return False
                 
         except Exception as e:
-            log_manager.log_event("TRANSMISSION_ERROR", f"Transmission设置速率限制时出错: {str(e)}")
+            log_manager.log_formatted_event("TRANSMISSION_ERROR", "Transmission设置速率限制时出错: {0}", str(e))
             return False
 
     def test_connection(self):
@@ -144,7 +144,7 @@ class Transmission(DownloaderBase):
                 return response.get("arguments", {})
             return None
         except Exception as e:
-            log_manager.log_event("TRANSMISSION_ERROR", f"获取Transmission统计信息时出错: {str(e)}")
+            log_manager.log_formatted_event("TRANSMISSION_ERROR", "获取Transmission统计信息时出错: {0}", str(e))
             return None
 
     def get_current_speeds(self):
@@ -163,9 +163,9 @@ class Transmission(DownloaderBase):
                     'upload_speed': current_stats.get('uploadSpeed', 0) / 1024       # 转换为KB/s
                 }
             else:
-                log_manager.log_event("TRANSMISSION_ERROR", f"获取Transmission速度信息失败: {response}")
+                log_manager.log_formatted_event("TRANSMISSION_ERROR", "获取Transmission速度信息失败: {0}", response)
                 return None
                 
         except Exception as e:
-            log_manager.log_event("TRANSMISSION_ERROR", f"获取Transmission速度信息时出错: {str(e)}")
+            log_manager.log_formatted_event("TRANSMISSION_ERROR", "获取Transmission速度信息时出错: {0}", str(e))
             return None 

@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}配置 - AutoLimit{% endblock %}
+{% block title %}{{ _('配置') }} - AutoLimit{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h5 class="card-title mb-0"><i class="bi bi-gear-wide-connected"></i> 系统配置</h5>
+                <h5 class="card-title mb-0"><i class="bi bi-gear-wide-connected"></i> {{ _('系统配置') }}</h5>
             </div>
             <div class="card-body">
                 <!-- 媒体服务器 -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 text-primary"><i class="bi bi-server"></i> 媒体服务器</h5>
+                    <h5 class="mb-0 text-primary"><i class="bi bi-server"></i> {{ _('媒体服务器') }}</h5>
                     <button type="button" class="btn btn-success btn-sm" onclick="openAddModal('media_servers')">
-                        <i class="bi bi-plus-circle"></i> 添加媒体服务器
+                        <i class="bi bi-plus-circle"></i> {{ _('添加媒体服务器') }}
                     </button>
                 </div>
                 
@@ -37,26 +37,26 @@
                                                  alt="{{ server.type }}" class="instance-logo-small"
                                                  onerror="this.style.display='none'">
                                             <div>
-                                                <div class="fw-bold">{{ server.name or '未命名' }}</div>
+                                                <div class="fw-bold">{{ server.name or _('未命名') }}</div>
                                                 <small class="text-muted">{{ server.type | title }}</small>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <small class="text-muted">{{ server.url or 'URL未配置' }}</small>
+                                        <small class="text-muted">{{ server.url or _('URL未配置') }}</small>
                                     </div>
                                     <div class="col-md-2">
-                                        <small class="text-info">{{ server.poll_interval or 15 }}秒轮询</small>
+                                        <small class="text-info">{{ server.poll_interval or 15 }}{{ _('秒轮询') }}</small>
                                     </div>
                                     <div class="col-md-2 text-end">
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <button type="button" class="btn btn-outline-primary" onclick="testInstanceFromList(this)" title="测试连接">
+                                            <button type="button" class="btn btn-outline-primary" onclick="testInstanceFromList(this)" title="{{ _('测试连接') }}">
                                                 <i class="bi bi-wifi"></i>
                                             </button>
-                                            <button type="button" class="btn btn-outline-secondary" onclick="editInstance(this, 'media_servers', '{{ server.id }}')" title="编辑">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="editInstance(this, 'media_servers', '{{ server.id }}')" title="{{ _('编辑') }}">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <button type="button" class="btn btn-outline-danger" onclick="deleteInstance(this, 'media_servers', '{{ server.id }}')" title="删除">
+                                            <button type="button" class="btn btn-outline-danger" onclick="deleteInstance(this, 'media_servers', '{{ server.id }}')" title="{{ _('删除') }}">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
@@ -68,8 +68,8 @@
                     {% else %}
                     <div class="text-center py-4 text-muted empty-state" id="media-servers-empty">
                         <i class="bi bi-server display-4"></i>
-                        <p class="mt-2">还没有配置媒体服务器</p>
-                        <p class="small">点击上方"添加媒体服务器"开始配置</p>
+                        <p class="mt-2">{{ _('还没有配置媒体服务器') }}</p>
+                        <p class="small">{{ _('点击上方"添加媒体服务器"开始配置') }}</p>
                     </div>
                     {% endif %}
                 </div>
@@ -78,9 +78,9 @@
 
                 <!-- 下载器 -->
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="mb-0 text-primary"><i class="bi bi-download"></i> 下载器</h5>
+                    <h5 class="mb-0 text-primary"><i class="bi bi-download"></i> {{ _('下载器') }}</h5>
                     <button type="button" class="btn btn-success btn-sm" onclick="openAddModal('downloaders')">
-                        <i class="bi bi-plus-circle"></i> 添加下载器
+                        <i class="bi bi-plus-circle"></i> {{ _('添加下载器') }}
                     </button>
                 </div>
                 
@@ -103,29 +103,29 @@
                                                  alt="{{ downloader.type }}" class="instance-logo-small"
                                                  onerror="this.style.display='none'">
                                             <div>
-                                                <div class="fw-bold">{{ downloader.name or '未命名' }}</div>
+                                                <div class="fw-bold">{{ downloader.name or _('未命名') }}</div>
                                                 <small class="text-muted">{{ downloader.type | title }}</small>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <small class="text-muted">{{ downloader.url or 'URL未配置' }}</small>
+                                        <small class="text-muted">{{ downloader.url or _('URL未配置') }}</small>
                                     </div>
                                     <div class="col-md-2">
                                         <small class="text-success">
-                                            <div>默认：<span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}"></span></div>
-                                            <div>播放：<span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}"></span></div>
+                                            <div>{{ _('默认') }}：<span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}"></span></div>
+                                            <div>{{ _('播放') }}：<span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}"></span></div>
                                         </small>
                                     </div>
                                     <div class="col-md-2 text-end">
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <button type="button" class="btn btn-outline-primary" onclick="testInstanceFromList(this)" title="测试连接">
+                                            <button type="button" class="btn btn-outline-primary" onclick="testInstanceFromList(this)" title="{{ _('测试连接') }}">
                                                 <i class="bi bi-wifi"></i>
                                             </button>
-                                            <button type="button" class="btn btn-outline-secondary" onclick="editInstance(this, 'downloaders', '{{ downloader.id }}')" title="编辑">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="editInstance(this, 'downloaders', '{{ downloader.id }}')" title="{{ _('编辑') }}">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <button type="button" class="btn btn-outline-danger" onclick="deleteInstance(this, 'downloaders', '{{ downloader.id }}')" title="删除">
+                                            <button type="button" class="btn btn-outline-danger" onclick="deleteInstance(this, 'downloaders', '{{ downloader.id }}')" title="{{ _('删除') }}">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
@@ -137,19 +137,19 @@
                     {% else %}
                     <div class="text-center py-4 text-muted empty-state" id="downloaders-empty">
                         <i class="bi bi-download display-4"></i>
-                        <p class="mt-2">还没有配置下载器</p>
-                        <p class="small">点击上方"添加下载器"开始配置</p>
+                        <p class="mt-2">{{ _('还没有配置下载器') }}</p>
+                        <p class="small">{{ _('点击上方"添加下载器"开始配置') }}</p>
                     </div>
                     {% endif %}
                 </div>
 
                 <div class="alert alert-info mt-4">
                     <i class="bi bi-info-circle"></i>
-                    <strong>配置说明：</strong>
+                    <strong>{{ _('配置说明') }}：</strong>
                     <ul class="mb-0 mt-2">
-                        <li>每个媒体服务器可以设置独立的轮询间隔</li>
-                        <li>每个下载器可以设置独立的限速策略</li>
-                        <li>系统会根据所有启用服务器的播放状态，统一控制所有启用下载器的速率</li>
+                        <li>{{ _('每个媒体服务器可以设置独立的轮询间隔') }}</li>
+                        <li>{{ _('每个下载器可以设置独立的限速策略') }}</li>
+                        <li>{{ _('系统会根据所有启用服务器的播放状态，统一控制所有启用下载器的速率') }}</li>
                     </ul>
                 </div>
             </div>
@@ -162,7 +162,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="instanceModalLabel">添加实例</h5>
+                <h5 class="modal-title" id="instanceModalLabel">{{ _('添加实例') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -173,11 +173,11 @@
                     
                     <div class="row g-3">
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">实例名称 <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="instanceName" name="name" placeholder="例如：主服务器" required>
+                            <label class="form-label fw-bold">{{ _('实例名称') }} <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="instanceName" name="name" placeholder="{{ _('例如：主服务器') }}" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold">插件类型 <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">{{ _('插件类型') }} <span class="text-danger">*</span></label>
                             <div class="d-flex align-items-center">
                                 <img id="selectedTypeLogo" src="" alt="" class="instance-logo" style="display: none;">
                                 <select class="form-select" id="instanceTypeSelect" name="type" onchange="updateModalFields()" required>
@@ -190,7 +190,7 @@
                     <div class="mt-3">
                         <!-- 通用字段：URL（所有插件都需要） -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">服务器地址 <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold">{{ _('服务器地址') }} <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="instanceUrl" name="url" placeholder="http://192.168.1.10:8096" required>
                         </div>
                         
@@ -198,7 +198,7 @@
                         <div id="specificFields">
                             <!-- API Key (Emby/Jellyfin) -->
                             <div class="mb-3 field-api_key" style="display: none;">
-                                <label class="form-label fw-bold">API 密钥 <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold">{{ _('API 密钥') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="instanceApiKey" name="api_key">
                             </div>
                             
@@ -210,11 +210,11 @@
                             
                             <!-- Username/Password (qBittorrent/Transmission) -->
                             <div class="mb-3 field-username" style="display: none;">
-                                <label class="form-label fw-bold">用户名 <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold">{{ _('用户名') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="instanceUsername" name="username">
                             </div>
                             <div class="mb-3 field-password" style="display: none;">
-                                <label class="form-label fw-bold">密码 <span class="text-danger">*</span></label>
+                                <label class="form-label fw-bold">{{ _('密码') }} <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="instancePassword" name="password">
                             </div>
                         </div>
@@ -223,13 +223,13 @@
                         <div id="mediaServerSettings" style="display: none;">
                             <div class="polling-settings bg-light p-3 rounded">
                                 <h6 class="fw-bold text-info mb-2">
-                                    <i class="bi bi-clock-history"></i> 轮询设置
+                                    <i class="bi bi-clock-history"></i> {{ _('轮询设置') }}
                                 </h6>
                                 <div class="mb-3">
-                                    <label class="form-label">轮询间隔 (秒)</label>
+                                    <label class="form-label">{{ _('轮询间隔 (秒)') }}</label>
                                     <input type="number" class="form-control" id="instancePollInterval" name="poll_interval" value="15" min="5" max="300">
                                     <div class="form-text">
-                                        <i class="bi bi-info-circle"></i> 检查此服务器播放状态的频率，建议5-60秒
+                                        <i class="bi bi-info-circle"></i> {{ _('检查此服务器播放状态的频率，建议5-60秒') }}
                                     </div>
                                 </div>
                             </div>
@@ -239,28 +239,28 @@
                         <div id="downloaderSettings" style="display: none;">
                             <div class="speed-settings bg-light p-3 rounded">
                                 <h6 class="fw-bold text-primary mb-2">
-                                    <i class="bi bi-speedometer2"></i> 限速设置 (KB/s)
+                                    <i class="bi bi-speedometer2"></i> {{ _('限速设置 (KB/s)') }}
                                 </h6>
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <label class="form-label">默认下载</label>
-                                        <input type="number" class="form-control" id="instanceDefaultDownload" name="default_download_limit" value="0" min="0" placeholder="0=无限制">
+                                        <label class="form-label">{{ _('默认下载') }}</label>
+                                        <input type="number" class="form-control" id="instanceDefaultDownload" name="default_download_limit" value="0" min="0" placeholder="{{ _('0=无限制') }}">
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label">默认上传</label>
-                                        <input type="number" class="form-control" id="instanceDefaultUpload" name="default_upload_limit" value="0" min="0" placeholder="0=无限制">
+                                        <label class="form-label">{{ _('默认上传') }}</label>
+                                        <input type="number" class="form-control" id="instanceDefaultUpload" name="default_upload_limit" value="0" min="0" placeholder="{{ _('0=无限制') }}">
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label">播放时下载</label>
+                                        <label class="form-label">{{ _('播放时下载') }}</label>
                                         <input type="number" class="form-control" id="instanceBackupDownload" name="backup_download_limit" value="1024" min="0">
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label">播放时上传</label>
+                                        <label class="form-label">{{ _('播放时上传') }}</label>
                                         <input type="number" class="form-control" id="instanceBackupUpload" name="backup_upload_limit" value="512" min="0">
                                     </div>
                                 </div>
                                 <div class="form-text mt-2">
-                                    <i class="bi bi-info-circle"></i> 当有媒体播放时，自动切换到"播放时"限速
+                                    <i class="bi bi-info-circle"></i> {{ _('当有媒体播放时，自动切换到"播放时"限速') }}
                                 </div>
                             </div>
                         </div>
@@ -268,12 +268,12 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ _('取消') }}</button>
                 <button type="button" class="btn btn-primary" id="testConnectionBtn" onclick="testConnectionInModal()">
-                    <i class="bi bi-wifi"></i> 测试连接
+                    <i class="bi bi-wifi"></i> {{ _('测试连接') }}
                 </button>
                 <button type="button" class="btn btn-success" id="saveInstanceBtn" onclick="saveInstanceFromModal()">
-                    <i class="bi bi-check-lg"></i> 保存
+                    <i class="bi bi-check-lg"></i> {{ _('保存') }}
                 </button>
             </div>
         </div>
@@ -332,7 +332,7 @@ function openAddModal(instanceType) {
     const form = document.getElementById('instanceForm');
     
     // 设置标题
-    modalTitle.textContent = instanceType === 'media_servers' ? '添加媒体服务器' : '添加下载器';
+    modalTitle.textContent = instanceType === 'media_servers' ? '{{ _("添加媒体服务器") }}' : '{{ _("添加下载器") }}';
     
     // 重置表单
     form.reset();
@@ -361,7 +361,7 @@ function editInstance(button, instanceType, instanceId) {
     // 从全局配置中获取实例数据
     const instanceConfig = getInstanceConfigById(instanceType, instanceId);
     if (!instanceConfig) {
-        showToast('无法找到实例配置', 'error');
+        showToast('{{ _("无法找到实例配置") }}', 'error');
         return;
     }
 
@@ -376,7 +376,7 @@ function editInstance(button, instanceType, instanceId) {
     const form = document.getElementById('instanceForm');
     
     // 设置标题
-    modalTitle.textContent = instanceType === 'media_servers' ? '编辑媒体服务器' : '编辑下载器';
+    modalTitle.textContent = instanceType === 'media_servers' ? '{{ _("编辑媒体服务器") }}' : '{{ _("编辑下载器") }}';
     
     // 填充表单数据
     document.getElementById('instanceType').value = instanceType;
@@ -497,12 +497,12 @@ function testConnectionInModal() {
     
     // 基本验证
     if (!instanceConfig.name.trim()) {
-        showToast('请填写实例名称', 'warning');
+        showToast('{{ _("请填写实例名称") }}', 'warning');
         document.getElementById('instanceName').focus();
         return;
     }
     if (!instanceConfig.url.trim()) {
-        showToast('请填写服务器地址', 'warning');
+        showToast('{{ _("请填写服务器地址") }}', 'warning');
         document.getElementById('instanceUrl').focus();
         return;
     }
@@ -514,7 +514,7 @@ function testConnectionInModal() {
     
     const testBtn = document.getElementById('testConnectionBtn');
     testBtn.disabled = true;
-    testBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> 测试中...';
+    testBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> {{ _("测试中...") }}';
     
     fetch('/test_connection', {
         method: 'POST',
@@ -527,17 +527,17 @@ function testConnectionInModal() {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            showToast(`${instanceConfig.name} 连接成功`, 'success', '连接测试');
+            showToast(`${instanceConfig.name} {{ _("连接成功") }}`, 'success', '{{ _("连接测试") }}');
         } else {
-            showToast(`${instanceConfig.name} 连接失败: ${data.message}`, 'error', '连接测试');
+            showToast(`${instanceConfig.name} {{ _("连接失败") }}: ${data.message}`, 'error', '{{ _("连接测试") }}');
         }
     })
     .catch(error => {
-        showToast(`连接测试时发生网络错误: ${error.message}`, 'error', '网络错误');
+        showToast(`{{ _("连接测试时发生网络错误") }}: ${error.message}`, 'error', '{{ _("网络错误") }}');
     })
     .finally(() => {
         testBtn.disabled = false;
-        testBtn.innerHTML = '<i class="bi bi-wifi"></i> 测试连接';
+        testBtn.innerHTML = '<i class="bi bi-wifi"></i> {{ _("测试连接") }}';
     });
 }
 
@@ -570,12 +570,12 @@ function saveInstanceFromModal() {
     
     // 基本验证
     if (!instanceConfig.name.trim()) {
-        showToast('请填写实例名称', 'warning');
+        showToast('{{ _("请填写实例名称") }}', 'warning');
         document.getElementById('instanceName').focus();
         return;
     }
     if (!instanceConfig.url.trim()) {
-        showToast('请填写服务器地址', 'warning');
+        showToast('{{ _("请填写服务器地址") }}', 'warning');
         document.getElementById('instanceUrl').focus();
         return;
     }
@@ -587,7 +587,7 @@ function saveInstanceFromModal() {
     
     const saveBtn = document.getElementById('saveInstanceBtn');
     saveBtn.disabled = true;
-    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> 保存中...';
+    saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> {{ _("保存中...") }}';
     
     fetch('/save_instance', {
         method: 'POST',
@@ -600,7 +600,7 @@ function saveInstanceFromModal() {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            showToast(`${instanceConfig.name} 保存成功`, 'success', '配置保存');
+            showToast(`${instanceConfig.name} {{ _("保存成功") }}`, 'success', '{{ _("配置保存") }}');
             
             // 关闭弹框
             const modal = bootstrap.Modal.getInstance(document.getElementById('instanceModal'));
@@ -611,15 +611,15 @@ function saveInstanceFromModal() {
                 location.reload();
             }, 500);
         } else {
-            showToast(`保存失败: ${data.message}`, 'error', '配置保存');
+            showToast(`{{ _("保存失败") }}: ${data.message}`, 'error', '{{ _("配置保存") }}');
         }
     })
     .catch(error => {
-        showToast(`保存时发生网络错误: ${error.message}`, 'error', '网络错误');
+        showToast(`{{ _("保存时发生网络错误") }}: ${error.message}`, 'error', '{{ _("网络错误") }}');
     })
     .finally(() => {
         saveBtn.disabled = false;
-        saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> 保存';
+        saveBtn.innerHTML = '<i class="bi bi-check-lg"></i> {{ _("保存") }}';
     });
 }
 
@@ -631,7 +631,7 @@ function testInstanceFromList(button) {
     
     const instanceConfig = getInstanceConfigById(instanceType, instanceId);
     if (!instanceConfig) {
-        showToast('无法找到实例配置', 'error');
+        showToast('{{ _("无法找到实例配置") }}', 'error');
         return;
     }
 
@@ -649,13 +649,13 @@ function testInstanceFromList(button) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            showToast(`${instanceConfig.name || instanceConfig.type} 连接成功`, 'success', '连接测试');
+            showToast(`${instanceConfig.name || instanceConfig.type} {{ _("连接成功") }}`, 'success', '{{ _("连接测试") }}');
         } else {
-            showToast(`${instanceConfig.name || instanceConfig.type} 连接失败: ${data.message}`, 'error', '连接测试');
+            showToast(`${instanceConfig.name || instanceConfig.type} {{ _("连接失败") }}: ${data.message}`, 'error', '{{ _("连接测试") }}');
         }
     })
     .catch(error => {
-        showToast(`连接测试时发生网络错误: ${error.message}`, 'error', '网络错误');
+        showToast(`{{ _("连接测试时发生网络错误") }}: ${error.message}`, 'error', '{{ _("网络错误") }}');
     })
     .finally(() => {
         button.disabled = false;
@@ -667,7 +667,7 @@ function testInstanceFromList(button) {
 function toggleInstance(checkbox, instanceType, instanceId) {
     const instanceConfig = getInstanceConfigById(instanceType, instanceId);
     if (!instanceConfig) {
-        showToast('无法找到实例配置', 'error');
+        showToast('{{ _("无法找到实例配置") }}', 'error');
         checkbox.checked = !checkbox.checked; // 恢复原状态
         return;
     }
@@ -685,14 +685,14 @@ function toggleInstance(checkbox, instanceType, instanceId) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            showToast(`${instanceConfig.name} ${checkbox.checked ? '已启用' : '已禁用'}`, 'success');
+            showToast(`${instanceConfig.name} ${checkbox.checked ? '{{ _("已启用") }}' : '{{ _("已禁用") }}'}`, 'success');
         } else {
-            showToast(`状态更新失败: ${data.message}`, 'error');
+            showToast(`{{ _("状态更新失败") }}: ${data.message}`, 'error');
             checkbox.checked = !checkbox.checked; // 恢复原状态
         }
     })
     .catch(error => {
-        showToast(`状态更新时发生网络错误: ${error.message}`, 'error');
+        showToast(`{{ _("状态更新时发生网络错误") }}: ${error.message}`, 'error');
         checkbox.checked = !checkbox.checked; // 恢复原状态
     });
 }
@@ -703,11 +703,11 @@ function deleteInstance(button, instanceType, instanceId) {
     const instanceConfig = getInstanceConfigById(instanceType, instanceId);
     
     if (!instanceConfig) {
-        showToast('无法找到实例配置', 'error');
+        showToast('{{ _("无法找到实例配置") }}', 'error');
         return;
     }
     
-    if (confirm(`确定要删除 "${instanceConfig.name || '未命名'}" 吗？`)) {
+    if (confirm(`{{ _("确定要删除") }} "${instanceConfig.name || _('未命名')}" {{ _("吗？") }}`)) {
         fetch('/delete_instance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -719,7 +719,7 @@ function deleteInstance(button, instanceType, instanceId) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
-                showToast(`${instanceConfig.name} 已删除`, 'success');
+                showToast(`${instanceConfig.name} {{ _("已删除") }}`, 'success');
                 listItem.remove();
                 
                 // 检查是否需要显示空状态
@@ -731,11 +731,11 @@ function deleteInstance(button, instanceType, instanceId) {
                     }
                 }
             } else {
-                showToast(`删除失败: ${data.message}`, 'error');
+                showToast(`{{ _("删除失败") }}: ${data.message}`, 'error');
             }
         })
         .catch(error => {
-            showToast(`删除时发生网络错误: ${error.message}`, 'error');
+            showToast(`{{ _("删除时发生网络错误") }}: ${error.message}`, 'error');
         });
     }
 }
@@ -761,13 +761,13 @@ function validateRequiredFields(instanceConfig) {
     if (instanceType === 'media_servers') {
         if (selectedType === 'emby' || selectedType === 'jellyfin') {
             if (!instanceConfig.api_key || !instanceConfig.api_key.trim()) {
-                showToast('请填写API密钥', 'warning');
+                showToast('{{ _("请填写API密钥") }}', 'warning');
                 document.getElementById('instanceApiKey').focus();
                 return false;
             }
         } else if (selectedType === 'plex') {
             if (!instanceConfig.token || !instanceConfig.token.trim()) {
-                showToast('请填写X-Plex-Token', 'warning');
+                showToast('{{ _("请填写X-Plex-Token") }}', 'warning');
                 document.getElementById('instanceToken').focus();
                 return false;
             }
@@ -775,12 +775,12 @@ function validateRequiredFields(instanceConfig) {
     } else if (instanceType === 'downloaders') {
         if (selectedType === 'qbittorrent' || selectedType === 'transmission' || selectedType === 'clouddrive2') {
             if (!instanceConfig.username || !instanceConfig.username.trim()) {
-                showToast('请填写用户名', 'warning');
+                showToast('{{ _("请填写用户名") }}', 'warning');
                 document.getElementById('instanceUsername').focus();
                 return false;
             }
             if (!instanceConfig.password || !instanceConfig.password.trim()) {
-                showToast('请填写密码', 'warning');
+                showToast('{{ _("请填写密码") }}', 'warning');
                 document.getElementById('instancePassword').focus();
                 return false;
             }

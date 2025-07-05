@@ -1,6 +1,7 @@
 import re
 import uuid
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, current_app, session
+from flask_babel import _, get_locale
 from .services.config_manager import config_manager
 from .services.log_manager import log_manager
 from .services.scheduler import scheduler
@@ -11,6 +12,15 @@ main = Blueprint('main', __name__)
 def index():
     settings = config_manager.get_settings()
     return render_template('index.html', settings=settings)
+
+@main.route('/set_language/<language>')
+def set_language(language=None):
+    """设置用户语言偏好"""
+    if language and language in current_app.config['LANGUAGES']:
+        session['language'] = language
+        # 同时更新配置文件中的语言设置，用于后台任务
+        config_manager.set_language(language)
+    return redirect(request.referrer or url_for('main.index'))
 
 def parse_form_data(form_data):
     """
@@ -122,10 +132,10 @@ def test_connection():
     plugin_name = instance_config.get("type", "UNKNOWN").upper()
     log_event_type = f"TEST_{plugin_name}"
     if success:
-        log_manager.log_event(log_event_type, f"连接测试成功: {message}")
+        log_manager.log_formatted_event(log_event_type, "连接测试成功: {0}", message)
         return jsonify({'status': 'success', 'message': f'连接成功: {message}'})
     else:
-        log_manager.log_event(f"{log_event_type}_ERROR", f"连接测试失败: {message}")
+        log_manager.log_formatted_event(f"{log_event_type}_ERROR", "连接测试失败: {0}", message)
         return jsonify({'status': 'error', 'message': f'连接失败: {message}'}), 400
 
 @main.route('/api/media_server/sessions')
@@ -291,10 +301,10 @@ def save_instance():
         # 更新或添加实例
         if found_index >= 0:
             settings[instance_type][found_index] = instance_config
-            log_manager.log_event("CONFIG", f"更新了{instance_config.get('name', '未命名')}实例配置")
+            log_manager.log_formatted_event("CONFIG", "更新了{0}实例配置", instance_config.get('name', '未命名'))
         else:
             settings[instance_type].append(instance_config)
-            log_manager.log_event("CONFIG", f"添加了新的{instance_config.get('name', '未命名')}实例")
+            log_manager.log_formatted_event("CONFIG", "添加了新的{0}实例", instance_config.get('name', '未命名'))
         
         # 保存设置
         if config_manager.save_settings(settings):
@@ -346,7 +356,7 @@ def delete_instance():
             
             # 保存设置
             if config_manager.save_settings(settings):
-                log_manager.log_event("CONFIG", f"删除了{instance_name}实例")
+                log_manager.log_formatted_event("CONFIG", "删除了{0}实例", instance_name)
                 # 重启调度器以应用新配置
                 scheduler.restart()
                 return jsonify({

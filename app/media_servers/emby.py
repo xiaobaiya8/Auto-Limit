@@ -34,10 +34,10 @@ class Emby(MediaServerBase):
                             })
                 return active_playing_sessions
             else:
-                log_manager.log_event("EMBY_ERROR", f"获取Emby会话失败: HTTP {response.status_code}")
+                log_manager.log_formatted_event("EMBY_ERROR", "获取Emby会话失败: HTTP {0}", response.status_code)
                 return None
         except requests.exceptions.RequestException as e:
-            log_manager.log_event("EMBY_ERROR", f"获取Emby会话时出错: {str(e)}")
+            log_manager.log_formatted_event("EMBY_ERROR", "获取Emby会话时出错: {0}", str(e))
             return None
 
     def test_connection(self):
@@ -147,8 +147,8 @@ class Emby(MediaServerBase):
                     'sessions': session_speeds
                 }
             else:
-                log_manager.log_event("EMBY_ERROR", f"获取Emby网络速度失败: HTTP {response.status_code}")
+                log_manager.log_formatted_event("EMBY_ERROR", "获取Emby网络速度失败: HTTP {0}", response.status_code)
                 return None
         except requests.exceptions.RequestException as e:
-            log_manager.log_event("EMBY_ERROR", f"获取Emby网络速度时出错: {str(e)}")
+            log_manager.log_formatted_event("EMBY_ERROR", "获取Emby网络速度时出错: {0}", str(e))
             return None 

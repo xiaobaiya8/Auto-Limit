@@ -1,0 +1,651 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-07-05 15:25+0800\n"
+"PO-Revision-Date: 2025-07-05 15:22+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/templates/base.html:6
+msgid "Auto-Limit控制器"
+msgstr "Auto-Limit控制器"
+
+#: app/templates/base.html:142
+msgid "首页"
+msgstr "首页"
+
+#: app/templates/base.html:145
+msgid "配置"
+msgstr "配置"
+
+#: app/templates/base.html:148
+msgid "日志"
+msgstr "日志"
+
+#: app/templates/base.html:152
+msgid "语言"
+msgstr "语言"
+
+#: app/templates/base.html:191
+msgid "无限制"
+msgstr "无限制"
+
+#: app/templates/base.html:208
+msgid "未知"
+msgstr "未知"
+
+#: app/templates/index.html:9
+msgid "系统状态"
+msgstr "系统状态"
+
+#: app/templates/index.html:19
+msgid "播放状态"
+msgstr "播放状态"
+
+#: app/templates/index.html:20
+msgid "加载中..."
+msgstr "加载中..."
+
+#: app/templates/index.html:28
+msgid "媒体服务器"
+msgstr "媒体服务器"
+
+#: app/templates/index.html:29 app/templates/index.html:38
+msgid "个已启用"
+msgstr "个已启用"
+
+#: app/templates/index.html:37
+msgid "下载器"
+msgstr "下载器"
+
+#: app/templates/index.html:49
+msgid "媒体服务器实例"
+msgstr "媒体服务器实例"
+
+#: app/templates/index.html:60
+msgid "未命名"
+msgstr "未命名"
+
+#: app/templates/index.html:63
+msgid "URL未配置"
+msgstr "URL未配置"
+
+#: app/templates/index.html:64
+msgid "轮询间隔"
+msgstr "轮询间隔"
+
+#: app/templates/index.html:64
+msgid "秒"
+msgstr "秒"
+
+# 新增翻译条目
+
+msgid "系统配置"
+msgstr "系统配置"
+
+msgid "添加媒体服务器"
+msgstr "添加媒体服务器"
+
+msgid "秒轮询"
+msgstr "秒轮询"
+
+msgid "测试连接"
+msgstr "测试连接"
+
+msgid "编辑"
+msgstr "编辑"
+
+msgid "删除"
+msgstr "删除"
+
+msgid "还没有配置媒体服务器"
+msgstr "还没有配置媒体服务器"
+
+msgid "点击上方"添加媒体服务器"开始配置"
+msgstr "点击上方"添加媒体服务器"开始配置"
+
+msgid "添加下载器"
+msgstr "添加下载器"
+
+msgid "默认"
+msgstr "默认"
+
+msgid "播放"
+msgstr "播放"
+
+msgid "还没有配置下载器"
+msgstr "还没有配置下载器"
+
+msgid "点击上方"添加下载器"开始配置"
+msgstr "点击上方"添加下载器"开始配置"
+
+msgid "配置说明"
+msgstr "配置说明"
+
+msgid "每个媒体服务器可以设置独立的轮询间隔"
+msgstr "每个媒体服务器可以设置独立的轮询间隔"
+
+msgid "每个下载器可以设置独立的限速策略"
+msgstr "每个下载器可以设置独立的限速策略"
+
+msgid "系统会根据所有启用服务器的播放状态，统一控制所有启用下载器的速率"
+msgstr "系统会根据所有启用服务器的播放状态，统一控制所有启用下载器的速率"
+
+msgid "添加实例"
+msgstr "添加实例"
+
+msgid "实例名称"
+msgstr "实例名称"
+
+msgid "例如：主服务器"
+msgstr "例如：主服务器"
+
+msgid "插件类型"
+msgstr "插件类型"
+
+msgid "服务器地址"
+msgstr "服务器地址"
+
+msgid "API 密钥"
+msgstr "API 密钥"
+
+msgid "用户名"
+msgstr "用户名"
+
+msgid "密码"
+msgstr "密码"
+
+msgid "轮询设置"
+msgstr "轮询设置"
+
+msgid "轮询间隔 (秒)"
+msgstr "轮询间隔 (秒)"
+
+msgid "检查此服务器播放状态的频率，建议5-60秒"
+msgstr "检查此服务器播放状态的频率，建议5-60秒"
+
+msgid "限速设置 (KB/s)"
+msgstr "限速设置 (KB/s)"
+
+msgid "默认下载"
+msgstr "默认下载"
+
+msgid "0=无限制"
+msgstr "0=无限制"
+
+msgid "默认上传"
+msgstr "默认上传"
+
+msgid "播放时下载"
+msgstr "播放时下载"
+
+msgid "播放时上传"
+msgstr "播放时上传"
+
+msgid "当有媒体播放时，自动切换到"播放时"限速"
+msgstr "当有媒体播放时，自动切换到"播放时"限速"
+
+msgid "取消"
+msgstr "取消"
+
+msgid "保存"
+msgstr "保存"
+
+msgid "添加媒体服务器"
+msgstr "添加媒体服务器"
+
+msgid "添加下载器"
+msgstr "添加下载器"
+
+msgid "无法找到实例配置"
+msgstr "无法找到实例配置"
+
+msgid "编辑媒体服务器"
+msgstr "编辑媒体服务器"
+
+msgid "编辑下载器"
+msgstr "编辑下载器"
+
+msgid "请填写实例名称"
+msgstr "请填写实例名称"
+
+msgid "请填写服务器地址"
+msgstr "请填写服务器地址"
+
+msgid "测试中..."
+msgstr "测试中..."
+
+msgid "连接成功"
+msgstr "连接成功"
+
+msgid "连接测试"
+msgstr "连接测试"
+
+msgid "连接失败"
+msgstr "连接失败"
+
+msgid "连接测试时发生网络错误"
+msgstr "连接测试时发生网络错误"
+
+msgid "网络错误"
+msgstr "网络错误"
+
+msgid "保存中..."
+msgstr "保存中..."
+
+msgid "保存成功"
+msgstr "保存成功"
+
+msgid "配置保存"
+msgstr "配置保存"
+
+msgid "保存失败"
+msgstr "保存失败"
+
+msgid "保存时发生网络错误"
+msgstr "保存时发生网络错误"
+
+msgid "已启用"
+msgstr "已启用"
+
+msgid "已禁用"
+msgstr "已禁用"
+
+msgid "状态更新失败"
+msgstr "状态更新失败"
+
+msgid "状态更新时发生网络错误"
+msgstr "状态更新时发生网络错误"
+
+msgid "确定要删除"
+msgstr "确定要删除"
+
+msgid "吗？"
+msgstr "吗？"
+
+msgid "已删除"
+msgstr "已删除"
+
+msgid "删除失败"
+msgstr "删除失败"
+
+msgid "删除时发生网络错误"
+msgstr "删除时发生网络错误"
+
+msgid "请填写API密钥"
+msgstr "请填写API密钥"
+
+msgid "请填写X-Plex-Token"
+msgstr "请填写X-Plex-Token"
+
+msgid "请填写用户名"
+msgstr "请填写用户名"
+
+msgid "请填写密码"
+msgstr "请填写密码"
+
+# 日志页面
+msgid "系统日志 (最近500条)"
+msgstr "系统日志 (最近500条)"
+
+msgid "刷新"
+msgstr "刷新"
+
+msgid "时间"
+msgstr "时间"
+
+msgid "类型"
+msgstr "类型"
+
+msgid "消息"
+msgstr "消息"
+
+msgid "速率变更"
+msgstr "速率变更"
+
+msgid "错误"
+msgstr "错误"
+
+msgid "测试"
+msgstr "测试"
+
+msgid "暂无日志记录"
+msgstr "暂无日志记录"
+
+msgid "系统运行一段时间后会自动生成日志"
+msgstr "系统运行一段时间后会自动生成日志"
+
+# 主页新增
+msgid "加载状态中..."
+msgstr "加载状态中..."
+
+msgid "没有已启用的媒体服务器"
+msgstr "没有已启用的媒体服务器"
+
+msgid "前往配置"
+msgstr "前往配置"
+
+msgid "下载器实例"
+msgstr "下载器实例"
+
+msgid "没有已启用的下载器"
+msgstr "没有已启用的下载器"
+
+msgid "调度器状态"
+msgstr "调度器状态"
+
+msgid "运行中"
+msgstr "运行中"
+
+msgid "当前限速模式"
+msgstr "当前限速模式"
+
+msgid "检测中"
+msgstr "检测中"
+
+msgid "全局速度"
+msgstr "全局速度"
+
+msgid "快速操作"
+msgstr "快速操作"
+
+msgid "查看日志"
+msgstr "查看日志"
+
+msgid "有"
+msgstr "有"
+
+msgid "个活跃播放"
+msgstr "个活跃播放"
+
+msgid "播放时限速"
+msgstr "播放时限速"
+
+msgid "无播放活动"
+msgstr "无播放活动"
+
+msgid "默认限速"
+msgstr "默认限速"
+
+msgid "状态获取失败"
+msgstr "状态获取失败"
+
+msgid "连接失败"
+msgstr "连接失败"
+
+msgid "异常"
+msgstr "异常"
+
+msgid "实际速度"
+msgstr "实际速度"
+
+msgid "获取中..."
+msgstr "获取中..."
+
+msgid "活跃播放"
+msgstr "活跃播放"
+
+msgid "个会话"
+msgstr "个会话"
+
+msgid "注：显示媒体文件比特率，非实时网络速度"
+msgstr "注：显示媒体文件比特率，非实时网络速度"
+
+msgid "无法在配置中找到该实例"
+msgstr "无法在配置中找到该实例"
+
+msgid "配置错误"
+msgstr "配置错误"
+
+# 实例卡片
+msgid "新实例"
+msgstr "新实例"
+
+msgid "保存此实例"
+msgstr "保存此实例"
+
+msgid "删除实例"
+msgstr "删除实例"
+
+# 日志消息翻译
+msgid "调度器已启动"
+msgstr "调度器已启动"
+
+msgid "调度器已停止"
+msgstr "调度器已停止"
+
+msgid "所有播放已停止"
+msgstr "所有播放已停止"
+
+msgid "速率限制设置成功"
+msgstr "速率限制设置成功"
+
+msgid "速率设置失败"
+msgstr "速率设置失败"
+
+msgid "连接测试成功"
+msgstr "连接测试成功"
+
+msgid "连接测试失败"
+msgstr "连接测试失败"
+
+msgid "配置已更新，调度器将重启以应用新设置"
+msgstr "配置已更新，调度器将重启以应用新设置"
+
+msgid "qBittorrent登录失败"
+msgstr "qBittorrent登录失败"
+
+msgid "qBittorrent连接错误"
+msgstr "qBittorrent连接错误"
+
+msgid "速率限制设置失败"
+msgstr "速率限制设置失败"
+
+msgid "设置速率限制时出错"
+msgstr "设置速率限制时出错"
+
+msgid "获取qBittorrent速度信息失败"
+msgstr "获取qBittorrent速度信息失败"
+
+msgid "获取qBittorrent速度信息时出错"
+msgstr "获取qBittorrent速度信息时出错"
+
+msgid "获取Transmission会话ID失败"
+msgstr "获取Transmission会话ID失败"
+
+msgid "获取Transmission会话ID时出错"
+msgstr "获取Transmission会话ID时出错"
+
+msgid "Transmission响应不是有效的JSON"
+msgstr "Transmission响应不是有效的JSON"
+
+msgid "Transmission RPC请求失败"
+msgstr "Transmission RPC请求失败"
+
+msgid "Transmission RPC请求时出错"
+msgstr "Transmission RPC请求时出错"
+
+msgid "Transmission速率限制设置失败"
+msgstr "Transmission速率限制设置失败"
+
+msgid "Transmission设置速率限制时出错"
+msgstr "Transmission设置速率限制时出错"
+
+msgid "获取Transmission统计信息时出错"
+msgstr "获取Transmission统计信息时出错"
+
+msgid "获取Transmission速度信息失败"
+msgstr "获取Transmission速度信息失败"
+
+msgid "获取Transmission速度信息时出错"
+msgstr "获取Transmission速度信息时出错"
+
+msgid "CloudDrive2 token已过期，需要重新登录"
+msgstr "CloudDrive2 token已过期，需要重新登录"
+
+msgid "gRPC请求失败"
+msgstr "gRPC请求失败"
+
+msgid "保存CloudDrive2 token时出错"
+msgstr "保存CloudDrive2 token时出错"
+
+msgid "CloudDrive2重新登录成功"
+msgstr "CloudDrive2重新登录成功"
+
+msgid "CloudDrive2登录成功"
+msgstr "CloudDrive2登录成功"
+
+msgid "CloudDrive2登录失败"
+msgstr "CloudDrive2登录失败"
+
+msgid "CloudDrive2登录异常"
+msgstr "CloudDrive2登录异常"
+
+msgid "CloudDrive2速率限制设置失败"
+msgstr "CloudDrive2速率限制设置失败"
+
+msgid "CloudDrive2设置速率限制时出错"
+msgstr "CloudDrive2设置速率限制时出错"
+
+msgid "获取CloudDrive2速度信息时出错"
+msgstr "获取CloudDrive2速度信息时出错"
+
+msgid "获取Emby会话失败"
+msgstr "获取Emby会话失败"
+
+msgid "获取Emby会话时出错"
+msgstr "获取Emby会话时出错"
+
+msgid "获取Emby网络速度失败"
+msgstr "获取Emby网络速度失败"
+
+msgid "获取Emby网络速度时出错"
+msgstr "获取Emby网络速度时出错"
+
+msgid "实例配置缺少'type'字段"
+msgstr "实例配置缺少'type'字段"
+
+msgid "加载插件失败"
+msgstr "加载插件失败"
+
+# 复杂日志消息模板
+msgid "为服务器 {0} 设置 {1} 秒轮询间隔"
+msgstr "为服务器 {0} 设置 {1} 秒轮询间隔"
+
+msgid "检测到 {0} 个总活跃播放"
+msgstr "检测到 {0} 个总活跃播放"
+
+msgid "{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"
+msgstr "{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"
+
+msgid "{0} 速率设置失败"
+msgstr "{0} 速率设置失败"
+
+msgid "连接测试成功: {0}"
+msgstr "连接测试成功: {0}"
+
+msgid "连接测试失败: {0}"
+msgstr "连接测试失败: {0}"
+
+msgid "更新了{0}实例配置"
+msgstr "更新了{0}实例配置"
+
+msgid "添加了新的{0}实例"
+msgstr "添加了新的{0}实例"
+
+msgid "删除了{0}实例"
+msgstr "删除了{0}实例"
+
+msgid "获取Emby会话失败: HTTP {0}"
+msgstr "获取Emby会话失败: HTTP {0}"
+
+msgid "获取Emby会话时出错: {0}"
+msgstr "获取Emby会话时出错: {0}"
+
+msgid "获取Emby网络速度失败: HTTP {0}"
+msgstr "获取Emby网络速度失败: HTTP {0}"
+
+msgid "获取Emby网络速度时出错: {0}"
+msgstr "获取Emby网络速度时出错: {0}"
+
+msgid "实例配置缺少'type'字段: {0}"
+msgstr "实例配置缺少'type'字段: {0}"
+
+msgid "加载插件 {0} 失败: {1}"
+msgstr "加载插件 {0} 失败: {1}"
+
+msgid "qBittorrent登录失败: {0}"
+msgstr "qBittorrent登录失败: {0}"
+
+msgid "qBittorrent连接错误: {0}"
+msgstr "qBittorrent连接错误: {0}"
+
+msgid "速率限制设置失败: {0}"
+msgstr "速率限制设置失败: {0}"
+
+msgid "设置速率限制时出错: {0}"
+msgstr "设置速率限制时出错: {0}"
+
+msgid "获取qBittorrent速度信息失败: HTTP {0}"
+msgstr "获取qBittorrent速度信息失败: HTTP {0}"
+
+msgid "获取qBittorrent速度信息时出错: {0}"
+msgstr "获取qBittorrent速度信息时出错: {0}"
+
+msgid "获取Transmission会话ID失败: HTTP {0}"
+msgstr "获取Transmission会话ID失败: HTTP {0}"
+
+msgid "获取Transmission会话ID时出错: {0}"
+msgstr "获取Transmission会话ID时出错: {0}"
+
+msgid "Transmission RPC请求失败: HTTP {0}"
+msgstr "Transmission RPC请求失败: HTTP {0}"
+
+msgid "Transmission RPC请求时出错: {0}"
+msgstr "Transmission RPC请求时出错: {0}"
+
+msgid "Transmission速率限制设置失败: {0}"
+msgstr "Transmission速率限制设置失败: {0}"
+
+msgid "Transmission设置速率限制时出错: {0}"
+msgstr "Transmission设置速率限制时出错: {0}"
+
+msgid "获取Transmission统计信息时出错: {0}"
+msgstr "获取Transmission统计信息时出错: {0}"
+
+msgid "获取Transmission速度信息失败: {0}"
+msgstr "获取Transmission速度信息失败: {0}"
+
+msgid "获取Transmission速度信息时出错: {0}"
+msgstr "获取Transmission速度信息时出错: {0}"
+
+msgid "gRPC请求失败: {0}"
+msgstr "gRPC请求失败: {0}"
+
+msgid "保存CloudDrive2 token时出错: {0}"
+msgstr "保存CloudDrive2 token时出错: {0}"
+
+msgid "CloudDrive2登录失败: {0}"
+msgstr "CloudDrive2登录失败: {0}"
+
+msgid "CloudDrive2登录异常: {0}"
+msgstr "CloudDrive2登录异常: {0}"
+
+msgid "CloudDrive2设置速率限制时出错: {0}"
+msgstr "CloudDrive2设置速率限制时出错: {0}"
+
+msgid "获取CloudDrive2速度信息时出错: {0}"
+msgstr "获取CloudDrive2速度信息时出错: {0}"
+

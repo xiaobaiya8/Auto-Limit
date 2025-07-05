@@ -148,19 +148,19 @@ class CloudDrive2(DownloaderBase):
             # 检查是否是401错误（token过期）
             try:
                 if hasattr(e, 'response') and e.response and e.response.status_code == 401 and service_method != 'GetToken':
-                    log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2 token已过期，需要重新登录")
+                    log_manager.log_event("CLOUDDRIVE2", "CloudDrive2 token已过期，需要重新登录")
                     # 清除过期的token
                     self.token = None
                     self._save_token_to_config(None)
                 elif 'response' in locals() and response.status_code == 401 and service_method != 'GetToken':
-                    log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2 token已过期，需要重新登录")
+                    log_manager.log_event("CLOUDDRIVE2", "CloudDrive2 token已过期，需要重新登录")
                     # 清除过期的token
                     self.token = None
                     self._save_token_to_config(None)
             except:
                 pass
             
-            log_manager.log_event("CLOUDDRIVE2_ERROR", f"gRPC请求失败: {str(e)}")
+            log_manager.log_formatted_event("CLOUDDRIVE2_ERROR", "gRPC请求失败: {0}", str(e))
             return {}
     
     def _save_token_to_config(self, token):
@@ -187,7 +187,7 @@ class CloudDrive2(DownloaderBase):
                 config_manager.save_settings(settings)
             
         except Exception as e:
-            log_manager.log_event("CLOUDDRIVE2_ERROR", f"保存CloudDrive2 token时出错: {str(e)}")
+            log_manager.log_formatted_event("CLOUDDRIVE2_ERROR", "保存CloudDrive2 token时出错: {0}", str(e))
 
     def login(self):
         """登录获取Token"""
@@ -211,17 +211,17 @@ class CloudDrive2(DownloaderBase):
                 self._save_token_to_config(new_token)
                 
                 if old_token:
-                    log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2重新登录成功")
+                    log_manager.log_formatted_event("CLOUDDRIVE2", f"CloudDrive2重新登录成功")
                 else:
-                    log_manager.log_event("CLOUDDRIVE2", f"CloudDrive2登录成功")
+                    log_manager.log_formatted_event("CLOUDDRIVE2", f"CloudDrive2登录成功")
                 return True
             else:
                 error_msg = response.get(2, '未知错误')
-                log_manager.log_event("CLOUDDRIVE2_ERROR", f"CloudDrive2登录失败: {error_msg}")
+                log_manager.log_formatted_event("CLOUDDRIVE2_ERROR", "CloudDrive2登录失败: {0}", error_msg)
                 return False
                 
         except Exception as e:
-            log_manager.log_event("CLOUDDRIVE2_ERROR", f"CloudDrive2登录异常: {str(e)}")
+            log_manager.log_formatted_event("CLOUDDRIVE2_ERROR", "CloudDrive2登录异常: {0}", str(e))
             return False
     
     def set_speed_limits(self, download_limit_kb, upload_limit_kb):
@@ -271,11 +271,11 @@ class CloudDrive2(DownloaderBase):
                 # 不再记录成功日志，由调度器统一记录
                 return True
             else:
-                log_manager.log_event("CLOUDDRIVE2_ERROR", f"CloudDrive2速率限制设置失败")
+                log_manager.log_event("CLOUDDRIVE2_ERROR", "CloudDrive2速率限制设置失败")
                 return False
                 
         except Exception as e:
-            log_manager.log_event("CLOUDDRIVE2_ERROR", f"CloudDrive2设置速率限制时出错: {str(e)}")
+            log_manager.log_formatted_event("CLOUDDRIVE2_ERROR", "CloudDrive2设置速率限制时出错: {0}", str(e))
             return False
     
     def test_connection(self):
@@ -326,7 +326,7 @@ class CloudDrive2(DownloaderBase):
                     'upload_speed': upload_speed
                 }
             except Exception as e:
-                log_manager.log_event("CLOUDDRIVE2_ERROR", f"获取CloudDrive2速度信息时出错: {str(e)}")
+                log_manager.log_formatted_event("CLOUDDRIVE2_ERROR", "获取CloudDrive2速度信息时出错: {0}", str(e))
                 return None
         
         try:
@@ -343,5 +343,5 @@ class CloudDrive2(DownloaderBase):
             return speeds
             
         except Exception as e:
-            log_manager.log_event("CLOUDDRIVE2_ERROR", f"获取CloudDrive2速度信息时出错: {str(e)}")
+            log_manager.log_formatted_event("CLOUDDRIVE2_ERROR", "获取CloudDrive2速度信息时出错: {0}", str(e))
             return None 

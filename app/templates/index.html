@@ -6,7 +6,7 @@
         <div class="card">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-activity"></i> 系统状态
+                    <i class="bi bi-activity"></i> {{ _('系统状态') }}
                 </h5>
             </div>
             <div class="card-body">
@@ -16,8 +16,8 @@
                         <div class="d-flex align-items-center">
                             <div id="playback-status-indicator" class="status-indicator status-inactive me-2"></div>
                             <div>
-                                <h6 class="mb-0">播放状态</h6>
-                                <span id="playback-status-text" class="text-muted">加载中...</span>
+                                <h6 class="mb-0">{{ _('播放状态') }}</h6>
+                                <span id="playback-status-text" class="text-muted">{{ _('加载中...') }}</span>
                             </div>
                         </div>
                     </div>
@@ -25,8 +25,8 @@
                         <div class="d-flex align-items-center">
                             <i class="bi bi-server text-primary me-2" style="font-size: 1.5rem;"></i>
                             <div>
-                                <h6 class="mb-0">媒体服务器</h6>
-                                <span class="text-muted">{{ settings.media_servers | selectattr('enabled') | list | length }} 个已启用</span>
+                                <h6 class="mb-0">{{ _('媒体服务器') }}</h6>
+                                <span class="text-muted">{{ settings.media_servers | selectattr('enabled') | list | length }} {{ _('个已启用') }}</span>
                             </div>
                         </div>
                     </div>
@@ -34,8 +34,8 @@
                         <div class="d-flex align-items-center">
                             <i class="bi bi-download text-success me-2" style="font-size: 1.5rem;"></i>
                             <div>
-                                <h6 class="mb-0">下载器</h6>
-                                <span class="text-muted">{{ settings.downloaders | selectattr('enabled') | list | length }} 个已启用</span>
+                                <h6 class="mb-0">{{ _('下载器') }}</h6>
+                                <span class="text-muted">{{ settings.downloaders | selectattr('enabled') | list | length }} {{ _('个已启用') }}</span>
                             </div>
                         </div>
                     </div>
@@ -46,7 +46,7 @@
                 <!-- 实例状态 -->
                 <div class="row">
                     <div class="col-md-6 mb-3 mb-md-0">
-                        <h6><i class="bi bi-server"></i> 媒体服务器实例</h6>
+                        <h6><i class="bi bi-server"></i> {{ _('媒体服务器实例') }}</h6>
                         <div class="list-group list-group-flush">
                             {% set enabled_servers = settings.media_servers | selectattr('enabled') | list %}
                             {% if enabled_servers %}
@@ -57,33 +57,33 @@
                                                 <img src="{{ url_for('static', filename='img/logos/' + server.type + '.png') }}" 
                                                      alt="{{ server.type }}" class="instance-logo"
                                                      onerror="this.style.display='none'">
-                                                <span class="fw-bold">{{ server.name or '未命名' }}</span> 
+                                                <span class="fw-bold">{{ server.name or _('未命名') }}</span> 
                                                 <span class="badge bg-secondary ms-2">{{ server.type | title }}</span>
                                             </div>
-                                            <small class="text-muted d-block">{{ server.url or 'URL未配置' }}</small>
-                                            <small class="text-info">轮询间隔: {{ server.poll_interval or 15 }}秒</small>
+                                            <small class="text-muted d-block">{{ server.url or _('URL未配置') }}</small>
+                                            <small class="text-info">{{ _('轮询间隔') }}: {{ server.poll_interval or 15 }}{{ _('秒') }}</small>
                                             <div class="mt-1" id="media-server-{{ server.id }}-status">
-                                                <small class="text-muted">加载状态中...</small>
+                                                <small class="text-muted">{{ _('加载状态中...') }}</small>
                                             </div>
                                         </div>
                                         <button class="btn btn-sm btn-outline-secondary test-btn" onclick="testInstance(this)">
-                                            <i class="bi bi-wifi"></i> 测试
+                                            <i class="bi bi-wifi"></i> {{ _('测试') }}
                                         </button>
                                     </div>
                                 {% endfor %}
                             {% else %}
                                 <div class="text-center py-3">
                                     <i class="bi bi-server text-muted" style="font-size: 2rem;"></i>
-                                    <p class="text-muted mt-2 mb-1">没有已启用的媒体服务器</p>
+                                    <p class="text-muted mt-2 mb-1">{{ _('没有已启用的媒体服务器') }}</p>
                                     <a href="{{ url_for('main.config') }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-gear"></i> 前往配置
+                                        <i class="bi bi-gear"></i> {{ _('前往配置') }}
                                     </a>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <h6><i class="bi bi-download"></i> 下载器实例</h6>
+                        <h6><i class="bi bi-download"></i> {{ _('下载器实例') }}</h6>
                         <div class="list-group list-group-flush">
                             {% set enabled_downloaders = settings.downloaders | selectattr('enabled') | list %}
                             {% if enabled_downloaders %}
@@ -94,25 +94,25 @@
                                                 <img src="{{ url_for('static', filename='img/logos/' + downloader.type + '.png') }}" 
                                                      alt="{{ downloader.type }}" class="instance-logo"
                                                      onerror="this.style.display='none'">
-                                                <span class="fw-bold">{{ downloader.name or '未命名' }}</span> 
+                                                <span class="fw-bold">{{ downloader.name or _('未命名') }}</span> 
                                                 <span class="badge bg-secondary ms-2">{{ downloader.type | title }}</span>
                                             </div>
-                                            <small class="text-muted d-block">{{ downloader.url or 'URL未配置' }}</small>
+                                            <small class="text-muted d-block">{{ downloader.url or _('URL未配置') }}</small>
                                             <div class="mt-1" id="downloader-{{ downloader.id }}-status">
-                                                <small class="text-muted">加载状态中...</small>
+                                                <small class="text-muted">{{ _('加载状态中...') }}</small>
                                             </div>
                                         </div>
                                         <button class="btn btn-sm btn-outline-secondary test-btn" onclick="testInstance(this)">
-                                            <i class="bi bi-wifi"></i> 测试
+                                            <i class="bi bi-wifi"></i> {{ _('测试') }}
                                         </button>
                                     </div>
                                 {% endfor %}
                             {% else %}
                                 <div class="text-center py-3">
                                     <i class="bi bi-download text-muted" style="font-size: 2rem;"></i>
-                                    <p class="text-muted mt-2 mb-1">没有已启用的下载器</p>
+                                    <p class="text-muted mt-2 mb-1">{{ _('没有已启用的下载器') }}</p>
                                     <a href="{{ url_for('main.config') }}" class="btn btn-sm btn-outline-primary">
-                                        <i class="bi bi-gear"></i> 前往配置
+                                        <i class="bi bi-gear"></i> {{ _('前往配置') }}
                                     </a>
                                 </div>
                             {% endif %}
@@ -127,8 +127,8 @@
                         <div class="text-center">
                             <i class="bi bi-clock-history text-info" style="font-size: 1.5rem;"></i>
                             <div class="mt-1">
-                                <small class="text-muted d-block">调度器状态</small>
-                                <span id="scheduler-status" class="badge bg-success">运行中</span>
+                                <small class="text-muted d-block">{{ _('调度器状态') }}</small>
+                                <span id="scheduler-status" class="badge bg-success">{{ _('运行中') }}</span>
                             </div>
                         </div>
                     </div>
@@ -136,8 +136,8 @@
                         <div class="text-center">
                             <i class="bi bi-speedometer2 text-warning" style="font-size: 1.5rem;"></i>
                             <div class="mt-1">
-                                <small class="text-muted d-block">当前限速模式</small>
-                                <span id="speed-mode" class="badge bg-secondary">检测中</span>
+                                <small class="text-muted d-block">{{ _('当前限速模式') }}</small>
+                                <span id="speed-mode" class="badge bg-secondary">{{ _('检测中') }}</span>
                             </div>
                         </div>
                     </div>
@@ -145,7 +145,7 @@
                         <div class="text-center">
                             <i class="bi bi-speedometer text-info" style="font-size: 1.5rem;"></i>
                             <div class="mt-1">
-                                <small class="text-muted d-block">全局速度</small>
+                                <small class="text-muted d-block">{{ _('全局速度') }}</small>
                                 <div id="global-speed" class="small">
                                     <div class="text-success"><i class="bi bi-download"></i> 0 KB/s</div>
                                     <div class="text-warning"><i class="bi bi-upload"></i> 0 KB/s</div>
@@ -157,9 +157,9 @@
                         <div class="text-center">
                             <i class="bi bi-journal-text text-secondary" style="font-size: 1.5rem;"></i>
                             <div class="mt-1">
-                                <small class="text-muted d-block">快速操作</small>
+                                <small class="text-muted d-block">{{ _('快速操作') }}</small>
                                 <a href="{{ url_for('main.logs_page') }}" class="btn btn-sm btn-outline-secondary">
-                                    <i class="bi bi-journal-text"></i> 查看日志
+                                    <i class="bi bi-journal-text"></i> {{ _('查看日志') }}
                                 </a>
                             </div>
                         </div>
@@ -174,7 +174,34 @@
 
 {% block scripts %}
 <script type="application/json" id="app-config">{{ settings | tojson | safe }}</script>
+<script type="application/json" id="translations">{{ {
+    'has': _('有'),
+    'activePlaying': _('个活跃播放'),
+    'playingSpeedLimit': _('播放时限速'),
+    'noPlayingActivity': _('无播放活动'),
+    'defaultSpeedLimit': _('默认限速'),
+    'statusFetchFailed': _('状态获取失败'),
+    'connectionFailed': _('连接失败'),
+    'running': _('运行中'),
+    'abnormal': _('异常'),
+    'actualSpeed': _('实际速度'),
+    'fetching': _('获取中...'),
+    'activePlaying2': _('活跃播放'),
+    'sessions': _('个会话'),
+    'note': _('注：显示媒体文件比特率，非实时网络速度'),
+    'instanceNotFound': _('无法在配置中找到该实例'),
+    'configError': _('配置错误'),
+    'connectionSuccess': _('连接成功'),
+    'connectionTest': _('连接测试'),
+    'connectionFailed2': _('连接失败'),
+    'networkError': _('网络错误'),
+    'test': _('测试'),
+    'networkErrorDuringTest': _('连接测试时发生网络错误')
+} | tojson | safe }}</script>
 <script>
+// 翻译字符串
+const translations = JSON.parse(document.getElementById('translations').textContent);
+
 // 全局配置数据
 window.APP_CONFIG = JSON.parse(document.getElementById('app-config').textContent);
 
@@ -189,21 +216,21 @@ function updateStatus() {
             
             if (data.status === 'success' && data.sessions.length > 0) {
                 indicator.className = 'status-indicator status-active';
-                statusText.textContent = `有 ${data.count} 个活跃播放`;
+                statusText.textContent = `${translations.has} ${data.count} ${translations.activePlaying}`;
                 speedMode.className = 'badge bg-warning';
-                speedMode.textContent = '播放时限速';
+                speedMode.textContent = translations.playingSpeedLimit;
             } else {
                 indicator.className = 'status-indicator status-inactive';
-                statusText.textContent = '无播放活动';
+                statusText.textContent = translations.noPlayingActivity;
                 speedMode.className = 'badge bg-success';
-                speedMode.textContent = '默认限速';
+                speedMode.textContent = translations.defaultSpeedLimit;
             }
         })
         .catch(error => {
             console.error('Error fetching status:', error);
-            document.getElementById('playback-status-text').textContent = '状态获取失败';
+            document.getElementById('playback-status-text').textContent = translations.statusFetchFailed;
             document.getElementById('scheduler-status').className = 'badge bg-danger';
-            document.getElementById('scheduler-status').textContent = '连接失败';
+            document.getElementById('scheduler-status').textContent = translations.connectionFailed;
         });
 
     // 获取下载器状态和媒体服务器速度
@@ -216,16 +243,16 @@ function updateStatus() {
             const schedulerStatus = document.getElementById('scheduler-status');
             if (data.status === 'healthy') {
                 schedulerStatus.className = 'badge bg-success';
-                schedulerStatus.textContent = '运行中';
+                schedulerStatus.textContent = translations.running;
             } else {
                 schedulerStatus.className = 'badge bg-danger';
-                schedulerStatus.textContent = '异常';
+                schedulerStatus.textContent = translations.abnormal;
             }
         })
         .catch(error => {
             const schedulerStatus = document.getElementById('scheduler-status');
             schedulerStatus.className = 'badge bg-danger';
-            schedulerStatus.textContent = '连接失败';
+            schedulerStatus.textContent = translations.connectionFailed;
         });
 }
 
@@ -262,7 +289,7 @@ function updateDownloadersStatus() {
                         
                         // 显示当前激活的限速模式
                         const modeColor = downloader.speed_mode === 'playing' ? 'text-warning' : 'text-success';
-                        const modeText = downloader.speed_mode === 'playing' ? '播放时限速' : '默认限速';
+                        const modeText = downloader.speed_mode === 'playing' ? translations.playingSpeedLimit : translations.defaultSpeedLimit;
                         const activeLimits = downloader.active_limits;
                         
                         statusHtml += `<small class="${modeColor}">`;
@@ -275,14 +302,14 @@ function updateDownloadersStatus() {
                             const currentSpeeds = downloader.current_speeds;
                             statusHtml += '<br>';
                             statusHtml += `<small class="text-info">`;
-                            statusHtml += `<i class="bi bi-activity"></i> 实际速度: `;
+                            statusHtml += `<i class="bi bi-activity"></i> ${translations.actualSpeed}: `;
                             statusHtml += `<i class="bi bi-download"></i> ${formatActualSpeed(currentSpeeds.download_speed)} / <i class="bi bi-upload"></i> ${formatActualSpeed(currentSpeeds.upload_speed)}`;
                             statusHtml += `</small>`;
                         } else if (downloader.type === 'qbittorrent' || downloader.type === 'transmission' || downloader.type === 'clouddrive2') {
                             // 支持获取速度但当前无法获取
                             statusHtml += '<br>';
                             statusHtml += `<small class="text-muted">`;
-                            statusHtml += `<i class="bi bi-activity"></i> 实际速度: 获取中...`;
+                            statusHtml += `<i class="bi bi-activity"></i> ${translations.actualSpeed}: ${translations.fetching}`;
                             statusHtml += `</small>`;
                         }
                         
@@ -318,7 +345,7 @@ function updateDownloadersStatus() {
                         
                         if (speedInfo && speedInfo.total_bitrate > 0) {
                             let statusHtml = `<small class="text-info">`;
-                            statusHtml += `<i class="bi bi-person-video3"></i> 活跃播放: ${speedInfo.sessions.length} 个会话`;
+                            statusHtml += `<i class="bi bi-person-video3"></i> ${translations.activePlaying2}: ${speedInfo.sessions.length} ${translations.sessions}`;
                             statusHtml += `</small>`;
                             
                             // 添加播放详情
@@ -338,17 +365,17 @@ function updateDownloadersStatus() {
                             }
                             
                             statusHtml += `<br><small class="text-muted">`;
-                            statusHtml += `<i class="bi bi-info-circle"></i> 注：显示媒体文件比特率，非实时网络速度`;
+                            statusHtml += `<i class="bi bi-info-circle"></i> ${translations.note}`;
                             statusHtml += `</small>`;
                             element.innerHTML = statusHtml;
                         } else {
-                            element.innerHTML = '<small class="text-muted">无播放活动</small>';
+                            element.innerHTML = `<small class="text-muted">${translations.noPlayingActivity}</small>`;
                         }
                     });
                 } else {
                     // 错误时重置媒体服务器状态
                     document.querySelectorAll('[id^="media-server-"][id$="-status"]').forEach(element => {
-                        element.innerHTML = '<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> 状态获取失败</small>';
+                        element.innerHTML = `<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> ${translations.statusFetchFailed}</small>`;
                     });
                 }
                 
@@ -366,12 +393,12 @@ function updateDownloadersStatus() {
         console.error('Error fetching status:', error);
         // 在错误情况下显示基本信息
         document.querySelectorAll('[id^="downloader-"][id$="-status"]').forEach(element => {
-            element.innerHTML = '<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> 状态获取失败</small>';
+            element.innerHTML = `<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> ${translations.statusFetchFailed}</small>`;
         });
         
         // 错误时重置媒体服务器状态
         document.querySelectorAll('[id^="media-server-"][id$="-status"]').forEach(element => {
-            element.innerHTML = '<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> 状态获取失败</small>';
+            element.innerHTML = `<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> ${translations.statusFetchFailed}</small>`;
         });
         
         // 错误时重置全局速度显示
@@ -395,7 +422,7 @@ function testInstance(button) {
     const instanceConfig = window.APP_CONFIG[instanceType].find(inst => inst.id === instanceId);
 
     if (!instanceConfig) {
-        showToast('无法在配置中找到该实例', 'error', '配置错误');
+        showToast(translations.instanceNotFound, 'error', translations.configError);
         return;
     }
 
@@ -415,17 +442,17 @@ function testInstance(button) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            showToast(`${instanceConfig.name || instanceConfig.type} 连接成功`, 'success', '连接测试');
+            showToast(`${instanceConfig.name || instanceConfig.type} ${translations.connectionSuccess}`, 'success', translations.connectionTest);
         } else {
-            showToast(`${instanceConfig.name || instanceConfig.type} 连接失败: ${data.message}`, 'error', '连接测试');
+            showToast(`${instanceConfig.name || instanceConfig.type} ${translations.connectionFailed2}: ${data.message}`, 'error', translations.connectionTest);
         }
     })
     .catch(error => {
-        showToast(`${instanceConfig.name || instanceConfig.type} 连接测试时发生网络错误: ${error.message}`, 'error', '网络错误');
+        showToast(`${instanceConfig.name || instanceConfig.type} ${translations.networkErrorDuringTest}: ${error.message}`, 'error', translations.networkError);
     })
     .finally(() => {
         btn.disabled = false;
-        btn.innerHTML = '<i class="bi bi-wifi"></i> 测试';
+        btn.innerHTML = `<i class="bi bi-wifi"></i> ${translations.test}`;
     });
 }
 
@@ -444,21 +471,21 @@ setInterval(() => {
             
             if (data.status === 'success' && data.sessions.length > 0) {
                 indicator.className = 'status-indicator status-active';
-                statusText.textContent = `有 ${data.count} 个活跃播放`;
+                statusText.textContent = `${translations.has} ${data.count} ${translations.activePlaying}`;
                 speedMode.className = 'badge bg-warning';
-                speedMode.textContent = '播放时限速';
+                speedMode.textContent = translations.playingSpeedLimit;
             } else {
                 indicator.className = 'status-indicator status-inactive';
-                statusText.textContent = '无播放活动';
+                statusText.textContent = translations.noPlayingActivity;
                 speedMode.className = 'badge bg-success';
-                speedMode.textContent = '默认限速';
+                speedMode.textContent = translations.defaultSpeedLimit;
             }
         })
         .catch(error => {
             console.error('Error fetching status:', error);
-            document.getElementById('playback-status-text').textContent = '状态获取失败';
+            document.getElementById('playback-status-text').textContent = translations.statusFetchFailed;
             document.getElementById('scheduler-status').className = 'badge bg-danger';
-            document.getElementById('scheduler-status').textContent = '连接失败';
+            document.getElementById('scheduler-status').textContent = translations.connectionFailed;
         });
 
     // 检查调度器状态
@@ -468,16 +495,16 @@ setInterval(() => {
             const schedulerStatus = document.getElementById('scheduler-status');
             if (data.status === 'healthy') {
                 schedulerStatus.className = 'badge bg-success';
-                schedulerStatus.textContent = '运行中';
+                schedulerStatus.textContent = translations.running;
             } else {
                 schedulerStatus.className = 'badge bg-danger';
-                schedulerStatus.textContent = '异常';
+                schedulerStatus.textContent = translations.abnormal;
             }
         })
         .catch(error => {
             const schedulerStatus = document.getElementById('scheduler-status');
             schedulerStatus.className = 'badge bg-danger';
-            schedulerStatus.textContent = '连接失败';
+            schedulerStatus.textContent = translations.connectionFailed;
         });
 }, 10000);
 

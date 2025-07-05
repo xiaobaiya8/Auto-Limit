@@ -1,0 +1,645 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-07-05 15:25+0800\n"
+"PO-Revision-Date: 2025-07-05 15:22+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app/templates/base.html:6
+msgid "Auto-Limit控制器"
+msgstr "Auto-Limit Controller"
+
+#: app/templates/base.html:142
+msgid "首页"
+msgstr "Home"
+
+#: app/templates/base.html:145
+msgid "配置"
+msgstr "Configuration"
+
+#: app/templates/base.html:148
+msgid "日志"
+msgstr "Logs"
+
+#: app/templates/base.html:152
+msgid "语言"
+msgstr "Language"
+
+#: app/templates/base.html:191
+msgid "无限制"
+msgstr "Unlimited"
+
+#: app/templates/base.html:208
+msgid "未知"
+msgstr "Unknown"
+
+#: app/templates/index.html:9
+msgid "系统状态"
+msgstr "System Status"
+
+#: app/templates/index.html:19
+msgid "播放状态"
+msgstr "Playback Status"
+
+#: app/templates/index.html:20
+msgid "加载中..."
+msgstr "Loading..."
+
+#: app/templates/index.html:28
+msgid "媒体服务器"
+msgstr "Media Servers"
+
+#: app/templates/index.html:29 app/templates/index.html:38
+msgid "个已启用"
+msgstr " Enabled"
+
+#: app/templates/index.html:37
+msgid "下载器"
+msgstr "Downloaders"
+
+#: app/templates/index.html:49
+msgid "媒体服务器实例"
+msgstr "Media Server Instances"
+
+#: app/templates/index.html:60
+msgid "未命名"
+msgstr "Unnamed"
+
+#: app/templates/index.html:63
+msgid "URL未配置"
+msgstr "URL Not Configured"
+
+#: app/templates/index.html:64
+msgid "轮询间隔"
+msgstr "Poll Interval"
+
+#: app/templates/index.html:64
+msgid "秒"
+msgstr "s"
+
+# New translation entries
+
+msgid "系统配置"
+msgstr "System Configuration"
+
+msgid "添加媒体服务器"
+msgstr "Add Media Server"
+
+msgid "秒轮询"
+msgstr "s Polling"
+
+msgid "测试连接"
+msgstr "Test Connection"
+
+msgid "编辑"
+msgstr "Edit"
+
+msgid "删除"
+msgstr "Delete"
+
+msgid "还没有配置媒体服务器"
+msgstr "No media servers configured yet"
+
+msgid "点击上方"添加媒体服务器"开始配置"
+msgstr "Click \"Add Media Server\" above to start configuration"
+
+msgid "添加下载器"
+msgstr "Add Downloader"
+
+msgid "默认"
+msgstr "Default"
+
+msgid "播放"
+msgstr "Playing"
+
+msgid "还没有配置下载器"
+msgstr "No downloaders configured yet"
+
+msgid "点击上方"添加下载器"开始配置"
+msgstr "Click \"Add Downloader\" above to start configuration"
+
+msgid "配置说明"
+msgstr "Configuration Instructions"
+
+msgid "每个媒体服务器可以设置独立的轮询间隔"
+msgstr "Each media server can set independent polling intervals"
+
+msgid "每个下载器可以设置独立的限速策略"
+msgstr "Each downloader can set independent speed limit policies"
+
+msgid "系统会根据所有启用服务器的播放状态，统一控制所有启用下载器的速率"
+msgstr "The system will control all enabled downloaders based on the playback status of all enabled servers"
+
+msgid "添加实例"
+msgstr "Add Instance"
+
+msgid "实例名称"
+msgstr "Instance Name"
+
+msgid "例如：主服务器"
+msgstr "e.g.: Main Server"
+
+msgid "插件类型"
+msgstr "Plugin Type"
+
+msgid "服务器地址"
+msgstr "Server Address"
+
+msgid "API 密钥"
+msgstr "API Key"
+
+msgid "用户名"
+msgstr "Username"
+
+msgid "密码"
+msgstr "Password"
+
+msgid "轮询设置"
+msgstr "Polling Settings"
+
+msgid "轮询间隔 (秒)"
+msgstr "Poll Interval (seconds)"
+
+msgid "检查此服务器播放状态的频率，建议5-60秒"
+msgstr "Frequency to check this server's playback status, recommended 5-60 seconds"
+
+msgid "限速设置 (KB/s)"
+msgstr "Speed Limit Settings (KB/s)"
+
+msgid "默认下载"
+msgstr "Default Download"
+
+msgid "0=无限制"
+msgstr "0=Unlimited"
+
+msgid "默认上传"
+msgstr "Default Upload"
+
+msgid "播放时下载"
+msgstr "Download During Playback"
+
+msgid "播放时上传"
+msgstr "Upload During Playback"
+
+msgid "当有媒体播放时，自动切换到"播放时"限速"
+msgstr "Automatically switch to \"During Playback\" speed limits when media is playing"
+
+msgid "取消"
+msgstr "Cancel"
+
+msgid "保存"
+msgstr "Save"
+
+msgid "无法找到实例配置"
+msgstr "Instance configuration not found"
+
+msgid "编辑媒体服务器"
+msgstr "Edit Media Server"
+
+msgid "编辑下载器"
+msgstr "Edit Downloader"
+
+msgid "请填写实例名称"
+msgstr "Please enter instance name"
+
+msgid "请填写服务器地址"
+msgstr "Please enter server address"
+
+msgid "测试中..."
+msgstr "Testing..."
+
+msgid "连接成功"
+msgstr "Connection successful"
+
+msgid "连接测试"
+msgstr "Connection Test"
+
+msgid "连接失败"
+msgstr "Connection failed"
+
+msgid "连接测试时发生网络错误"
+msgstr "Network error occurred during connection test"
+
+msgid "网络错误"
+msgstr "Network Error"
+
+msgid "保存中..."
+msgstr "Saving..."
+
+msgid "保存成功"
+msgstr "Saved successfully"
+
+msgid "配置保存"
+msgstr "Configuration Save"
+
+msgid "保存失败"
+msgstr "Save failed"
+
+msgid "保存时发生网络错误"
+msgstr "Network error occurred during save"
+
+msgid "已启用"
+msgstr "Enabled"
+
+msgid "已禁用"
+msgstr "Disabled"
+
+msgid "状态更新失败"
+msgstr "Status update failed"
+
+msgid "状态更新时发生网络错误"
+msgstr "Network error occurred during status update"
+
+msgid "确定要删除"
+msgstr "Are you sure you want to delete"
+
+msgid "吗？"
+msgstr "?"
+
+msgid "已删除"
+msgstr "Deleted"
+
+msgid "删除失败"
+msgstr "Delete failed"
+
+msgid "删除时发生网络错误"
+msgstr "Network error occurred during deletion"
+
+msgid "请填写API密钥"
+msgstr "Please enter API key"
+
+msgid "请填写X-Plex-Token"
+msgstr "Please enter X-Plex-Token"
+
+msgid "请填写用户名"
+msgstr "Please enter username"
+
+msgid "请填写密码"
+msgstr "Please enter password"
+
+# Log page
+msgid "系统日志 (最近500条)"
+msgstr "System Logs (Last 500 entries)"
+
+msgid "刷新"
+msgstr "Refresh"
+
+msgid "时间"
+msgstr "Time"
+
+msgid "类型"
+msgstr "Type"
+
+msgid "消息"
+msgstr "Message"
+
+msgid "速率变更"
+msgstr "Speed Change"
+
+msgid "错误"
+msgstr "Error"
+
+msgid "测试"
+msgstr "Test"
+
+msgid "暂无日志记录"
+msgstr "No log records"
+
+msgid "系统运行一段时间后会自动生成日志"
+msgstr "Logs will be generated automatically after the system runs for a while"
+
+# Homepage additions
+msgid "加载状态中..."
+msgstr "Loading status..."
+
+msgid "没有已启用的媒体服务器"
+msgstr "No enabled media servers"
+
+msgid "前往配置"
+msgstr "Go to Configuration"
+
+msgid "下载器实例"
+msgstr "Downloader Instances"
+
+msgid "没有已启用的下载器"
+msgstr "No enabled downloaders"
+
+msgid "调度器状态"
+msgstr "Scheduler Status"
+
+msgid "运行中"
+msgstr "Running"
+
+msgid "当前限速模式"
+msgstr "Current Speed Limit Mode"
+
+msgid "检测中"
+msgstr "Detecting"
+
+msgid "全局速度"
+msgstr "Global Speed"
+
+msgid "快速操作"
+msgstr "Quick Actions"
+
+msgid "查看日志"
+msgstr "View Logs"
+
+msgid "有"
+msgstr "There are"
+
+msgid "个活跃播放"
+msgstr " active playback sessions"
+
+msgid "播放时限速"
+msgstr "Playback Speed Limit"
+
+msgid "无播放活动"
+msgstr "No playback activity"
+
+msgid "默认限速"
+msgstr "Default Speed Limit"
+
+msgid "状态获取失败"
+msgstr "Failed to fetch status"
+
+msgid "连接失败"
+msgstr "Connection failed"
+
+msgid "异常"
+msgstr "Abnormal"
+
+msgid "实际速度"
+msgstr "Actual Speed"
+
+msgid "获取中..."
+msgstr "Fetching..."
+
+msgid "活跃播放"
+msgstr "Active Playback"
+
+msgid "个会话"
+msgstr " sessions"
+
+msgid "注：显示媒体文件比特率，非实时网络速度"
+msgstr "Note: Shows media file bitrate, not real-time network speed"
+
+msgid "无法在配置中找到该实例"
+msgstr "Instance not found in configuration"
+
+msgid "配置错误"
+msgstr "Configuration Error"
+
+# Instance cards
+msgid "新实例"
+msgstr "New Instance"
+
+msgid "保存此实例"
+msgstr "Save This Instance"
+
+msgid "删除实例"
+msgstr "Delete Instance"
+
+# 日志消息翻译
+msgid "调度器已启动"
+msgstr "Scheduler started"
+
+msgid "调度器已停止"
+msgstr "Scheduler stopped"
+
+msgid "所有播放已停止"
+msgstr "All playback stopped"
+
+msgid "速率限制设置成功"
+msgstr "Speed limit set successfully"
+
+msgid "速率设置失败"
+msgstr "Speed setting failed"
+
+msgid "连接测试成功"
+msgstr "Connection test successful"
+
+msgid "连接测试失败"
+msgstr "Connection test failed"
+
+msgid "配置已更新，调度器将重启以应用新设置"
+msgstr "Configuration updated, scheduler will restart to apply new settings"
+
+msgid "qBittorrent登录失败"
+msgstr "qBittorrent login failed"
+
+msgid "qBittorrent连接错误"
+msgstr "qBittorrent connection error"
+
+msgid "速率限制设置失败"
+msgstr "Speed limit setting failed"
+
+msgid "设置速率限制时出错"
+msgstr "Error setting speed limit"
+
+msgid "获取qBittorrent速度信息失败"
+msgstr "Failed to get qBittorrent speed information"
+
+msgid "获取qBittorrent速度信息时出错"
+msgstr "Error getting qBittorrent speed information"
+
+msgid "获取Transmission会话ID失败"
+msgstr "Failed to get Transmission session ID"
+
+msgid "获取Transmission会话ID时出错"
+msgstr "Error getting Transmission session ID"
+
+msgid "Transmission响应不是有效的JSON"
+msgstr "Transmission response is not valid JSON"
+
+msgid "Transmission RPC请求失败"
+msgstr "Transmission RPC request failed"
+
+msgid "Transmission RPC请求时出错"
+msgstr "Error in Transmission RPC request"
+
+msgid "Transmission速率限制设置失败"
+msgstr "Transmission speed limit setting failed"
+
+msgid "Transmission设置速率限制时出错"
+msgstr "Error setting Transmission speed limit"
+
+msgid "获取Transmission统计信息时出错"
+msgstr "Error getting Transmission statistics"
+
+msgid "获取Transmission速度信息失败"
+msgstr "Failed to get Transmission speed information"
+
+msgid "获取Transmission速度信息时出错"
+msgstr "Error getting Transmission speed information"
+
+msgid "CloudDrive2 token已过期，需要重新登录"
+msgstr "CloudDrive2 token expired, need to login again"
+
+msgid "gRPC请求失败"
+msgstr "gRPC request failed"
+
+msgid "保存CloudDrive2 token时出错"
+msgstr "Error saving CloudDrive2 token"
+
+msgid "CloudDrive2重新登录成功"
+msgstr "CloudDrive2 re-login successful"
+
+msgid "CloudDrive2登录成功"
+msgstr "CloudDrive2 login successful"
+
+msgid "CloudDrive2登录失败"
+msgstr "CloudDrive2 login failed"
+
+msgid "CloudDrive2登录异常"
+msgstr "CloudDrive2 login exception"
+
+msgid "CloudDrive2速率限制设置失败"
+msgstr "CloudDrive2 speed limit setting failed"
+
+msgid "CloudDrive2设置速率限制时出错"
+msgstr "Error setting CloudDrive2 speed limit"
+
+msgid "获取CloudDrive2速度信息时出错"
+msgstr "Error getting CloudDrive2 speed information"
+
+msgid "获取Emby会话失败"
+msgstr "Failed to get Emby sessions"
+
+msgid "获取Emby会话时出错"
+msgstr "Error getting Emby sessions"
+
+msgid "获取Emby网络速度失败"
+msgstr "Failed to get Emby network speed"
+
+msgid "获取Emby网络速度时出错"
+msgstr "Error getting Emby network speed"
+
+msgid "实例配置缺少'type'字段"
+msgstr "Instance configuration missing 'type' field"
+
+msgid "加载插件失败"
+msgstr "Failed to load plugin"
+
+# 复杂日志消息模板
+msgid "为服务器 {0} 设置 {1} 秒轮询间隔"
+msgstr "Set {1} second polling interval for server {0}"
+
+msgid "检测到 {0} 个总活跃播放"
+msgstr "Detected {0} total active playbacks"
+
+msgid "{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"
+msgstr "{0} speed limit set successfully: download {1} KB/s, upload {2} KB/s"
+
+msgid "{0} 速率设置失败"
+msgstr "{0} speed setting failed"
+
+msgid "连接测试成功: {0}"
+msgstr "Connection test successful: {0}"
+
+msgid "连接测试失败: {0}"
+msgstr "Connection test failed: {0}"
+
+msgid "更新了{0}实例配置"
+msgstr "Updated {0} instance configuration"
+
+msgid "添加了新的{0}实例"
+msgstr "Added new {0} instance"
+
+msgid "删除了{0}实例"
+msgstr "Deleted {0} instance"
+
+msgid "获取Emby会话失败: HTTP {0}"
+msgstr "Failed to get Emby sessions: HTTP {0}"
+
+msgid "获取Emby会话时出错: {0}"
+msgstr "Error getting Emby sessions: {0}"
+
+msgid "获取Emby网络速度失败: HTTP {0}"
+msgstr "Failed to get Emby network speed: HTTP {0}"
+
+msgid "获取Emby网络速度时出错: {0}"
+msgstr "Error getting Emby network speed: {0}"
+
+msgid "实例配置缺少'type'字段: {0}"
+msgstr "Instance configuration missing 'type' field: {0}"
+
+msgid "加载插件 {0} 失败: {1}"
+msgstr "Failed to load plugin {0}: {1}"
+
+msgid "qBittorrent登录失败: {0}"
+msgstr "qBittorrent login failed: {0}"
+
+msgid "qBittorrent连接错误: {0}"
+msgstr "qBittorrent connection error: {0}"
+
+msgid "速率限制设置失败: {0}"
+msgstr "Speed limit setting failed: {0}"
+
+msgid "设置速率限制时出错: {0}"
+msgstr "Error setting speed limit: {0}"
+
+msgid "获取qBittorrent速度信息失败: HTTP {0}"
+msgstr "Failed to get qBittorrent speed information: HTTP {0}"
+
+msgid "获取qBittorrent速度信息时出错: {0}"
+msgstr "Error getting qBittorrent speed information: {0}"
+
+msgid "获取Transmission会话ID失败: HTTP {0}"
+msgstr "Failed to get Transmission session ID: HTTP {0}"
+
+msgid "获取Transmission会话ID时出错: {0}"
+msgstr "Error getting Transmission session ID: {0}"
+
+msgid "Transmission RPC请求失败: HTTP {0}"
+msgstr "Transmission RPC request failed: HTTP {0}"
+
+msgid "Transmission RPC请求时出错: {0}"
+msgstr "Error in Transmission RPC request: {0}"
+
+msgid "Transmission速率限制设置失败: {0}"
+msgstr "Transmission speed limit setting failed: {0}"
+
+msgid "Transmission设置速率限制时出错: {0}"
+msgstr "Error setting Transmission speed limit: {0}"
+
+msgid "获取Transmission统计信息时出错: {0}"
+msgstr "Error getting Transmission statistics: {0}"
+
+msgid "获取Transmission速度信息失败: {0}"
+msgstr "Failed to get Transmission speed information: {0}"
+
+msgid "获取Transmission速度信息时出错: {0}"
+msgstr "Error getting Transmission speed information: {0}"
+
+msgid "gRPC请求失败: {0}"
+msgstr "gRPC request failed: {0}"
+
+msgid "保存CloudDrive2 token时出错: {0}"
+msgstr "Error saving CloudDrive2 token: {0}"
+
+msgid "CloudDrive2登录失败: {0}"
+msgstr "CloudDrive2 login failed: {0}"
+
+msgid "CloudDrive2登录异常: {0}"
+msgstr "CloudDrive2 login exception: {0}"
+
+msgid "CloudDrive2设置速率限制时出错: {0}"
+msgstr "Error setting CloudDrive2 speed limit: {0}"
+
+msgid "获取CloudDrive2速度信息时出错: {0}"
+msgstr "Error getting CloudDrive2 speed information: {0}"
+

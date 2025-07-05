@@ -25,6 +25,7 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
 - **🐳 Docker 一键部署** - 支持 Docker 和 Docker Compose 快速部署
 - **📱 响应式界面** - 支持手机、平板、电脑访问
 - **🔄 多实例支持** - 同时管理多个下载器和媒体服务器
+- **🌐 多语言支持** - 支持中英文界面和日志
 
 ### 🎮 支持的软件
 
@@ -212,6 +213,7 @@ Auto-Limit is an intelligent download speed management tool designed specificall
 - **🐳 One-Click Docker Deployment** - Supports Docker and Docker Compose for quick deployment
 - **📱 Responsive Interface** - Works on phones, tablets, and computers
 - **🔄 Multi-Instance Support** - Manage multiple downloaders and media servers simultaneously
+- **🌐 Multi-language Support** - Supports Chinese and English for both the UI and logs
 
 ### 🎮 Supported Software
 

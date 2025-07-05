@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}日志 - Auto-Limit{% endblock %}
+{% block title %}{{ _('日志') }} - Auto-Limit{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -8,10 +8,10 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-journal-text"></i> 系统日志 (最近500条)
+                    <i class="bi bi-journal-text"></i> {{ _('系统日志 (最近500条)') }}
                 </h5>
                 <button class="btn btn-sm btn-outline-primary" onclick="location.reload()">
-                    <i class="bi bi-arrow-clockwise"></i> 刷新
+                    <i class="bi bi-arrow-clockwise"></i> {{ _('刷新') }}
                 </button>
             </div>
             <div class="card-body">
@@ -20,9 +20,9 @@
                     <table class="table table-sm table-hover">
                         <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
                             <tr>
-                                <th style="width: 160px;">时间</th>
-                                <th style="width: 120px;">类型</th>
-                                <th>消息</th>
+                                <th style="width: 160px;">{{ _('时间') }}</th>
+                                <th style="width: 120px;">{{ _('类型') }}</th>
+                                <th>{{ _('消息') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,15 +32,15 @@
                                 <td>
                                     {% set type = log.type %}
                                     {% if type == 'PLAY_START' or type == 'PLAY_STOP' %}
-                                        <span class="badge bg-primary">播放状态</span>
+                                        <span class="badge bg-primary">{{ _('播放状态') }}</span>
                                     {% elif type == 'SPEED_CHANGE' %}
-                                        <span class="badge bg-info">速率变更</span>
+                                        <span class="badge bg-info">{{ _('速率变更') }}</span>
                                     {% elif type == 'CONFIG' %}
-                                        <span class="badge bg-secondary">配置</span>
+                                        <span class="badge bg-secondary">{{ _('配置') }}</span>
                                     {% elif type == 'EMBY_ERROR' or type == 'QB_ERROR' or type == 'TEST_ERROR' %}
-                                        <span class="badge bg-danger">错误</span>
+                                        <span class="badge bg-danger">{{ _('错误') }}</span>
                                     {% elif type == 'TEST' %}
-                                        <span class="badge bg-success">测试</span>
+                                        <span class="badge bg-success">{{ _('测试') }}</span>
                                     {% else %}
                                         <span class="badge bg-light text-dark">{{ type }}</span>
                                     {% endif %}
@@ -54,8 +54,8 @@
                 {% else %}
                 <div class="text-center py-4">
                     <i class="bi bi-journal-x display-4 text-muted"></i>
-                    <p class="text-muted mt-2">暂无日志记录</p>
-                    <p class="small text-muted">系统运行一段时间后会自动生成日志</p>
+                    <p class="text-muted mt-2">{{ _('暂无日志记录') }}</p>
+                    <p class="small text-muted">{{ _('系统运行一段时间后会自动生成日志') }}</p>
                 </div>
                 {% endif %}
             </div>

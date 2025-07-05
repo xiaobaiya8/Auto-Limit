@@ -2,6 +2,7 @@ import json
 import os
 from flask import current_app
 import uuid
+from threading import Lock
 
 class ConfigManager:
     """
@@ -9,53 +10,102 @@ class ConfigManager:
     """
     def __init__(self):
         self.config_path = None
+        self.settings = {}
+        self.lock = Lock()
+        self.app = None
 
     def init_app(self, app):
         """用Flask app实例来初始化"""
+        self.app = app
         self.config_path = os.path.join(app.config['DATA_DIR'], 'config.json')
+        self.load_settings()
 
-    def get_settings(self):
-        """从JSON文件加载配置，并处理旧格式到新格式的迁移"""
-        if self.config_path is None:
-            raise RuntimeError("ConfigManager has not been initialized. Call init_app(app) first.")
-        
-        # 新的默认配置结构，支持多实例
-        defaults = {
-            "media_servers": [],
-            "downloaders": [],
-            "rates": {
-                "default_download_limit": 0,
-                "default_upload_limit": 0,
-                "backup_download_limit": 1024,
-                "backup_upload_limit": 512
+    def get_default_settings(self):
+        """返回默认配置"""
+        return {
+            'media_servers': [],
+            'downloaders': [],
+            'rates': {
+                'default_download_limit': 0,
+                'default_upload_limit': 0,
+                'backup_download_limit': 1024,
+                'backup_upload_limit': 512
             },
-            "scheduler": {
-                "poll_interval": 15
+            'scheduler': {
+                'poll_interval': 15
+            },
+            'ui': {
+                'language': 'zh'  # 添加UI语言设置
             }
         }
 
-        settings = defaults
-        try:
-            if os.path.exists(self.config_path):
-                with open(self.config_path, 'r', encoding='utf-8') as f:
-                    settings = json.load(f)
-                
-                # 检查是否需要迁移
-                if self._needs_migration(settings):
-                    settings = self._migrate_config(settings)
-                    self.save_settings(settings)
-                
-                # 合并默认值以处理未来可能增加的顶级键
-                for key, value in defaults.items():
-                    if key not in settings:
-                        settings[key] = value
-
-        except (json.JSONDecodeError, IOError) as e:
-            current_app.logger.error(f"读取配置文件失败，将使用默认配置: {e}")
-            return defaults
+    def load_settings(self):
+        """从JSON文件加载配置"""
+        if self.config_path is None:
+            raise RuntimeError("ConfigManager has not been initialized. Call init_app(app) first.")
         
-        return settings
-    
+        with self.lock:
+            try:
+                if os.path.exists(self.config_path):
+                    with open(self.config_path, 'r', encoding='utf-8') as f:
+                        loaded_settings = json.load(f)
+                        # 合并默认设置和加载的设置
+                        self.settings = self.get_default_settings()
+                        self._merge_settings(self.settings, loaded_settings)
+                else:
+                    self.settings = self.get_default_settings()
+                    self.save_settings(self.settings)
+            except (json.JSONDecodeError, IOError) as e:
+                print(f"加载配置文件失败: {e}")
+                self.settings = self.get_default_settings()
+
+    def _merge_settings(self, default, loaded):
+        """递归合并设置"""
+        for key, value in loaded.items():
+            if key in default:
+                if isinstance(value, dict) and isinstance(default[key], dict):
+                    self._merge_settings(default[key], value)
+                else:
+                    default[key] = value
+            else:
+                default[key] = value
+
+    def get_settings(self):
+        """获取当前配置"""
+        with self.lock:
+            return self.settings.copy()
+
+    def save_settings(self, new_settings):
+        """保存配置到JSON文件"""
+        if self.config_path is None:
+            raise RuntimeError("ConfigManager has not been initialized. Call init_app(app) first.")
+        
+        with self.lock:
+            self.settings = new_settings
+            try:
+                with open(self.config_path, 'w', encoding='utf-8') as f:
+                    json.dump(self.settings, f, indent=4, ensure_ascii=False)
+            except IOError as e:
+                print(f"保存配置文件失败: {e}")
+
+    def get_language(self):
+        """获取当前UI语言设置"""
+        with self.lock:
+            return self.settings.get('ui', {}).get('language', 'zh')
+
+    def set_language(self, language):
+        """设置UI语言"""
+        with self.lock:
+            if 'ui' not in self.settings:
+                self.settings['ui'] = {}
+            self.settings['ui']['language'] = language
+            # 立即保存到文件
+            try:
+                with open(self.config_path, 'w', encoding='utf-8') as f:
+                    json.dump(self.settings, f, indent=4, ensure_ascii=False)
+            except IOError as e:
+                print(f"保存语言设置失败: {e}")
+
     def _needs_migration(self, settings):
         """检查配置是否是需要迁移的旧格式（基于字典）"""
         return isinstance(settings.get("media_servers"), dict) or \
@@ -102,19 +152,5 @@ class ConfigManager:
         
         current_app.logger.info("配置迁移完成。")
         return new_settings
-
-    def save_settings(self, settings):
-        """保存配置到JSON文件"""
-        if self.config_path is None:
-            raise RuntimeError("ConfigManager has not been initialized. Call init_app(app) first.")
-
-        try:
-            with open(self.config_path, 'w', encoding='utf-8') as f:
-                json.dump(settings, f, indent=4)
-            current_app.logger.info("配置已成功保存")
-            return True
-        except IOError as e:
-            current_app.logger.error(f"保存配置文件失败: {e}")
-            return False
 
 config_manager = ConfigManager() 

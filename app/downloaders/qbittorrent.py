@@ -23,10 +23,10 @@ class Qbittorrent(DownloaderBase):
             if response.status_code == 200 and response.text == "Ok.":
                 return True
             else:
-                log_manager.log_event("QB_ERROR", f"qBittorrent登录失败: {response.text}")
+                log_manager.log_formatted_event("QB_ERROR", "qBittorrent登录失败: {0}", response.text)
                 return False
         except requests.exceptions.RequestException as e:
-            log_manager.log_event("QB_ERROR", f"qBittorrent连接错误: {str(e)}")
+            log_manager.log_formatted_event("QB_ERROR", "qBittorrent连接错误: {0}", str(e))
             return False
 
     def set_speed_limits(self, download_limit_kb, upload_limit_kb):
@@ -42,10 +42,10 @@ class Qbittorrent(DownloaderBase):
             if response.status_code == 200:
                 return True
             else:
-                log_manager.log_event("QB_ERROR", f"速率限制设置失败: {response.text}")
+                log_manager.log_formatted_event("QB_ERROR", "速率限制设置失败: {0}", response.text)
                 return False
         except requests.exceptions.RequestException as e:
-            log_manager.log_event("QB_ERROR", f"设置速率限制时出错: {str(e)}")
+            log_manager.log_formatted_event("QB_ERROR", "设置速率限制时出错: {0}", str(e))
             return False
 
     def test_connection(self):
@@ -75,9 +75,9 @@ class Qbittorrent(DownloaderBase):
                     'upload_speed': data.get('up_info_speed', 0) / 1024     # 转换为KB/s
                 }
             else:
-                log_manager.log_event("QB_ERROR", f"获取qBittorrent速度信息失败: HTTP {response.status_code}")
+                log_manager.log_formatted_event("QB_ERROR", "获取qBittorrent速度信息失败: HTTP {0}", response.status_code)
                 return None
                 
         except requests.exceptions.RequestException as e:
-            log_manager.log_event("QB_ERROR", f"获取qBittorrent速度信息时出错: {str(e)}")
+            log_manager.log_formatted_event("QB_ERROR", "获取qBittorrent速度信息时出错: {0}", str(e))
             return None 
