@@ -4,7 +4,7 @@
 [![GitHub forks](https://img.shields.io/github/forks/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
 [![GitHub issues](https://img.shields.io/github/issues/xiaobaiya8/Auto-Limit?style=flat-square)](https://github.com/xiaobaiya8/Auto-Limit)
 [![Docker Pulls](https://img.shields.io/docker/pulls/xiaobaiya8/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya8/auto-limit)
-[![License](https://img.shields.io/github/license/xiaobaiya8/Auto-Limit?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/github/license/xiaobaiya8/Auto-Limit?style=flat-square&cache=none)](https://github.com/xiaobaiya8/Auto-Limit/blob/main/LICENSE)
 
 [English](#english) | [中文](#中文)
 
