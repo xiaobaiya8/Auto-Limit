@@ -48,4 +48,8 @@ Thumbs.db
 
 # Documentation
 *.md
-!README.md 
+!README.md
+
+# Proto files - 排除敏感的协议文件
+*.proto
+CloudDrive.proto 

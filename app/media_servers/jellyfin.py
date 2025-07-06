@@ -2,8 +2,8 @@ import requests
 from .base import MediaServerBase
 from ..services.log_manager import log_manager
 
-class Emby(MediaServerBase):
-    """Emby媒体服务器的实现"""
+class Jellyfin(MediaServerBase):
+    """Jellyfin媒体服务器的实现"""
     def __init__(self, config):
         super().__init__(config)
         self.url = self.config.get('url', '').rstrip('/')
@@ -15,7 +15,8 @@ class Emby(MediaServerBase):
             return None
             
         try:
-            sessions_url = f"{self.url}/emby/Sessions"
+            # Jellyfin的Sessions API路径
+            sessions_url = f"{self.url}/Sessions"
             params = {'api_key': self.api_key}
             response = self.session.get(sessions_url, params=params, timeout=10)
             
@@ -34,21 +35,28 @@ class Emby(MediaServerBase):
                             })
                 return active_playing_sessions
             else:
-                log_manager.log_formatted_event("EMBY_ERROR", "获取Emby会话失败: HTTP {0}", response.status_code)
+                log_manager.log_formatted_event("JELLYFIN_ERROR", "获取Jellyfin会话失败: HTTP {0}", response.status_code)
                 return None
         except requests.exceptions.RequestException as e:
-            log_manager.log_formatted_event("EMBY_ERROR", "获取Emby会话时出错: {0}", str(e))
+            log_manager.log_formatted_event("JELLYFIN_ERROR", "获取Jellyfin会话时出错: {0}", str(e))
             return None
 
     def test_connection(self):
         if not self.url or not self.api_key:
-            return False, "Emby URL或API密钥未配置"
+            return False, "Jellyfin URL或API密钥未配置"
 
         try:
-            info_url = f"{self.url}/emby/System/Info/Public"
+            # Jellyfin的系统信息API
+            info_url = f"{self.url}/System/Info/Public"
             response = self.session.get(info_url, timeout=5)
             if response.status_code == 200:
-                return True, "连接成功"
+                try:
+                    info = response.json()
+                    server_name = info.get('ServerName', 'Jellyfin Server')
+                    version = info.get('Version', '未知版本')
+                    return True, f"连接成功 - {server_name} ({version})"
+                except:
+                    return True, "连接成功"
             else:
                 return False, f"连接失败: HTTP {response.status_code}"
         except Exception as e:
@@ -58,13 +66,12 @@ class Emby(MediaServerBase):
         """
         获取当前播放的媒体比特率信息
         注意：返回的是媒体文件的编码比特率，不是实际的网络传输速度
-        :return: {'total_bitrate': float, 'sessions': [{'user_name': str, 'bitrate': float}]} 或 None
         """
         if not self.url or not self.api_key:
             return None
             
         try:
-            sessions_url = f"{self.url}/emby/Sessions"
+            sessions_url = f"{self.url}/Sessions"
             params = {'api_key': self.api_key}
             response = self.session.get(sessions_url, params=params, timeout=10)
             
@@ -123,8 +130,6 @@ class Emby(MediaServerBase):
                             # 转换单位：确保统一为Kbps
                             if bitrate > 100000:  # 大于100Kbps，可能是bps单位
                                 bitrate = bitrate / 1000  # 转换为Kbps
-                            # 如果bitrate小于1000，可能已经是Kbps或者是很小的bps值
-                            # 保持原值不变
                             
                             # 对于非转码的直播，应用一个动态因子来模拟网络波动
                             if not is_transcoding and bitrate > 0:
@@ -147,8 +152,8 @@ class Emby(MediaServerBase):
                     'sessions': session_speeds
                 }
             else:
-                log_manager.log_formatted_event("EMBY_ERROR", "获取Emby网络速度失败: HTTP {0}", response.status_code)
+                log_manager.log_formatted_event("JELLYFIN_ERROR", "获取Jellyfin网络速度失败: HTTP {0}", response.status_code)
                 return None
         except requests.exceptions.RequestException as e:
-            log_manager.log_formatted_event("EMBY_ERROR", "获取Emby网络速度时出错: {0}", str(e))
+            log_manager.log_formatted_event("JELLYFIN_ERROR", "获取Jellyfin网络速度时出错: {0}", str(e))
             return None 

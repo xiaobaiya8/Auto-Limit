@@ -264,16 +264,9 @@ function updateDownloadersStatus() {
     ])
     .then(([downloadersData, mediaServerData]) => {
         if (downloadersData.status === 'success') {
-            // 计算全局速度
+            // 计算全局速度（仅来自下载器的真实网络速度）
             let totalDownloadSpeed = 0;
             let totalUploadSpeed = 0;
-            
-            // 添加媒体服务器的比特率（上传速度）
-            // 注意：媒体服务器返回的是比特率(Kbps)，需要转换为字节速度(KB/s)
-            if (mediaServerData.status === 'success') {
-                // 将Kbps转换为KB/s：除以8
-                totalUploadSpeed += (mediaServerData.total_bitrate || 0) / 8;
-            }
                 
                 // 更新下载器状态
                 downloadersData.downloaders.forEach(downloader => {

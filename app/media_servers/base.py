@@ -27,7 +27,8 @@ class MediaServerBase(ABC):
 
     def get_network_speeds(self):
         """
-        获取当前网络速度信息（可选实现）。
+        获取当前播放的媒体比特率信息（可选实现）。
+        注意：返回的是媒体文件的编码比特率，不是实际的网络传输速度。
         :return: {'total_bitrate': float, 'sessions': [{'user_name': str, 'bitrate': float}]} 或 None
         """
         return None 

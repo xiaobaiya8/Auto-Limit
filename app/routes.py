@@ -162,7 +162,7 @@ def api_media_server_sessions():
 
 @main.route('/api/media_server/speeds')
 def api_media_server_speeds():
-    """获取所有媒体服务器的网络速度信息"""
+    """获取所有媒体服务器的播放比特率信息（非网络传输速度）"""
     total_bitrate = 0
     all_sessions = []
     settings = config_manager.get_settings()
