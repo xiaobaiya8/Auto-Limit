@@ -256,6 +256,17 @@ function updateStatus() {
         });
 }
 
+// 辅助函数：清理元素中的所有tooltip实例
+function cleanupTooltips(element) {
+    const existingTooltips = element.querySelectorAll('[title]');
+    existingTooltips.forEach(tooltipEl => {
+        const tooltip = bootstrap.Tooltip.getInstance(tooltipEl);
+        if (tooltip) {
+            tooltip.dispose();
+        }
+    });
+}
+
 function updateDownloadersStatus() {
     // 同时获取下载器状态和媒体服务器速度
     Promise.all([
@@ -264,9 +275,20 @@ function updateDownloadersStatus() {
     ])
     .then(([downloadersData, mediaServerData]) => {
         if (downloadersData.status === 'success') {
-            // 计算全局速度（仅来自下载器的真实网络速度）
+            // 计算全局速度（下载器的真实网络速度 + Plex的真实传输速度）
             let totalDownloadSpeed = 0;
             let totalUploadSpeed = 0;
+            
+            // 添加Plex的真实传输速度到上传速度
+            if (mediaServerData.status === 'success') {
+                mediaServerData.sessions.forEach(session => {
+                    // 只有Plex的真实带宽数据才加入全局速度统计
+                    if (session.source_server_type === 'plex' && session.transfer_type === 'real_bandwidth') {
+                        // Plex的真实网络传输速度（KB/s）直接加入上传速度统计
+                        totalUploadSpeed += (session.bitrate || 0); // 已经是KB/s
+                    }
+                });
+            }
                 
                 // 更新下载器状态
                 downloadersData.downloaders.forEach(downloader => {
@@ -337,6 +359,9 @@ function updateDownloadersStatus() {
                         const speedInfo = serverSpeedMap[serverName];
                         
                         if (speedInfo && speedInfo.total_bitrate > 0) {
+                            // 在更新内容前，先销毁现有的tooltip以避免悬浮bug
+                            cleanupTooltips(element);
+                            
                             let statusHtml = `<small class="text-info">`;
                             statusHtml += `<i class="bi bi-person-video3"></i> ${translations.activePlaying2}: ${speedInfo.sessions.length} ${translations.sessions}`;
                             statusHtml += `</small>`;
@@ -345,29 +370,53 @@ function updateDownloadersStatus() {
                             if (speedInfo.sessions.length > 0) {
                                 statusHtml += `<div class="mt-2">`;
                                 speedInfo.sessions.forEach((session, index) => {
-                                    statusHtml += `<div class="d-flex align-items-center mb-1">`;
-                                    statusHtml += `<i class="bi bi-person-circle text-primary me-1" style="font-size: 0.8rem;"></i>`;
-                                    statusHtml += `<small class="text-dark">`;
-                                    statusHtml += `<strong>${session.user_name}</strong>: ${session.item_name}`;
-                                    if (session.bitrate > 0) {
-                                        statusHtml += ` <span class="text-success">(${formatBitrate(session.bitrate)})</span>`;
+                                                                statusHtml += `<div class="d-flex align-items-center mb-1">`;
+                            statusHtml += `<i class="bi bi-person-circle text-primary me-1" style="font-size: 0.8rem;"></i>`;
+                            statusHtml += `<small class="text-dark">`;
+                            statusHtml += `<strong>${session.user_name}</strong>: ${session.item_name}`;
+                            if (session.bitrate > 0) {
+                                // 根据服务器类型使用不同的格式化方式
+                                if (session.transfer_type === 'real_bandwidth') {
+                                    // Plex的真实传输速度（KB/s）+ 媒体比特率
+                                    statusHtml += ` <span class="text-success fw-bold" title="📊 实际网络传输速度<br>✓ 反映真实带宽使用<br>✓ 已计入全局速度统计" style="border-bottom: 1px dotted currentColor; cursor: help;">(${formatActualSpeed(session.bitrate)}</span>`;
+                                    // 始终显示媒体比特率信息
+                                    if (session.media_bitrate && session.media_bitrate > 0) {
+                                        statusHtml += ` <span class="text-muted fst-italic" title="📄 媒体文件编码比特率<br>⚠️ 仅作参考，不反映实际网络使用" style="border-bottom: 1px dotted currentColor; cursor: help;">/ ${formatBitrate(session.media_bitrate)}</span>`;
+                                    } else {
+                                        statusHtml += ` <span class="text-muted fst-italic" title="📄 媒体文件编码比特率<br>⚠️ 未获取到比特率信息" style="border-bottom: 1px dotted currentColor; cursor: help;">/ N/A</span>`;
                                     }
-                                    statusHtml += `</small></div>`;
+                                    statusHtml += `<span class="text-success">)</span>`;
+                                } else {
+                                    // Emby/Jellyfin的媒体比特率（Kbps）
+                                    statusHtml += ` <span class="text-warning fst-italic" title="📄 媒体文件编码比特率<br>⚠️ 不反映实际网络传输速度<br>💡 建议使用Plex获取真实数据" style="border-bottom: 1px dotted currentColor; cursor: help;">(${formatBitrate(session.bitrate)})</span>`;
+                                }
+                            }
+                            statusHtml += `</small></div>`;
                                 });
                                 statusHtml += `</div>`;
                             }
                             
-                            statusHtml += `<br><small class="text-muted">`;
-                            statusHtml += `<i class="bi bi-info-circle"></i> ${translations.note}`;
-                            statusHtml += `</small>`;
+
                             element.innerHTML = statusHtml;
+                            
+                            // 初始化新添加的tooltip（支持HTML内容）
+                            const titleElements = element.querySelectorAll('[title]');
+                            const titleTooltips = [...titleElements].map(titleEl => new bootstrap.Tooltip(titleEl, {
+                                html: true
+                            }));
                         } else {
+                            // 清理可能存在的tooltip
+                            cleanupTooltips(element);
+                            
                             element.innerHTML = `<small class="text-muted">${translations.noPlayingActivity}</small>`;
                         }
                     });
                 } else {
                     // 错误时重置媒体服务器状态
                     document.querySelectorAll('[id^="media-server-"][id$="-status"]').forEach(element => {
+                        // 清理可能存在的tooltip
+                        cleanupTooltips(element);
+                        
                         element.innerHTML = `<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> ${translations.statusFetchFailed}</small>`;
                     });
                 }
@@ -386,11 +435,17 @@ function updateDownloadersStatus() {
         console.error('Error fetching status:', error);
         // 在错误情况下显示基本信息
         document.querySelectorAll('[id^="downloader-"][id$="-status"]').forEach(element => {
+            // 清理可能存在的tooltip
+            cleanupTooltips(element);
+            
             element.innerHTML = `<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> ${translations.statusFetchFailed}</small>`;
         });
         
         // 错误时重置媒体服务器状态
         document.querySelectorAll('[id^="media-server-"][id$="-status"]').forEach(element => {
+            // 清理可能存在的tooltip
+            cleanupTooltips(element);
+            
             element.innerHTML = `<small class="text-muted"><i class="bi bi-exclamation-triangle"></i> ${translations.statusFetchFailed}</small>`;
         });
         

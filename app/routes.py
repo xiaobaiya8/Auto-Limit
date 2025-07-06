@@ -162,7 +162,8 @@ def api_media_server_sessions():
 
 @main.route('/api/media_server/speeds')
 def api_media_server_speeds():
-    """获取所有媒体服务器的播放比特率信息（非网络传输速度）"""
+    """获取所有媒体服务器的网络速度信息
+    注意：Plex返回真实网络传输速度，Emby/Jellyfin返回媒体文件比特率"""
     total_bitrate = 0
     all_sessions = []
     settings = config_manager.get_settings()
@@ -180,6 +181,7 @@ def api_media_server_speeds():
                         # 为每个会话添加服务器信息
                         for session in speed_info.get('sessions', []):
                             session['source_server'] = server_name
+                            session['source_server_type'] = server_instance.get('type', '未知类型')
                             all_sessions.append(session)
                 except Exception as e:
                     current_app.logger.warning(f"获取媒体服务器 {server_instance.get('name', '未知')} 网络速度失败: {e}")
