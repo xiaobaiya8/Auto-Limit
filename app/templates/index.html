@@ -62,6 +62,9 @@
                                             </div>
                                             <small class="text-muted d-block">{{ server.url or _('URL未配置') }}</small>
                                             <small class="text-info">{{ _('轮询间隔') }}: {{ server.poll_interval or 15 }}{{ _('秒') }}</small>
+                                            {% if server.skip_local_playback %}
+                                                <div><small class="text-warning"><i class="bi bi-shield-check"></i> {{ _('已启用本地播放跳过') }}</small></div>
+                                            {% endif %}
                                             <div class="mt-1" id="media-server-{{ server.id }}-status">
                                                 <small class="text-muted">{{ _('加载状态中...') }}</small>
                                             </div>

@@ -8,6 +8,12 @@
 [![Docker Image Version](https://img.shields.io/docker/v/xiaobaiya000/auto-limit?style=flat-square)](https://hub.docker.com/r/xiaobaiya000/auto-limit)
 [![License](https://img.shields.io/github/license/xiaobaiya8/Auto-Limit?style=flat-square&cache=none)](https://github.com/xiaobaiya8/Auto-Limit/blob/main/LICENSE)
 
+> **🎉 版本 1.1.0 重大更新**
+> - ✨ 新增 **Jellyfin** 和 **Plex** 媒体服务器支持
+> - 🔐 添加**安全认证系统**，首次使用需设置管理员账号
+> - 🌐 完善**多语言支持**，界面和日志全面中英文双语
+> - 🐛 修复多项稳定性问题，提升用户体验
+
 [English](#english) | [中文](#中文)
 
 ---
@@ -20,10 +26,11 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
 
 ### 🌟 核心功能
 
-- **🎬 智能检测播放状态** - 自动监控 Emby/Jellyfin 的播放活动
+- **🎬 智能检测播放状态** - 自动监控 Emby/Jellyfin/Plex 的播放活动
 - **⚡ 自动限速切换** - 播放时自动降速，停止播放时恢复正常速度
 - **📊 实时速度监控** - 显示下载器实时上传下载速度和媒体服务器比特率
 - **🔧 简单易用配置** - Web 界面配置，无需命令行操作
+- **🔐 安全认证系统** - 首次使用设置管理员账号，保护系统安全
 - **🐳 Docker 一键部署** - 支持 Docker 和 Docker Compose 快速部署
 - **📱 响应式界面** - 支持手机、平板、电脑访问
 - **🔄 多实例支持** - 同时管理多个下载器和媒体服务器
@@ -33,21 +40,21 @@ Auto-Limit 是一个专为 **NAS 用户** 和 **家庭媒体服务器** 设计�
 
 #### 媒体服务器
 - **Emby** - 完整支持播放检测和比特率监控
-- **Jellyfin** - 计划支持中
+- **Jellyfin** - 完整支持播放检测和比特率监控
+- **Plex** - 完整支持播放检测和网络速度监控
 
 #### 下载器
 - **qBittorrent** - 完整支持限速和实时速度监控
 - **Transmission** - 完整支持限速和实时速度监控
 - **CloudDrive2** - 支持限速和实时速度监控
 
-### 🐳 Docker 镜像
-
-**Docker Hub 地址**: [xiaobaiya000/auto-limit](https://hub.docker.com/r/xiaobaiya000/auto-limit)
 
 **快速运行命令**:
 ```bash
 docker run -d --name autolimit-controller -p 9190:9190 xiaobaiya000/auto-limit:latest
 ```
+
+启动后访问 `http://localhost:9190`，首次使用需要设置管理员账号密码。
 
 ### 🚀 快速开始
 
@@ -67,6 +74,8 @@ services:
       - TZ=Asia/Shanghai
     restart: unless-stopped
 ```
+
+启动后访问 `http://localhost:9190` 进行首次设置。
 
 #### 方法二：Docker 运行
 
@@ -97,10 +106,24 @@ python run.py
 #### 1. 添加媒体服务器
 
 1. 在 Web 界面点击"配置"
-2. 添加 Emby 服务器：
+2. 添加媒体服务器：
+   
+   **Emby 配置**：
    - **名称**：自定义名称（如：客厅 Emby）
    - **地址**：`http://你的NAS地址:8096`
    - **API 密钥**：在 Emby 控制台 → API 密钥中生成
+   - **轮询间隔**：建议 15 秒
+   
+   **Jellyfin 配置**：
+   - **名称**：自定义名称（如：主 Jellyfin）
+   - **地址**：`http://你的NAS地址:8096`
+   - **API 密钥**：在 Jellyfin 控制台 → API 密钥中生成
+   - **轮询间隔**：建议 15 秒
+   
+   **Plex 配置**：
+   - **名称**：自定义名称（如：家庭 Plex）
+   - **地址**：`http://你的NAS地址:32400`
+   - **API 密钥**：在 Plex 设置 → 常规 → 令牌中获取
    - **轮询间隔**：建议 15 秒
 
 #### 2. 添加下载器
@@ -167,16 +190,23 @@ A: 检查下载器是否正在下载任务，无任务时限速不会显示效�
 
 ## English
 
+> **🎉 Version 1.1.0 Major Update**
+> - ✨ Added **Jellyfin** and **Plex** media server support
+> - 🔐 Added **secure authentication system**, admin account setup required on first use
+> - 🌐 Enhanced **multi-language support**, comprehensive Chinese/English UI and logs
+> - 🐛 Fixed multiple stability issues, improved user experience
+
 ### 🎯 What is Auto-Limit?
 
 Auto-Limit is an intelligent download speed management tool designed specifically for **NAS users** and **home media server** enthusiasts. It automatically reduces the speed of downloaders like qBittorrent and Transmission when family members are watching movies on media servers like Emby or Jellyfin, ensuring smooth streaming without buffering.
 
 ### 🌟 Key Features
 
-- **🎬 Smart Playback Detection** - Automatically monitors Emby/Jellyfin playback activities
+- **🎬 Smart Playback Detection** - Automatically monitors Emby/Jellyfin/Plex playback activities
 - **⚡ Automatic Speed Switching** - Reduces speed during playback, restores normal speed when stopped
 - **📊 Real-time Speed Monitoring** - Shows real-time upload/download speeds and media server bitrates
 - **🔧 Easy Web Configuration** - Web interface setup, no command line required
+- **🔐 Secure Authentication System** - First-time setup for admin account to protect system security
 - **🐳 One-Click Docker Deployment** - Supports Docker and Docker Compose for quick deployment
 - **📱 Responsive Interface** - Works on phones, tablets, and computers
 - **🔄 Multi-Instance Support** - Manage multiple downloaders and media servers simultaneously
@@ -186,7 +216,8 @@ Auto-Limit is an intelligent download speed management tool designed specificall
 
 #### Media Servers
 - **Emby** - Full support for playback detection and bitrate monitoring
-- **Jellyfin** - Planned support
+- **Jellyfin** - Full support for playback detection and bitrate monitoring
+- **Plex** - Full support for playback detection and network speed monitoring
 
 #### Downloaders
 - **qBittorrent** - Full support for speed limiting and real-time monitoring
@@ -201,6 +232,8 @@ Auto-Limit is an intelligent download speed management tool designed specificall
 ```bash
 docker run -d --name autolimit-controller -p 9190:9190 xiaobaiya000/auto-limit:latest
 ```
+
+After startup, visit `http://localhost:9190` and set up an admin account on first use.
 
 ### 🚀 Quick Start
 
@@ -220,6 +253,8 @@ services:
       - TZ=Asia/Shanghai
     restart: unless-stopped
 ```
+
+After startup, visit `http://localhost:9190` for initial setup.
 
 #### Method 2: Docker Run
 
@@ -250,10 +285,24 @@ python run.py
 #### 1. Add Media Server
 
 1. Click "Configuration" in the web interface
-2. Add Emby server:
+2. Add Media Server:
+   
+   **Emby Configuration**:
    - **Name**: Custom name (e.g., Living Room Emby)
    - **URL**: `http://your-nas-ip:8096`
    - **API Key**: Generate in Emby Dashboard → API Keys
+   - **Poll Interval**: Recommended 15 seconds
+   
+   **Jellyfin Configuration**:
+   - **Name**: Custom name (e.g., Main Jellyfin)
+   - **URL**: `http://your-nas-ip:8096`
+   - **API Key**: Generate in Jellyfin Dashboard → API Keys
+   - **Poll Interval**: Recommended 15 seconds
+   
+   **Plex Configuration**:
+   - **Name**: Custom name (e.g., Home Plex)
+   - **URL**: `http://your-nas-ip:32400`
+   - **API Key**: Get from Plex Settings → General → Token
    - **Poll Interval**: Recommended 15 seconds
 
 #### 2. Add Downloader

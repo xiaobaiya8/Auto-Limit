@@ -28,10 +28,20 @@ class Jellyfin(MediaServerBase):
                         play_state = session.get('PlayState', {})
                         is_paused = play_state.get('IsPaused', False)
                         if not is_paused:
+                            # 获取客户端IP和设备信息
+                            client_ip = session.get('RemoteEndPoint', '')
+                            device_name = session.get('DeviceName', 'Unknown')
+                            
+                            # 如果RemoteEndPoint包含端口，提取IP部分
+                            if client_ip and ':' in client_ip:
+                                client_ip = client_ip.split(':')[0]
+                            
                             active_playing_sessions.append({
                                 'session_id': session.get('Id', 'Unknown'),
                                 'user_name': session.get('UserName', 'Unknown'),
-                                'item_name': session.get('NowPlayingItem', {}).get('Name', 'Unknown')
+                                'item_name': session.get('NowPlayingItem', {}).get('Name', 'Unknown'),
+                                'client_ip': client_ip,
+                                'device_name': device_name
                             })
                 return active_playing_sessions
             else:

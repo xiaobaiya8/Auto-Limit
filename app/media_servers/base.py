@@ -12,7 +12,12 @@ class MediaServerBase(ABC):
     def get_active_sessions(self):
         """
         获取当前活跃的、非暂停的播放会话。
-        :return: 包含会话信息的列表，例如 [{'user_name': 'test', 'item_name': 'Test Movie'}]
+        :return: 包含会话信息的列表，每个会话包含以下字段：
+                 - session_id: 会话ID
+                 - user_name: 用户名
+                 - item_name: 媒体项目名称
+                 - client_ip: 客户端IP地址（可选）
+                 - device_name: 设备名称（可选）
                  如果获取失败，返回 None。
         """
         pass

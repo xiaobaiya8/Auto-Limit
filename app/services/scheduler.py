@@ -4,6 +4,7 @@ from flask import current_app
 from flask_babel import _
 from .config_manager import config_manager
 from .log_manager import log_manager
+from ..utils import should_skip_speed_limit
 
 class Scheduler:
     """
@@ -123,12 +124,23 @@ class Scheduler:
             if media_server:
                 current_sessions = media_server.get_active_sessions()
                 
-                # 计算该服务器的会话ID
+                # 计算该服务器的会话ID（只计算不被跳过的会话）
                 server_session_ids = set()
+                skipped_sessions = []
                 if current_sessions:
                     for session in current_sessions:
                         session['source_server'] = server_instance.get('name', server_id)
-                        server_session_ids.add(f"{server_id}:{session['session_id']}")
+                        session_id = f"{server_id}:{session['session_id']}"
+                        
+                        # 检查是否应该跳过此会话的限速
+                        if should_skip_speed_limit(session, server_instance):
+                            skipped_sessions.append(session)
+                            # 记录跳过的会话
+                            reason = "本地播放" if session.get('client_ip') and session.get('client_ip') != '' else "白名单用户"
+                            log_manager.log_formatted_event("SKIP_LIMIT", _("跳过限速 - 用户: {0}, 原因: {1}"), 
+                                                           session.get('user_name', 'Unknown'), reason)
+                        else:
+                            server_session_ids.add(session_id)
                 
                 # 更新全局活跃会话集合
                 with self.lock:
@@ -136,14 +148,16 @@ class Scheduler:
                     old_server_sessions = {sid for sid in self.active_session_ids if sid.startswith(f"{server_id}:")}
                     self.active_session_ids.difference_update(old_server_sessions)
                     
-                    # 添加该服务器的新会话
+                    # 添加该服务器的新会话（不包括跳过的）
                     self.active_session_ids.update(server_session_ids)
                     
                     # 检查是否需要更新下载器速率
                     total_sessions = len(self.active_session_ids)
                     if old_server_sessions != server_session_ids:
                         if total_sessions > 0:
-                            log_manager.log_formatted_event("PLAY_STATUS", _("检测到 {0} 个总活跃播放"), total_sessions)
+                            log_manager.log_formatted_event("PLAY_STATUS", _("检测到 {0} 个需要限速的播放"), total_sessions)
+                            if skipped_sessions:
+                                log_manager.log_formatted_event("PLAY_STATUS", _("已跳过 {0} 个本地/白名单播放"), len(skipped_sessions))
                         else:
                             log_manager.log_event("PLAY_STATUS", _("所有播放已停止"))
                         

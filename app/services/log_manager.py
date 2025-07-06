@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 from datetime import datetime
 from threading import RLock
 from flask import current_app, has_request_context, has_app_context
@@ -30,6 +31,19 @@ class LogManager:
                 if os.path.exists(self.log_path):
                     with open(self.log_path, 'r', encoding='utf-8') as f:
                         return json.load(f)
+            except UnicodeDecodeError as e:
+                self._safe_log_error(f"日志文件编码错误: {e}")
+                # 尝试恢复日志文件
+                recovered_logs = self._try_recover_logs()
+                if recovered_logs is not None:
+                    # 如果恢复成功，重新写入文件
+                    self._backup_corrupted_log_file()
+                    self._write_logs(recovered_logs)
+                    return recovered_logs
+                else:
+                    # 恢复失败，备份并重新创建
+                    self._backup_corrupted_log_file()
+                    self._create_new_log_file()
             except (json.JSONDecodeError, IOError) as e:
                 self._safe_log_error(f"读取日志文件失败: {e}")
                 # 如果日志文件损坏，创建新的日志文件
@@ -54,6 +68,59 @@ class LogManager:
         else:
             print(f"INFO: {message}")
 
+    def _try_recover_logs(self):
+        """尝试从损坏的日志文件中恢复数据"""
+        try:
+            if not os.path.exists(self.log_path):
+                return None
+            
+            # 尝试用不同的编码读取文件
+            encodings = ['utf-8', 'utf-8-sig', 'latin1', 'cp1252']
+            content = None
+            
+            for encoding in encodings:
+                try:
+                    with open(self.log_path, 'r', encoding=encoding, errors='replace') as f:
+                        content = f.read()
+                    break
+                except:
+                    continue
+            
+            if content is None:
+                return None
+            
+            # 尝试修复JSON格式
+            try:
+                # 首先尝试直接解析
+                return json.loads(content)
+            except json.JSONDecodeError:
+                # 如果失败，尝试找到最后一个完整的日志条目
+                try:
+                    # 查找最后一个完整的 '}]' 结构
+                    last_bracket = content.rfind('}]')
+                    if last_bracket > 0:
+                        truncated_content = content[:last_bracket + 2]
+                        return json.loads(truncated_content)
+                except:
+                    pass
+                
+                # 如果还是失败，返回空列表
+                return []
+        
+        except Exception as e:
+            self._safe_log_error(f"恢复日志文件失败: {e}")
+            return None
+
+    def _backup_corrupted_log_file(self):
+        """备份损坏的日志文件"""
+        try:
+            if os.path.exists(self.log_path):
+                backup_path = f"{self.log_path}.corrupted.{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                shutil.move(self.log_path, backup_path)
+                self._safe_log_info(f"已备份损坏的日志文件到: {backup_path}")
+        except Exception as e:
+            self._safe_log_error(f"备份损坏日志文件失败: {e}")
+
     def _create_new_log_file(self):
         """创建新的日志文件"""
         try:
@@ -73,8 +140,23 @@ class LogManager:
             return False
             
         try:
+            # 确保所有日志条目都是有效的UTF-8字符串
+            cleaned_logs = []
+            for log in logs:
+                cleaned_log = {}
+                for key, value in log.items():
+                    if isinstance(value, str):
+                        # 清理无效的UTF-8字符
+                        try:
+                            cleaned_log[key] = value.encode('utf-8', errors='replace').decode('utf-8')
+                        except:
+                            cleaned_log[key] = str(value)
+                    else:
+                        cleaned_log[key] = value
+                cleaned_logs.append(cleaned_log)
+            
             with open(self.log_path, 'w', encoding='utf-8') as f:
-                json.dump(logs, f, indent=4, ensure_ascii=False)
+                json.dump(cleaned_logs, f, indent=4, ensure_ascii=False)
             return True
         except Exception as e:
             self._safe_log_error(f"写入日志文件失败: {e}")
@@ -119,6 +201,22 @@ class LogManager:
         if self.log_path is None:
             raise RuntimeError("LogManager has not been initialized. Call init_app(app) first.")
 
+        try:
+            # 清理输入的消息，确保是有效的UTF-8字符串
+            if isinstance(message, str):
+                message = message.encode('utf-8', errors='replace').decode('utf-8')
+            else:
+                message = str(message)
+            
+            if isinstance(event_type, str):
+                event_type = event_type.encode('utf-8', errors='replace').decode('utf-8')
+            else:
+                event_type = str(event_type)
+        except:
+            # 如果清理失败，使用安全的默认值
+            message = "日志消息包含无效字符"
+            event_type = "SYSTEM"
+
         translated_message = self._translate(message)
         self._safe_log_info(f"[{event_type}] {translated_message}")
         
@@ -150,6 +248,22 @@ class LogManager:
                 formatted_message = message_template.format(*args, **kwargs)
             except:
                 formatted_message = message_template
+
+        try:
+            # 清理输入的消息，确保是有效的UTF-8字符串
+            if isinstance(formatted_message, str):
+                formatted_message = formatted_message.encode('utf-8', errors='replace').decode('utf-8')
+            else:
+                formatted_message = str(formatted_message)
+            
+            if isinstance(event_type, str):
+                event_type = event_type.encode('utf-8', errors='replace').decode('utf-8')
+            else:
+                event_type = str(event_type)
+        except:
+            # 如果清理失败，使用安全的默认值
+            formatted_message = "日志消息包含无效字符"
+            event_type = "SYSTEM"
 
         self._safe_log_info(f"[{event_type}] {formatted_message}")
         

@@ -197,6 +197,48 @@ msgstr "Upload During Playback"
 msgid "当有媒体播放时，自动切换到"播放时"限速"
 msgstr "Automatically switch to \"During Playback\" speed limits when media is playing"
 
+msgid "智能限速控制"
+msgstr "Smart Speed Control"
+
+msgid "跳过本地播放限速"
+msgstr "Skip Local Playback Speed Limits"
+
+msgid "启用后，本地网络播放不会触发下载限速"
+msgstr "When enabled, local network playback will not trigger download speed limits"
+
+msgid "自定义IP白名单"
+msgstr "Custom IP Whitelist"
+
+msgid "192.168.1.100\n10.0.0.0/8\nexample.com"
+msgstr "192.168.1.100\n10.0.0.0/8\nexample.com"
+
+msgid "支持单个IP、CIDR格式、域名，每行一个"
+msgstr "Supports individual IPs, CIDR format, domains, one per line"
+
+msgid "用户白名单"
+msgstr "User Whitelist"
+
+msgid "admin\n家庭成员*\nlocaluser"
+msgstr "admin\nfamily*\nlocaluser"
+
+msgid "支持完全匹配和通配符*，每行一个"
+msgstr "Supports exact match and wildcard *, one per line"
+
+msgid "跳过本地"
+msgstr "Skip Local"
+
+msgid "已启用本地播放跳过"
+msgstr "Local Playback Skip Enabled"
+
+msgid "跳过限速 - 用户: {0}, 原因: {1}"
+msgstr "Skip Speed Limit - User: {0}, Reason: {1}"
+
+msgid "检测到 {0} 个需要限速的播放"
+msgstr "Detected {0} playbacks requiring speed limits"
+
+msgid "已跳过 {0} 个本地/白名单播放"
+msgstr "Skipped {0} local/whitelist playbacks"
+
 msgid "取消"
 msgstr "Cancel"
 

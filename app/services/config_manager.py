@@ -162,6 +162,10 @@ class ConfigManager:
                     # 添加轮询间隔设置，从全局scheduler设置迁移
                     scheduler_settings = old_settings.get('scheduler', {})
                     new_instance["poll_interval"] = scheduler_settings.get('poll_interval', 15)
+                    # 添加新的本地网络识别配置（默认关闭）
+                    new_instance["skip_local_playback"] = False
+                    new_instance["ip_whitelist"] = ""
+                    new_instance["user_whitelist"] = ""
                     new_settings["media_servers"].append(new_instance)
 
         # 迁移下载器

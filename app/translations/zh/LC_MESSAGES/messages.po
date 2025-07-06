@@ -197,6 +197,48 @@ msgstr "播放时上传"
 msgid "当有媒体播放时，自动切换到"播放时"限速"
 msgstr "当有媒体播放时，自动切换到"播放时"限速"
 
+msgid "智能限速控制"
+msgstr "智能限速控制"
+
+msgid "跳过本地播放限速"
+msgstr "跳过本地播放限速"
+
+msgid "启用后，本地网络播放不会触发下载限速"
+msgstr "启用后，本地网络播放不会触发下载限速"
+
+msgid "自定义IP白名单"
+msgstr "自定义IP白名单"
+
+msgid "192.168.1.100\n10.0.0.0/8\nexample.com"
+msgstr "192.168.1.100\n10.0.0.0/8\nexample.com"
+
+msgid "支持单个IP、CIDR格式、域名，每行一个"
+msgstr "支持单个IP、CIDR格式、域名，每行一个"
+
+msgid "用户白名单"
+msgstr "用户白名单"
+
+msgid "admin\n家庭成员*\nlocaluser"
+msgstr "admin\n家庭成员*\nlocaluser"
+
+msgid "支持完全匹配和通配符*，每行一个"
+msgstr "支持完全匹配和通配符*，每行一个"
+
+msgid "跳过本地"
+msgstr "跳过本地"
+
+msgid "已启用本地播放跳过"
+msgstr "已启用本地播放跳过"
+
+msgid "跳过限速 - 用户: {0}, 原因: {1}"
+msgstr "跳过限速 - 用户: {0}, 原因: {1}"
+
+msgid "检测到 {0} 个需要限速的播放"
+msgstr "检测到 {0} 个需要限速的播放"
+
+msgid "已跳过 {0} 个本地/白名单播放"
+msgstr "已跳过 {0} 个本地/白名单播放"
+
 msgid "取消"
 msgstr "取消"
 

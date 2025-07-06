@@ -47,6 +47,9 @@
                                     </div>
                                     <div class="col-md-2">
                                         <small class="text-info">{{ server.poll_interval or 15 }}{{ _('秒轮询') }}</small>
+                                        {% if server.skip_local_playback %}
+                                            <div><small class="text-warning"><i class="bi bi-shield-check"></i> {{ _('跳过本地') }}</small></div>
+                                        {% endif %}
                                     </div>
                                     <div class="col-md-2 text-end">
                                         <div class="btn-group btn-group-sm" role="group">
@@ -235,7 +238,7 @@
 
                         <!-- 媒体服务器特有设置 -->
                         <div id="mediaServerSettings" style="display: none;">
-                            <div class="polling-settings bg-light p-3 rounded">
+                            <div class="polling-settings bg-light p-3 rounded mb-3">
                                 <h6 class="fw-bold text-info mb-2">
                                     <i class="bi bi-clock-history"></i> {{ _('轮询设置') }}
                                 </h6>
@@ -244,6 +247,44 @@
                                     <input type="number" class="form-control" id="instancePollInterval" name="poll_interval" value="15" min="5" max="300">
                                     <div class="form-text">
                                         <i class="bi bi-info-circle"></i> {{ _('检查此服务器播放状态的频率，建议5-60秒') }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="advanced-settings bg-light p-3 rounded">
+                                <h6 class="fw-bold text-warning mb-2">
+                                    <i class="bi bi-shield-check"></i> {{ _('智能限速控制') }}
+                                </h6>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="instanceSkipLocal" name="skip_local_playback">
+                                        <label class="form-check-label" for="instanceSkipLocal">
+                                            {{ _('跳过本地播放限速') }}
+                                        </label>
+                                    </div>
+                                    <div class="form-text">
+                                        <i class="bi bi-info-circle"></i> {{ _('启用后，本地网络播放不会触发下载限速') }}
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ _('自定义IP白名单') }}</label>
+                                        <textarea class="form-control" id="instanceIpWhitelist" name="ip_whitelist" rows="3" placeholder="{{ _('192.168.1.100
+10.0.0.0/8
+example.com') }}"></textarea>
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle"></i> {{ _('支持单个IP、CIDR格式、域名，每行一个') }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">{{ _('用户白名单') }}</label>
+                                        <textarea class="form-control" id="instanceUserWhitelist" name="user_whitelist" rows="3" placeholder="{{ _('admin
+家庭成员*
+localuser') }}"></textarea>
+                                        <div class="form-text">
+                                            <i class="bi bi-info-circle"></i> {{ _('支持完全匹配和通配符*，每行一个') }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -412,6 +453,10 @@ function editInstance(button, instanceType, instanceId) {
     // 填充特定设置
     if (instanceType === 'media_servers') {
         document.getElementById('instancePollInterval').value = instanceConfig.poll_interval || 15;
+        // 填充智能限速控制设置
+        document.getElementById('instanceSkipLocal').checked = instanceConfig.skip_local_playback || false;
+        document.getElementById('instanceIpWhitelist').value = instanceConfig.ip_whitelist || '';
+        document.getElementById('instanceUserWhitelist').value = instanceConfig.user_whitelist || '';
     } else {
         document.getElementById('instanceDefaultDownload').value = instanceConfig.default_download_limit || 0;
         document.getElementById('instanceDefaultUpload').value = instanceConfig.default_upload_limit || 0;
@@ -602,6 +647,10 @@ function saveInstanceFromModal() {
     // 添加特定设置
     if (currentModal.type === 'media_servers') {
         instanceConfig.poll_interval = parseInt(formData.get('poll_interval')) || 15;
+        // 添加智能限速控制设置
+        instanceConfig.skip_local_playback = formData.get('skip_local_playback') === 'on';
+        instanceConfig.ip_whitelist = formData.get('ip_whitelist') || '';
+        instanceConfig.user_whitelist = formData.get('user_whitelist') || '';
     } else {
         instanceConfig.default_download_limit = parseInt(formData.get('default_download_limit')) || 0;
         instanceConfig.default_upload_limit = parseInt(formData.get('default_upload_limit')) || 0;

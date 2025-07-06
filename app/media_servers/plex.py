@@ -44,6 +44,22 @@ class Plex(MediaServerBase):
                                 user_title = user.get('title', 'Unknown')
                                 media_title = media.get('title', 'Unknown')
                                 
+                                # 获取客户端IP和设备信息
+                                client_ip = ''
+                                device_name = player.get('title', 'Unknown') if player is not None else 'Unknown'
+                                
+                                # 尝试从Player元素获取IP地址
+                                if player is not None:
+                                    # Plex可能在address属性中包含IP
+                                    client_ip = player.get('address', '')
+                                    # 如果没有address，尝试从remotePublicAddress获取
+                                    if not client_ip:
+                                        client_ip = player.get('remotePublicAddress', '')
+                                
+                                # 如果IP包含端口，提取IP部分
+                                if client_ip and ':' in client_ip and not client_ip.startswith('['):
+                                    client_ip = client_ip.split(':')[0]
+                                
                                 # 获取媒体文件比特率信息
                                 media_bitrate = None
                                 try:
@@ -68,6 +84,8 @@ class Plex(MediaServerBase):
                                     'session_id': session_key,
                                     'user_name': user_title,
                                     'item_name': media_title,
+                                    'client_ip': client_ip,
+                                    'device_name': device_name,
                                     'media_bitrate': media_bitrate
                                 })
                     
