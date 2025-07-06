@@ -200,12 +200,26 @@
                             <div class="mb-3 field-api_key" style="display: none;">
                                 <label class="form-label fw-bold">{{ _('API 密钥') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="instanceApiKey" name="api_key">
+                                <div class="form-text">
+                                    <div class="api-key-help-emby" style="display: none;">
+                                        <i class="bi bi-info-circle text-info"></i>
+                                        <strong>Emby {{ _('获取方式') }}:</strong> {{ _('设置') }} → {{ _('API 密钥') }} → {{ _('新建 API 密钥') }}
+                                    </div>
+                                    <div class="api-key-help-jellyfin" style="display: none;">
+                                        <i class="bi bi-info-circle text-info"></i>
+                                        <strong>Jellyfin {{ _('获取方式') }}:</strong> {{ _('控制台') }} → {{ _('API 密钥') }} → {{ _('添加新的 API 密钥') }}
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Token (Plex) -->
                             <div class="mb-3 field-token" style="display: none;">
                                 <label class="form-label fw-bold">X-Plex-Token <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="instanceToken" name="token">
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle text-info"></i>
+                                    <strong>Plex {{ _('获取方式') }}:</strong> {{ _('管理') }} → {{ _('媒体库') }} → {{ _('任意资料库的三个点') }} → {{ _('F12打开开发者工具') }} → {{ _('点击授权访问') }} → {{ _('查看载荷里的X-Plex-Token值') }}
+                                </div>
                             </div>
                             
                             <!-- Username/Password (qBittorrent/Transmission) -->
@@ -471,12 +485,30 @@ function updateModalFields() {
         if (fieldContainer) fieldContainer.style.display = 'none';
     });
     
+    // 隐藏所有帮助提示
+    const allHelpTexts = ['api-key-help-emby', 'api-key-help-jellyfin'];
+    allHelpTexts.forEach(help => {
+        const helpContainer = document.querySelector(`.${help}`);
+        if (helpContainer) helpContainer.style.display = 'none';
+    });
+    
     // 根据选择的类型显示相应的字段
     if (PLUGIN_FIELDS[instanceType] && PLUGIN_FIELDS[instanceType][selectedType]) {
         PLUGIN_FIELDS[instanceType][selectedType].forEach(field => {
             const fieldContainer = document.querySelector(`.field-${field}`);
             if (fieldContainer) fieldContainer.style.display = 'block';
         });
+    }
+    
+    // 根据媒体服务器类型显示相应的帮助提示
+    if (instanceType === 'media_servers') {
+        if (selectedType === 'emby') {
+            const embyHelp = document.querySelector('.api-key-help-emby');
+            if (embyHelp) embyHelp.style.display = 'block';
+        } else if (selectedType === 'jellyfin') {
+            const jellyfinHelp = document.querySelector('.api-key-help-jellyfin');
+            if (jellyfinHelp) jellyfinHelp.style.display = 'block';
+        }
     }
 }
 
@@ -524,8 +556,16 @@ function testConnectionInModal() {
             instance_type: currentModal.type
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok && response.status === 401) {
+            handleApiError(null, response);
+            return null;
+        }
+        return response.json();
+    })
     .then(data => {
+        if (!data) return; // 如果已经处理了401错误
+        
         if (data.status === 'success') {
             showToast(`${instanceConfig.name} {{ _("连接成功") }}`, 'success', '{{ _("连接测试") }}');
         } else {
@@ -533,6 +573,7 @@ function testConnectionInModal() {
         }
     })
     .catch(error => {
+        if (handleApiError(error)) return; // 如果是认证错误，已处理
         showToast(`{{ _("连接测试时发生网络错误") }}: ${error.message}`, 'error', '{{ _("网络错误") }}');
     })
     .finally(() => {
@@ -597,8 +638,16 @@ function saveInstanceFromModal() {
             instance_type: currentModal.type
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok && response.status === 401) {
+            handleApiError(null, response);
+            return null;
+        }
+        return response.json();
+    })
     .then(data => {
+        if (!data) return; // 如果已经处理了401错误
+        
         if (data.status === 'success') {
             showToast(`${instanceConfig.name} {{ _("保存成功") }}`, 'success', '{{ _("配置保存") }}');
             
@@ -615,6 +664,7 @@ function saveInstanceFromModal() {
         }
     })
     .catch(error => {
+        if (handleApiError(error)) return; // 如果是认证错误，已处理
         showToast(`{{ _("保存时发生网络错误") }}: ${error.message}`, 'error', '{{ _("网络错误") }}');
     })
     .finally(() => {
@@ -646,8 +696,16 @@ function testInstanceFromList(button) {
             instance_type: instanceType
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok && response.status === 401) {
+            handleApiError(null, response);
+            return null;
+        }
+        return response.json();
+    })
     .then(data => {
+        if (!data) return; // 如果已经处理了401错误
+        
         if (data.status === 'success') {
             showToast(`${instanceConfig.name || instanceConfig.type} {{ _("连接成功") }}`, 'success', '{{ _("连接测试") }}');
         } else {
@@ -655,6 +713,7 @@ function testInstanceFromList(button) {
         }
     })
     .catch(error => {
+        if (handleApiError(error)) return; // 如果是认证错误，已处理
         showToast(`{{ _("连接测试时发生网络错误") }}: ${error.message}`, 'error', '{{ _("网络错误") }}');
     })
     .finally(() => {
@@ -682,8 +741,16 @@ function toggleInstance(checkbox, instanceType, instanceId) {
             instance_type: instanceType
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok && response.status === 401) {
+            handleApiError(null, response);
+            return null;
+        }
+        return response.json();
+    })
     .then(data => {
+        if (!data) return; // 如果已经处理了401错误
+        
         if (data.status === 'success') {
             showToast(`${instanceConfig.name} ${checkbox.checked ? '{{ _("已启用") }}' : '{{ _("已禁用") }}'}`, 'success');
         } else {
@@ -692,6 +759,7 @@ function toggleInstance(checkbox, instanceType, instanceId) {
         }
     })
     .catch(error => {
+        if (handleApiError(error)) return; // 如果是认证错误，已处理
         showToast(`{{ _("状态更新时发生网络错误") }}: ${error.message}`, 'error');
         checkbox.checked = !checkbox.checked; // 恢复原状态
     });
@@ -716,8 +784,16 @@ function deleteInstance(button, instanceType, instanceId) {
                 instance_type: instanceType
             })
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok && response.status === 401) {
+                handleApiError(null, response);
+                return null;
+            }
+            return response.json();
+        })
         .then(data => {
+            if (!data) return; // 如果已经处理了401错误
+            
             if (data.status === 'success') {
                 showToast(`${instanceConfig.name} {{ _("已删除") }}`, 'success');
                 listItem.remove();
@@ -735,6 +811,7 @@ function deleteInstance(button, instanceType, instanceId) {
             }
         })
         .catch(error => {
+            if (handleApiError(error)) return; // 如果是认证错误，已处理
             showToast(`{{ _("删除时发生网络错误") }}: ${error.message}`, 'error');
         });
     }
@@ -742,6 +819,23 @@ function deleteInstance(button, instanceType, instanceId) {
 
 // 全局配置数据
 window.APP_CONFIG = JSON.parse(document.getElementById('app-config').textContent);
+
+// 通用错误处理函数
+function handleApiError(error, response = null) {
+    // 检查是否是401未授权错误
+    if (response && response.status === 401) {
+        window.location.href = '/login';
+        return true; // 表示已处理
+    }
+    
+    // 检查错误信息中是否包含401
+    if (error && (error.message.includes('401') || error.status === 401)) {
+        window.location.href = '/login';
+        return true; // 表示已处理
+    }
+    
+    return false; // 未处理，需要继续原有的错误处理
+}
 
 // 从全局配置中获取实例配置
 function getInstanceConfigById(instanceType, instanceId) {

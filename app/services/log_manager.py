@@ -1,7 +1,5 @@
 import json
 import os
-import tempfile
-import shutil
 from datetime import datetime
 from threading import RLock
 from flask import current_app, has_request_context, has_app_context
@@ -34,18 +32,7 @@ class LogManager:
                         return json.load(f)
             except (json.JSONDecodeError, IOError) as e:
                 self._safe_log_error(f"读取日志文件失败: {e}")
-                # 如果日志文件损坏，尝试从备份恢复
-                backup_path = self.log_path + '.backup'
-                if os.path.exists(backup_path):
-                    try:
-                        with open(backup_path, 'r', encoding='utf-8') as f:
-                            logs = json.load(f)
-                        self._safe_log_error("从备份文件恢复日志成功")
-                        return logs
-                    except (json.JSONDecodeError, IOError):
-                        self._safe_log_error("备份文件也损坏，创建新的日志文件")
-                
-                # 如果无法恢复，创建新的日志文件
+                # 如果日志文件损坏，创建新的日志文件
                 self._create_new_log_file()
             return []
 
@@ -80,43 +67,17 @@ class LogManager:
         except IOError as e:
             self._safe_log_error(f"创建新日志文件失败: {e}")
 
-    def _atomic_write_logs(self, logs):
-        """原子性地写入日志文件"""
+    def _write_logs(self, logs):
+        """写入日志文件"""
         if not logs:
             return False
             
         try:
-            # 创建临时文件
-            temp_dir = os.path.dirname(self.log_path)
-            with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', 
-                                           dir=temp_dir, delete=False, 
-                                           suffix='.tmp') as temp_file:
-                json.dump(logs, temp_file, indent=4, ensure_ascii=False)
-                temp_path = temp_file.name
-            
-            # 创建备份
-            backup_path = self.log_path + '.backup'
-            if os.path.exists(self.log_path):
-                shutil.copy2(self.log_path, backup_path)
-            
-            # 原子性地移动临时文件到目标位置
-            if os.name == 'nt':  # Windows
-                if os.path.exists(self.log_path):
-                    os.remove(self.log_path)
-                shutil.move(temp_path, self.log_path)
-            else:  # Unix/Linux
-                os.rename(temp_path, self.log_path)
-            
+            with open(self.log_path, 'w', encoding='utf-8') as f:
+                json.dump(logs, f, indent=4, ensure_ascii=False)
             return True
-            
         except Exception as e:
-            self._safe_log_error(f"原子写入日志文件失败: {e}")
-            # 清理临时文件
-            try:
-                if 'temp_path' in locals() and os.path.exists(temp_path):
-                    os.remove(temp_path)
-            except:
-                pass
+            self._safe_log_error(f"写入日志文件失败: {e}")
             return False
 
     def _translate(self, message):
@@ -172,8 +133,8 @@ class LogManager:
             
             trimmed_logs = logs[:self.max_entries]
             
-            # 使用原子写入
-            if not self._atomic_write_logs(trimmed_logs):
+            # 直接写入
+            if not self._write_logs(trimmed_logs):
                 self._safe_log_error(f"保存日志文件失败")
 
     def log_formatted_event(self, event_type, message_template, *args, **kwargs):
@@ -205,8 +166,8 @@ class LogManager:
             
             trimmed_logs = logs[:self.max_entries]
             
-            # 使用原子写入
-            if not self._atomic_write_logs(trimmed_logs):
+            # 直接写入
+            if not self._write_logs(trimmed_logs):
                 self._safe_log_error(f"保存日志文件失败")
 
 log_manager = LogManager() 

@@ -138,24 +138,36 @@
                 <i class="bi bi-play-circle"></i> Auto-Limit
             </a>
             <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="{{ url_for('main.index') }}">
-                    <i class="bi bi-house"></i> {{ _('首页') }}
-                </a>
-                <a class="nav-link" href="{{ url_for('main.config') }}">
-                    <i class="bi bi-gear"></i> {{ _('配置') }}
-                </a>
-                <a class="nav-link" href="{{ url_for('main.logs_page') }}">
-                    <i class="bi bi-journal-text"></i> {{ _('日志') }}
-                </a>
-                <div class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-translate"></i> {{ _('语言') }}
+                {% if g.is_authenticated %}
+                    <a class="nav-link" href="{{ url_for('main.index') }}">
+                        <i class="bi bi-house"></i> {{ _('首页') }}
                     </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='zh') }}">中文</a></li>
-                        <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='en') }}">English</a></li>
-                    </ul>
-                </div>
+                    <a class="nav-link" href="{{ url_for('main.config') }}">
+                        <i class="bi bi-gear"></i> {{ _('配置') }}
+                    </a>
+                    <a class="nav-link" href="{{ url_for('main.logs_page') }}">
+                        <i class="bi bi-journal-text"></i> {{ _('日志') }}
+                    </a>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-translate"></i> {{ _('语言') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='zh') }}">中文</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('main.set_language', language='en') }}">English</a></li>
+                        </ul>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ session.get('username', 'User') }}
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                <i class="bi bi-box-arrow-right"></i> {{ _('注销') }}
+                            </a></li>
+                        </ul>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </nav>

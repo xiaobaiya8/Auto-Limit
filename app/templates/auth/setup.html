@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('首次设置') }} - Auto-Limit{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-gear-wide-connected"></i> {{ _('首次设置') }}
+                </h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown">
+                        <i class="bi bi-translate"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="switchLanguage('zh')">中文</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="switchLanguage('en')">English</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info" role="alert">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>{{ _('欢迎使用Auto-Limit！') }}</strong><br>
+                    {{ _('检测到这是首次运行，请设置管理员账户以保护您的系统安全。') }}
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="post" action="{{ url_for('auth.setup_post') }}" onsubmit="clearSavedData()">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">{{ _('用户名') }} <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="username" name="username" required autofocus>
+                        <div class="form-text">{{ _('建议使用admin或您的常用用户名') }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">{{ _('密码') }} <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="form-text">{{ _('密码长度至少6个字符') }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirm_password" class="form-label">{{ _('确认密码') }} <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> {{ _('完成设置') }}
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6 class="card-title"><i class="bi bi-shield-check"></i> {{ _('安全提示') }}</h6>
+                            <ul class="small mb-0">
+                                <li>{{ _('设置强密码以保护您的系统') }}</li>
+                                <li>{{ _('请妥善保管账户信息') }}</li>
+                                <li>{{ _('配置完成后需要登录才能访问系统') }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center text-muted">
+                <small>Auto-Limit {{ _('控制器') }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .card {
+        margin-top: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: none;
+    }
+    .card-header {
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 页面加载时恢复表单数据
+    document.addEventListener('DOMContentLoaded', function() {
+        restoreFormData();
+        
+        // 密码确认验证
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (password !== confirmPassword) {
+                this.setCustomValidity('{{ _("两次密码输入不一致") }}');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        
+        // 自动聚焦到用户名输入框
+        document.getElementById('username').focus();
+    });
+
+    // 保存表单数据到localStorage
+    function saveFormData() {
+        const formData = {
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            confirm_password: document.getElementById('confirm_password').value
+        };
+        localStorage.setItem('setupFormData', JSON.stringify(formData));
+    }
+
+    // 从localStorage恢复表单数据
+    function restoreFormData() {
+        const savedData = localStorage.getItem('setupFormData');
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+            document.getElementById('username').value = formData.username || '';
+            document.getElementById('password').value = formData.password || '';
+            document.getElementById('confirm_password').value = formData.confirm_password || '';
+            // 清除保存的数据
+            localStorage.removeItem('setupFormData');
+        }
+    }
+
+    // 切换语言
+    function switchLanguage(language) {
+        saveFormData();
+        window.location.href = "{{ url_for('main.set_language', language='LANG') }}".replace('LANG', language);
+    }
+
+    // 清除保存的数据（表单提交时调用）
+    function clearSavedData() {
+        localStorage.removeItem('setupFormData');
+    }
+</script>
+{% endblock %} 

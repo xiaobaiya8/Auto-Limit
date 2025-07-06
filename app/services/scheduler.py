@@ -1,6 +1,7 @@
 import importlib
 from threading import Timer, RLock
 from flask import current_app
+from flask_babel import _
 from .config_manager import config_manager
 from .log_manager import log_manager
 
@@ -30,7 +31,7 @@ class Scheduler:
             with self.lock:
                 if not self.running:
                     self.running = True
-                    log_manager.log_event("SCHEDULER", "调度器已启动")
+                    log_manager.log_event("SCHEDULER", _("调度器已启动"))
                     self._schedule_all_servers()
 
     def stop(self):
@@ -49,7 +50,7 @@ class Scheduler:
         # 仅在app上下文可用时记录日志
         if self.app:
             with self.app.app_context():
-                log_manager.log_event("SCHEDULER", "调度器已停止")
+                log_manager.log_event("SCHEDULER", _("调度器已停止"))
 
     def restart(self):
         """重启调度器以应用新配置"""
@@ -92,7 +93,7 @@ class Scheduler:
                     if self.app:
                         with self.app.app_context():
                             log_manager.log_formatted_event("SCHEDULER", 
-                                "为服务器 {0} 设置 {1} 秒轮询间隔", 
+                                _("为服务器 {0} 设置 {1} 秒轮询间隔"), 
                                 server_instance.get('name', server_id), poll_interval)
 
     def _check_server_status(self, server_id):
@@ -142,9 +143,9 @@ class Scheduler:
                     total_sessions = len(self.active_session_ids)
                     if old_server_sessions != server_session_ids:
                         if total_sessions > 0:
-                            log_manager.log_formatted_event("PLAY_STATUS", "检测到 {0} 个总活跃播放", total_sessions)
+                            log_manager.log_formatted_event("PLAY_STATUS", _("检测到 {0} 个总活跃播放"), total_sessions)
                         else:
-                            log_manager.log_event("PLAY_STATUS", "所有播放已停止")
+                            log_manager.log_event("PLAY_STATUS", _("所有播放已停止"))
                         
                         self._update_speed(settings)
             
@@ -165,7 +166,7 @@ class Scheduler:
         """根据实例配置动态加载并实例化插件"""
         plugin_type_single = instance_config.get("type")
         if not plugin_type_single:
-            log_manager.log_formatted_event("PLUGIN_ERROR", "实例配置缺少'type'字段: {0}", instance_config)
+            log_manager.log_formatted_event("PLUGIN_ERROR", _("实例配置缺少'type'字段: {0}"), instance_config)
             return None
         try:
             # e.g., 'app.media_servers.emby'
@@ -190,7 +191,7 @@ class Scheduler:
             return plugin_class(instance_config)
 
         except (ImportError, AttributeError) as e:
-            log_manager.log_formatted_event("PLUGIN_ERROR", "加载插件 {0} 失败: {1}", plugin_type_single, e)
+            log_manager.log_formatted_event("PLUGIN_ERROR", _("加载插件 {0} 失败: {1}"), plugin_type_single, e)
             return None
 
     def _update_speed(self, settings):
@@ -221,11 +222,11 @@ class Scheduler:
                         success = downloader.set_speed_limits(dl_limit, ul_limit)
                         if success:
                             # 记录成功日志，使用实例名称
-                            log_manager.log_formatted_event("SPEED_CHANGE", "{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s", downloader_name, dl_limit, ul_limit)
+                            log_manager.log_formatted_event("SPEED_CHANGE", _("{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"), downloader_name, dl_limit, ul_limit)
                             # 只有成功设置后才更新状态记录
                             self.last_speed_state[downloader_id] = current_speed
                         else:
-                            log_manager.log_formatted_event("SPEED_ERROR", "{0} 速率设置失败", downloader_name)
+                            log_manager.log_formatted_event("SPEED_ERROR", _("{0} 速率设置失败"), downloader_name)
                 # else:
                 #     # 速率未变化，跳过设置（可选：记录调试日志）
                 #     log_manager.log_event("SPEED_DEBUG", f"{downloader_name} 速率未变化，跳过设置")

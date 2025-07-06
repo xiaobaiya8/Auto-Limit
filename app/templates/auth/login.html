@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}{{ _('登录') }} - Auto-Limit{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-shield-lock"></i> {{ _('登录') }}
+                </h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown">
+                        <i class="bi bi-translate"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="switchLanguage('zh')">中文</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="switchLanguage('en')">English</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="post" action="{{ url_for('auth.login_post') }}" onsubmit="clearSavedData()">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">{{ _('用户名') }}</label>
+                        <input type="text" class="form-control" id="username" name="username" required autofocus>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">{{ _('密码') }}</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> {{ _('登录') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center text-muted">
+                <small>Auto-Limit {{ _('控制器') }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    .card {
+        margin-top: 3rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: none;
+    }
+    .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 页面加载时恢复表单数据
+    document.addEventListener('DOMContentLoaded', function() {
+        restoreFormData();
+        // 自动聚焦到用户名输入框
+        document.getElementById('username').focus();
+    });
+
+    // 保存表单数据到localStorage
+    function saveFormData() {
+        const formData = {
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+        };
+        localStorage.setItem('loginFormData', JSON.stringify(formData));
+    }
+
+    // 从localStorage恢复表单数据
+    function restoreFormData() {
+        const savedData = localStorage.getItem('loginFormData');
+        if (savedData) {
+            const formData = JSON.parse(savedData);
+            document.getElementById('username').value = formData.username || '';
+            document.getElementById('password').value = formData.password || '';
+            // 清除保存的数据
+            localStorage.removeItem('loginFormData');
+        }
+    }
+
+    // 切换语言
+    function switchLanguage(language) {
+        saveFormData();
+        window.location.href = "{{ url_for('main.set_language', language='LANG') }}".replace('LANG', language);
+    }
+
+    // 清除保存的数据（表单提交时调用）
+    function clearSavedData() {
+        localStorage.removeItem('loginFormData');
+    }
+</script>
+{% endblock %} 

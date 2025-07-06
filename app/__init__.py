@@ -5,6 +5,7 @@ import os
 from .services.config_manager import config_manager
 from .services.log_manager import log_manager
 from .services.scheduler import scheduler
+from .auth import init_auth
 
 def create_app():
     """
@@ -21,6 +22,8 @@ def create_app():
     app.config.from_mapping(
         # 定义数据目录，优先使用环境变量，否则使用默认路径
         DATA_DIR=os.environ.get('DATA_DIR', '/app/data'),
+        # 认证配置
+        SECRET_KEY=os.environ.get('SECRET_KEY', 'your-secret-key-please-change-this-in-production'),
         # 国际化配置
         LANGUAGES=['zh', 'en'],
         BABEL_DEFAULT_LOCALE='zh',
@@ -58,10 +61,14 @@ def create_app():
     config_manager.init_app(app)
     log_manager.init_app(app)
     scheduler.init_app(app)
+    
+    # 初始化认证模块
+    init_auth(app)
 
     # 注册蓝图
-    from .routes import main as main_blueprint
+    from .routes import main as main_blueprint, auth as auth_blueprint
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(auth_blueprint)
 
     # 启动后台调度器
     if not scheduler.running:

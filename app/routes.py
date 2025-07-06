@@ -1,14 +1,16 @@
 import re
 import uuid
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, current_app
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, current_app, session, flash
 from flask_babel import _, get_locale
 from .services.config_manager import config_manager
 from .services.log_manager import log_manager
 from .services.scheduler import scheduler
+from .auth import login_required, login_user, logout_user, get_current_user
 
 main = Blueprint('main', __name__)
 
 @main.route('/')
+@login_required
 def index():
     settings = config_manager.get_settings()
     return render_template('index.html', settings=settings)
@@ -60,6 +62,7 @@ def parse_form_data(form_data):
     return parsed
 
 @main.route('/config', methods=['GET', 'POST'])
+@login_required
 def config():
     if request.method == 'POST':
         form_data = request.form.to_dict()
@@ -88,7 +91,7 @@ def config():
                  settings['scheduler'][key] = int(value) if value.isdigit() else 15
 
         config_manager.save_settings(settings)
-        log_manager.log_event("CONFIG", "配置已更新，调度器将重启以应用新设置")
+        log_manager.log_event("CONFIG", _("配置已更新，调度器将重启以应用新设置"))
         scheduler.restart()
         return redirect(url_for('main.index'))
     
@@ -101,11 +104,13 @@ def config():
     return render_template('config.html', settings=settings, available_plugins=available_plugins)
 
 @main.route('/logs')
+@login_required
 def logs_page():
     logs = log_manager.get_logs()
     return render_template('logs.html', logs=logs)
 
 @main.route('/api/status')
+@login_required
 def api_status():
     return jsonify({
         'active_sessions': len(scheduler.active_session_ids),
@@ -114,6 +119,7 @@ def api_status():
     })
 
 @main.route('/test_connection', methods=['POST'])
+@login_required
 def test_connection():
     """通用的插件连接测试路由，通过POST请求接收实例配置"""
     instance_config = request.json.get('instance_config', {})
@@ -131,13 +137,14 @@ def test_connection():
     plugin_name = instance_config.get("type", "UNKNOWN").upper()
     log_event_type = f"TEST_{plugin_name}"
     if success:
-        log_manager.log_formatted_event(log_event_type, "连接测试成功: {0}", message)
+        log_manager.log_formatted_event(log_event_type, _("连接测试成功: {0}"), message)
         return jsonify({'status': 'success', 'message': f'连接成功: {message}'})
     else:
-        log_manager.log_formatted_event(f"{log_event_type}_ERROR", "连接测试失败: {0}", message)
+        log_manager.log_formatted_event(f"{log_event_type}_ERROR", _("连接测试失败: {0}"), message)
         return jsonify({'status': 'error', 'message': f'连接失败: {message}'}), 400
 
 @main.route('/api/media_server/sessions')
+@login_required
 def api_media_server_sessions():
     sessions = []
     total_sessions = 0
@@ -161,6 +168,7 @@ def api_media_server_sessions():
         return jsonify({'status': 'success', 'sessions': [], 'count': 0})
 
 @main.route('/api/media_server/speeds')
+@login_required
 def api_media_server_speeds():
     """获取所有媒体服务器的网络速度信息
     注意：Plex返回真实网络传输速度，Emby/Jellyfin返回媒体文件比特率"""
@@ -193,6 +201,7 @@ def api_media_server_speeds():
     })
 
 @main.route('/api/downloaders/status')
+@login_required
 def api_downloaders_status():
     """获取所有下载器的状态信息"""
     downloaders_status = []
@@ -245,6 +254,7 @@ def api_downloaders_status():
     })
 
 @main.route('/health')
+@login_required
 def health_check():
     return jsonify({
         'status': 'healthy' if scheduler.running else 'unhealthy',
@@ -253,6 +263,7 @@ def health_check():
     }), 200 if scheduler.running else 503
 
 @main.route('/save_instance', methods=['POST'])
+@login_required
 def save_instance():
     """保存单个实例配置"""
     try:
@@ -302,10 +313,10 @@ def save_instance():
         # 更新或添加实例
         if found_index >= 0:
             settings[instance_type][found_index] = instance_config
-            log_manager.log_formatted_event("CONFIG", "更新了{0}实例配置", instance_config.get('name', '未命名'))
+            log_manager.log_formatted_event("CONFIG", _("更新了{0}实例配置"), instance_config.get('name', '未命名'))
         else:
             settings[instance_type].append(instance_config)
-            log_manager.log_formatted_event("CONFIG", "添加了新的{0}实例", instance_config.get('name', '未命名'))
+            log_manager.log_formatted_event("CONFIG", _("添加了新的{0}实例"), instance_config.get('name', '未命名'))
         
         # 保存设置
         if config_manager.save_settings(settings):
@@ -325,6 +336,7 @@ def save_instance():
 
 
 @main.route('/delete_instance', methods=['POST'])
+@login_required
 def delete_instance():
     """删除单个实例配置"""
     try:
@@ -357,7 +369,7 @@ def delete_instance():
             
             # 保存设置
             if config_manager.save_settings(settings):
-                log_manager.log_formatted_event("CONFIG", "删除了{0}实例", instance_name)
+                log_manager.log_formatted_event("CONFIG", _("删除了{0}实例"), instance_name)
                 # 重启调度器以应用新配置
                 scheduler.restart()
                 return jsonify({
@@ -372,5 +384,84 @@ def delete_instance():
     except Exception as e:
         current_app.logger.error(f"删除实例配置时出错: {e}")
         return jsonify({'status': 'error', 'message': f'删除失败: {str(e)}'}), 500
+
+
+# 认证相关的路由
+auth = Blueprint('auth', __name__)
+
+@auth.route('/login')
+def login():
+    """登录页面"""
+    return render_template('auth/login.html')
+
+@auth.route('/login', methods=['POST'])
+def login_post():
+    """处理登录请求"""
+    username = request.form.get('username')
+    password = request.form.get('password')
+    
+    if not username or not password:
+        flash(_('请输入用户名和密码'), 'error')
+        return redirect(url_for('auth.login'))
+    
+    if config_manager.verify_password(username, password):
+        login_user(username)
+        log_manager.log_formatted_event("AUTH", _("用户 {0} 登录成功"), username)
+        return redirect(url_for('main.index'))
+    else:
+        log_manager.log_formatted_event("AUTH", _("用户 {0} 登录失败"), username)
+        flash(_('用户名或密码错误'), 'error')
+        return redirect(url_for('auth.login'))
+
+@auth.route('/logout')
+def logout():
+    """登出"""
+    username = get_current_user()
+    logout_user()
+    if username:
+        log_manager.log_formatted_event("AUTH", _("用户 {0} 已登出"), username)
+    return redirect(url_for('auth.login'))
+
+@auth.route('/setup')
+def setup():
+    """首次设置密码页面"""
+    # 如果已经配置过认证，重定向到登录页面
+    if not config_manager.is_legacy_install():
+        return redirect(url_for('auth.login'))
+    
+    return render_template('auth/setup.html')
+
+@auth.route('/setup', methods=['POST'])
+def setup_post():
+    """处理首次设置密码请求"""
+    # 如果已经配置过认证，重定向到登录页面
+    if not config_manager.is_legacy_install():
+        return redirect(url_for('auth.login'))
+    
+    username = request.form.get('username')
+    password = request.form.get('password')
+    confirm_password = request.form.get('confirm_password')
+    
+    if not username or not password or not confirm_password:
+        flash(_('请填写所有字段'), 'error')
+        return redirect(url_for('auth.setup'))
+    
+    if password != confirm_password:
+        flash(_('两次密码输入不一致'), 'error')
+        return redirect(url_for('auth.setup'))
+    
+    if len(password) < 6:
+        flash(_('密码长度至少6个字符'), 'error')
+        return redirect(url_for('auth.setup'))
+    
+    if config_manager.set_auth_credentials(username, password):
+        log_manager.log_formatted_event("AUTH", _("用户 {0} 完成首次设置"), username)
+        # 直接登录用户并重定向到主页
+        login_user(username)
+        flash(_('设置完成，欢迎使用Auto-Limit！'), 'success')
+        return redirect(url_for('main.index'))
+    else:
+        flash(_('设置失败，请重试'), 'error')
+        return redirect(url_for('auth.setup'))
 
  

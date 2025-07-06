@@ -3,6 +3,7 @@ import os
 from flask import current_app
 import uuid
 from threading import Lock
+import bcrypt
 
 class ConfigManager:
     """
@@ -35,7 +36,12 @@ class ConfigManager:
                 'poll_interval': 15
             },
             'ui': {
-                'language': 'zh'  # 添加UI语言设置
+                'language': 'en'  # 添加UI语言设置，默认英文
+            },
+            'auth': {
+                'username': None,
+                'password_hash': None,
+                'require_auth': False  # 标记是否需要认证
             }
         }
 
@@ -110,7 +116,7 @@ class ConfigManager:
     def get_language(self):
         """获取当前UI语言设置"""
         with self.lock:
-            return self.settings.get('ui', {}).get('language', 'zh')
+            return self.settings.get('ui', {}).get('language', 'en')
 
     def set_language(self, language):
         """设置UI语言"""
@@ -140,7 +146,9 @@ class ConfigManager:
             "media_servers": [],
             "downloaders": [],
             "rates": old_settings.get("rates", {}),
-            "scheduler": old_settings.get("scheduler", {})
+            "scheduler": old_settings.get("scheduler", {}),
+            "ui": old_settings.get("ui", {"language": "en"}),  # 迁移UI配置，默认英文
+            "auth": old_settings.get("auth", {})  # 保留认证配置
         }
 
         # 迁移媒体服务器
@@ -174,5 +182,75 @@ class ConfigManager:
         
         current_app.logger.info("配置迁移完成。")
         return new_settings
+
+    def is_auth_required(self):
+        """检查是否需要认证"""
+        with self.lock:
+            auth_config = self.settings.get('auth', {})
+            return auth_config.get('require_auth', False)
+
+    def has_auth_configured(self):
+        """检查是否已配置认证"""
+        with self.lock:
+            auth_config = self.settings.get('auth', {})
+            return (auth_config.get('username') is not None and 
+                    auth_config.get('password_hash') is not None)
+
+    def is_legacy_install(self):
+        """检查是否是旧版本安装（无认证配置）"""
+        with self.lock:
+            if 'auth' not in self.settings:
+                return True
+            # 直接检查，避免重入锁
+            auth_config = self.settings.get('auth', {})
+            has_configured = (auth_config.get('username') is not None and 
+                            auth_config.get('password_hash') is not None)
+            return not has_configured
+
+    def verify_password(self, username, password):
+        """验证用户名和密码"""
+        with self.lock:
+            auth_config = self.settings.get('auth', {})
+            stored_username = auth_config.get('username')
+            stored_password_hash = auth_config.get('password_hash')
+            
+            if not stored_username or not stored_password_hash:
+                return False
+            
+            if username != stored_username:
+                return False
+            
+            try:
+                return bcrypt.checkpw(password.encode('utf-8'), stored_password_hash.encode('utf-8'))
+            except Exception:
+                return False
+
+    def set_auth_credentials(self, username, password):
+        """设置认证凭据"""
+        with self.lock:
+            password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+            
+            if 'auth' not in self.settings:
+                self.settings['auth'] = {}
+            
+            self.settings['auth']['username'] = username
+            self.settings['auth']['password_hash'] = password_hash.decode('utf-8')
+            self.settings['auth']['require_auth'] = True
+            
+            # 立即保存到文件
+            try:
+                with open(self.config_path, 'w', encoding='utf-8') as f:
+                    json.dump(self.settings, f, indent=4, ensure_ascii=False)
+                print(f"成功保存认证设置")
+                return True
+            except IOError as e:
+                print(f"保存认证设置失败: {e}")
+                return False
+
+    def get_auth_username(self):
+        """获取认证用户名"""
+        with self.lock:
+            auth_config = self.settings.get('auth', {})
+            return auth_config.get('username')
 
 config_manager = ConfigManager() 

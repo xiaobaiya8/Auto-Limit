@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-07-05 16:01+0800\n"
+"POT-Creation-Date: 2025-07-06 19:21+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,32 +17,155 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
+#: app/routes.py:94
+msgid "配置已更新，调度器将重启以应用新设置"
+msgstr ""
+
+#: app/routes.py:140
+#, python-brace-format
+msgid "连接测试成功: {0}"
+msgstr ""
+
+#: app/routes.py:143
+#, python-brace-format
+msgid "连接测试失败: {0}"
+msgstr ""
+
+#: app/routes.py:316
+#, python-brace-format
+msgid "更新了{0}实例配置"
+msgstr ""
+
+#: app/routes.py:319
+#, python-brace-format
+msgid "添加了新的{0}实例"
+msgstr ""
+
+#: app/routes.py:372
+#, python-brace-format
+msgid "删除了{0}实例"
+msgstr ""
+
+#: app/routes.py:404
+msgid "请输入用户名和密码"
+msgstr ""
+
+#: app/routes.py:409
+#, python-brace-format
+msgid "用户 {0} 登录成功"
+msgstr ""
+
+#: app/routes.py:412
+#, python-brace-format
+msgid "用户 {0} 登录失败"
+msgstr ""
+
+#: app/routes.py:413
+msgid "用户名或密码错误"
+msgstr ""
+
+#: app/routes.py:422
+#, python-brace-format
+msgid "用户 {0} 已登出"
+msgstr ""
+
+#: app/routes.py:446
+msgid "请填写所有字段"
+msgstr ""
+
+#: app/routes.py:450 app/templates/auth/setup.html:115
+msgid "两次密码输入不一致"
+msgstr ""
+
+#: app/routes.py:454 app/templates/auth/setup.html:50
+msgid "密码长度至少6个字符"
+msgstr ""
+
+#: app/routes.py:458
+#, python-brace-format
+msgid "用户 {0} 完成首次设置"
+msgstr ""
+
+#: app/routes.py:461
+msgid "设置完成，欢迎使用Auto-Limit！"
+msgstr ""
+
+#: app/routes.py:464
+msgid "设置失败，请重试"
+msgstr ""
+
+#: app/services/scheduler.py:34
+msgid "调度器已启动"
+msgstr ""
+
+#: app/services/scheduler.py:53
+msgid "调度器已停止"
+msgstr ""
+
+#: app/services/scheduler.py:96
+#, python-brace-format
+msgid "为服务器 {0} 设置 {1} 秒轮询间隔"
+msgstr ""
+
+#: app/services/scheduler.py:146
+#, python-brace-format
+msgid "检测到 {0} 个总活跃播放"
+msgstr ""
+
+#: app/services/scheduler.py:148
+msgid "所有播放已停止"
+msgstr ""
+
+#: app/services/scheduler.py:169
+#, python-brace-format
+msgid "实例配置缺少'type'字段: {0}"
+msgstr ""
+
+#: app/services/scheduler.py:194
+#, python-brace-format
+msgid "加载插件 {0} 失败: {1}"
+msgstr ""
+
+#: app/services/scheduler.py:225
+#, python-brace-format
+msgid "{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"
+msgstr ""
+
+#: app/services/scheduler.py:229
+#, python-brace-format
+msgid "{0} 速率设置失败"
+msgstr ""
+
 #: app/templates/base.html:6
 msgid "Auto-Limit控制器"
 msgstr ""
 
-#: app/templates/base.html:142
+#: app/templates/base.html:143
 msgid "首页"
 msgstr ""
 
-#: app/templates/base.html:145 app/templates/config.html:3
+#: app/templates/base.html:146 app/templates/config.html:3
 #: app/templates/logs.html:39
 msgid "配置"
 msgstr ""
 
-#: app/templates/base.html:148 app/templates/logs.html:3
+#: app/templates/base.html:149 app/templates/logs.html:3
 msgid "日志"
 msgstr ""
 
-#: app/templates/base.html:152
+#: app/templates/base.html:153
 msgid "语言"
 msgstr ""
 
-#: app/templates/base.html:191
+#: app/templates/base.html:166
+msgid "注销"
+msgstr ""
+
+#: app/templates/base.html:203
 msgid "无限制"
 msgstr ""
 
-#: app/templates/base.html:208
+#: app/templates/base.html:220
 msgid "未知"
 msgstr ""
 
@@ -54,7 +177,7 @@ msgstr ""
 msgid "媒体服务器"
 msgstr ""
 
-#: app/templates/config.html:17 app/templates/config.html:335
+#: app/templates/config.html:17 app/templates/config.html:349
 msgid "添加媒体服务器"
 msgstr ""
 
@@ -73,7 +196,7 @@ msgid "秒轮询"
 msgstr ""
 
 #: app/templates/config.html:53 app/templates/config.html:122
-#: app/templates/config.html:273 app/templates/config.html:540
+#: app/templates/config.html:287 app/templates/config.html:581
 #: app/templates/partials/instance_card.html:10
 msgid "测试连接"
 msgstr ""
@@ -98,7 +221,7 @@ msgstr ""
 msgid "下载器"
 msgstr ""
 
-#: app/templates/config.html:83 app/templates/config.html:335
+#: app/templates/config.html:83 app/templates/config.html:349
 msgid "添加下载器"
 msgstr ""
 
@@ -154,188 +277,236 @@ msgstr ""
 msgid "服务器地址"
 msgstr ""
 
-#: app/templates/config.html:201 app/templates/partials/instance_card.html:55
+#: app/templates/config.html:201 app/templates/config.html:206
+#: app/templates/config.html:210 app/templates/partials/instance_card.html:55
 msgid "API 密钥"
 msgstr ""
 
-#: app/templates/config.html:213 app/templates/partials/instance_card.html:67
+#: app/templates/config.html:206 app/templates/config.html:210
+#: app/templates/config.html:221
+msgid "获取方式"
+msgstr ""
+
+#: app/templates/config.html:206
+msgid "设置"
+msgstr ""
+
+#: app/templates/config.html:206
+msgid "新建 API 密钥"
+msgstr ""
+
+#: app/templates/config.html:210
+msgid "控制台"
+msgstr ""
+
+#: app/templates/config.html:210
+msgid "添加新的 API 密钥"
+msgstr ""
+
+#: app/templates/config.html:221
+msgid "管理"
+msgstr ""
+
+#: app/templates/config.html:221
+msgid "媒体库"
+msgstr ""
+
+#: app/templates/config.html:221
+msgid "任意资料库的三个点"
+msgstr ""
+
+#: app/templates/config.html:221
+msgid "F12打开开发者工具"
+msgstr ""
+
+#: app/templates/config.html:221
+msgid "点击授权访问"
+msgstr ""
+
+#: app/templates/config.html:221
+msgid "查看载荷里的X-Plex-Token值"
+msgstr ""
+
+#: app/templates/auth/login.html:37 app/templates/auth/setup.html:43
+#: app/templates/config.html:227 app/templates/partials/instance_card.html:67
 msgid "用户名"
 msgstr ""
 
-#: app/templates/config.html:217 app/templates/partials/instance_card.html:71
+#: app/templates/auth/login.html:41 app/templates/auth/setup.html:48
+#: app/templates/config.html:231 app/templates/partials/instance_card.html:71
 msgid "密码"
 msgstr ""
 
-#: app/templates/config.html:226 app/templates/partials/instance_card.html:79
+#: app/templates/config.html:240 app/templates/partials/instance_card.html:79
 msgid "轮询设置"
 msgstr ""
 
-#: app/templates/config.html:229 app/templates/partials/instance_card.html:83
+#: app/templates/config.html:243 app/templates/partials/instance_card.html:83
 msgid "轮询间隔 (秒)"
 msgstr ""
 
-#: app/templates/config.html:232 app/templates/partials/instance_card.html:86
+#: app/templates/config.html:246 app/templates/partials/instance_card.html:86
 msgid "检查此服务器播放状态的频率，建议5-60秒"
 msgstr ""
 
-#: app/templates/config.html:242 app/templates/partials/instance_card.html:97
+#: app/templates/config.html:256 app/templates/partials/instance_card.html:97
 msgid "限速设置 (KB/s)"
 msgstr ""
 
-#: app/templates/config.html:246 app/templates/partials/instance_card.html:101
+#: app/templates/config.html:260 app/templates/partials/instance_card.html:101
 msgid "默认下载"
 msgstr ""
 
-#: app/templates/config.html:247 app/templates/config.html:251
+#: app/templates/config.html:261 app/templates/config.html:265
 #: app/templates/partials/instance_card.html:102
 #: app/templates/partials/instance_card.html:106
 msgid "0=无限制"
 msgstr ""
 
-#: app/templates/config.html:250 app/templates/partials/instance_card.html:105
+#: app/templates/config.html:264 app/templates/partials/instance_card.html:105
 msgid "默认上传"
 msgstr ""
 
-#: app/templates/config.html:254 app/templates/partials/instance_card.html:109
+#: app/templates/config.html:268 app/templates/partials/instance_card.html:109
 msgid "播放时下载"
 msgstr ""
 
-#: app/templates/config.html:258 app/templates/partials/instance_card.html:113
+#: app/templates/config.html:272 app/templates/partials/instance_card.html:113
 msgid "播放时上传"
 msgstr ""
 
-#: app/templates/config.html:263 app/templates/partials/instance_card.html:118
+#: app/templates/config.html:277 app/templates/partials/instance_card.html:118
 msgid "当有媒体播放时，自动切换到\"播放时\"限速"
 msgstr ""
 
-#: app/templates/config.html:271
+#: app/templates/config.html:285
 msgid "取消"
 msgstr ""
 
-#: app/templates/config.html:276 app/templates/config.html:622
+#: app/templates/config.html:290 app/templates/config.html:672
 msgid "保存"
 msgstr ""
 
-#: app/templates/config.html:364 app/templates/config.html:634
-#: app/templates/config.html:670 app/templates/config.html:706
+#: app/templates/config.html:378 app/templates/config.html:684
+#: app/templates/config.html:729 app/templates/config.html:774
 msgid "无法找到实例配置"
 msgstr ""
 
-#: app/templates/config.html:379
+#: app/templates/config.html:393
 msgid "编辑媒体服务器"
 msgstr ""
 
-#: app/templates/config.html:379
+#: app/templates/config.html:393
 msgid "编辑下载器"
 msgstr ""
 
-#: app/templates/config.html:500 app/templates/config.html:573
+#: app/templates/config.html:532 app/templates/config.html:614
 msgid "请填写实例名称"
 msgstr ""
 
-#: app/templates/config.html:505 app/templates/config.html:578
+#: app/templates/config.html:537 app/templates/config.html:619
 msgid "请填写服务器地址"
 msgstr ""
 
-#: app/templates/config.html:517
+#: app/templates/config.html:549
 msgid "测试中..."
 msgstr ""
 
-#: app/templates/config.html:530 app/templates/config.html:652
+#: app/templates/config.html:570 app/templates/config.html:710
 #: app/templates/index.html:194
 msgid "连接成功"
 msgstr ""
 
-#: app/templates/config.html:530 app/templates/config.html:532
-#: app/templates/config.html:652 app/templates/config.html:654
+#: app/templates/config.html:570 app/templates/config.html:572
+#: app/templates/config.html:710 app/templates/config.html:712
 #: app/templates/index.html:195
 msgid "连接测试"
 msgstr ""
 
-#: app/templates/config.html:532 app/templates/config.html:654
+#: app/templates/config.html:572 app/templates/config.html:712
 #: app/templates/index.html:184 app/templates/index.html:196
 msgid "连接失败"
 msgstr ""
 
-#: app/templates/config.html:536 app/templates/config.html:658
+#: app/templates/config.html:577 app/templates/config.html:717
 #: app/templates/index.html:199
 msgid "连接测试时发生网络错误"
 msgstr ""
 
-#: app/templates/config.html:536 app/templates/config.html:618
-#: app/templates/config.html:658 app/templates/index.html:197
+#: app/templates/config.html:577 app/templates/config.html:668
+#: app/templates/config.html:717 app/templates/index.html:197
 msgid "网络错误"
 msgstr ""
 
-#: app/templates/config.html:590
+#: app/templates/config.html:631
 msgid "保存中..."
 msgstr ""
 
-#: app/templates/config.html:603
+#: app/templates/config.html:652
 msgid "保存成功"
 msgstr ""
 
-#: app/templates/config.html:603 app/templates/config.html:614
+#: app/templates/config.html:652 app/templates/config.html:663
 msgid "配置保存"
 msgstr ""
 
-#: app/templates/config.html:614
+#: app/templates/config.html:663
 msgid "保存失败"
 msgstr ""
 
-#: app/templates/config.html:618
+#: app/templates/config.html:668
 msgid "保存时发生网络错误"
 msgstr ""
 
-#: app/templates/config.html:688
+#: app/templates/config.html:755
 msgid "已启用"
 msgstr ""
 
-#: app/templates/config.html:688
+#: app/templates/config.html:755
 msgid "已禁用"
 msgstr ""
 
-#: app/templates/config.html:690
+#: app/templates/config.html:757
 msgid "状态更新失败"
 msgstr ""
 
-#: app/templates/config.html:695
+#: app/templates/config.html:763
 msgid "状态更新时发生网络错误"
 msgstr ""
 
-#: app/templates/config.html:710
+#: app/templates/config.html:778
 msgid "确定要删除"
 msgstr ""
 
-#: app/templates/config.html:710
+#: app/templates/config.html:778
 msgid "吗？"
 msgstr ""
 
-#: app/templates/config.html:722
+#: app/templates/config.html:798
 msgid "已删除"
 msgstr ""
 
-#: app/templates/config.html:734
+#: app/templates/config.html:810
 msgid "删除失败"
 msgstr ""
 
-#: app/templates/config.html:738
+#: app/templates/config.html:815
 msgid "删除时发生网络错误"
 msgstr ""
 
-#: app/templates/config.html:764
+#: app/templates/config.html:858
 msgid "请填写API密钥"
 msgstr ""
 
-#: app/templates/config.html:770
+#: app/templates/config.html:864
 msgid "请填写X-Plex-Token"
 msgstr ""
 
-#: app/templates/config.html:778
+#: app/templates/config.html:872
 msgid "请填写用户名"
 msgstr ""
 
-#: app/templates/config.html:783
+#: app/templates/config.html:877
 msgid "请填写密码"
 msgstr ""
 
@@ -476,6 +647,38 @@ msgstr ""
 msgid "配置错误"
 msgstr ""
 
+#: app/templates/index.html:200
+msgid "📊 实际网络传输速度"
+msgstr ""
+
+#: app/templates/index.html:201
+msgid "✓ 反映真实带宽使用"
+msgstr ""
+
+#: app/templates/index.html:202
+msgid "✓ 已计入全局速度统计"
+msgstr ""
+
+#: app/templates/index.html:203
+msgid "📄 媒体文件编码比特率"
+msgstr ""
+
+#: app/templates/index.html:204
+msgid "⚠️ 仅作参考，不反映实际网络使用"
+msgstr ""
+
+#: app/templates/index.html:205
+msgid "⚠️ 未获取到比特率信息"
+msgstr ""
+
+#: app/templates/index.html:206
+msgid "⚠️ 不反映实际网络传输速度"
+msgstr ""
+
+#: app/templates/index.html:207
+msgid "💡 建议使用Plex获取真实数据"
+msgstr ""
+
 #: app/templates/logs.html:11
 msgid "系统日志 (最近500条)"
 msgstr ""
@@ -510,6 +713,55 @@ msgstr ""
 
 #: app/templates/logs.html:58
 msgid "系统运行一段时间后会自动生成日志"
+msgstr ""
+
+#: app/templates/auth/login.html:3 app/templates/auth/login.html:11
+#: app/templates/auth/login.html:46
+msgid "登录"
+msgstr ""
+
+#: app/templates/auth/login.html:52 app/templates/auth/setup.html:77
+msgid "控制器"
+msgstr ""
+
+#: app/templates/auth/setup.html:3 app/templates/auth/setup.html:11
+msgid "首次设置"
+msgstr ""
+
+#: app/templates/auth/setup.html:26
+msgid "欢迎使用Auto-Limit！"
+msgstr ""
+
+#: app/templates/auth/setup.html:27
+msgid "检测到这是首次运行，请设置管理员账户以保护您的系统安全。"
+msgstr ""
+
+#: app/templates/auth/setup.html:45
+msgid "建议使用admin或您的常用用户名"
+msgstr ""
+
+#: app/templates/auth/setup.html:53
+msgid "确认密码"
+msgstr ""
+
+#: app/templates/auth/setup.html:58
+msgid "完成设置"
+msgstr ""
+
+#: app/templates/auth/setup.html:66
+msgid "安全提示"
+msgstr ""
+
+#: app/templates/auth/setup.html:68
+msgid "设置强密码以保护您的系统"
+msgstr ""
+
+#: app/templates/auth/setup.html:69
+msgid "请妥善保管账户信息"
+msgstr ""
+
+#: app/templates/auth/setup.html:70
+msgid "配置完成后需要登录才能访问系统"
 msgstr ""
 
 #: app/templates/partials/instance_card.html:6

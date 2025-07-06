@@ -200,6 +200,76 @@ msgstr "Automatically switch to \"During Playback\" speed limits when media is p
 msgid "取消"
 msgstr "Cancel"
 
+# Authentication related translations
+msgid "登录"
+msgstr "Login"
+
+msgid "注销"
+msgstr "Logout"
+
+msgid "首次设置"
+msgstr "First Setup"
+
+msgid "用户名"
+msgstr "Username"
+
+msgid "密码"
+msgstr "Password"
+
+msgid "确认密码"
+msgstr "Confirm Password"
+
+msgid "请输入用户名和密码"
+msgstr "Please enter username and password"
+
+msgid "用户名或密码错误"
+msgstr "Invalid username or password"
+
+msgid "欢迎使用Auto-Limit！"
+msgstr "Welcome to Auto-Limit!"
+
+msgid "检测到这是首次运行，请设置管理员账户以保护您的系统安全。"
+msgstr "This is your first run. Please set up an admin account to secure your system."
+
+msgid "建议使用admin或您的常用用户名"
+msgstr "Recommended to use admin or your usual username"
+
+msgid "密码长度至少6个字符"
+msgstr "Password must be at least 6 characters"
+
+msgid "两次密码输入不一致"
+msgstr "Passwords do not match"
+
+msgid "请填写所有字段"
+msgstr "Please fill in all fields"
+
+msgid "完成设置"
+msgstr "Complete Setup"
+
+msgid "安全提示"
+msgstr "Security Tips"
+
+msgid "设置强密码以保护您的系统"
+msgstr "Set a strong password to protect your system"
+
+msgid "请妥善保管账户信息"
+msgstr "Please keep your account information safe"
+
+msgid "配置完成后需要登录才能访问系统"
+msgstr "You need to login to access the system after setup"
+
+msgid "设置完成，请登录"
+msgstr "Setup completed, please login"
+
+msgid "设置失败，请重试"
+msgstr "Setup failed, please try again"
+
+msgid "控制器"
+msgstr "Controller"
+
+msgid "需要登录"
+msgstr "Login required"
+
 msgid "保存"
 msgstr "Save"
 
@@ -643,3 +713,80 @@ msgstr "Error setting CloudDrive2 speed limit: {0}"
 msgid "获取CloudDrive2速度信息时出错: {0}"
 msgstr "Error getting CloudDrive2 speed information: {0}"
 
+# 新增待翻译条目
+
+msgid "⚠️ 不反映实际网络传输速度"
+msgstr "⚠️ Does not reflect actual network transfer speed"
+
+msgid "⚠️ 仅作参考，不反映实际网络使用"
+msgstr "⚠️ Reference only, does not reflect actual network usage"
+
+msgid "⚠️ 未获取到比特率信息"
+msgstr "⚠️ Bitrate information not available"
+
+msgid "✓ 反映真实带宽使用"
+msgstr "✓ Reflects real bandwidth usage"
+
+msgid "✓ 已计入全局速度统计"
+msgstr "✓ Included in global speed statistics"
+
+msgid "💡 建议使用Plex获取真实数据"
+msgstr "💡 Recommend using Plex for real data"
+
+msgid "📄 媒体文件编码比特率"
+msgstr "📄 Media file encoded bitrate"
+
+msgid "📊 实际网络传输速度"
+msgstr "📊 Actual network transfer speed"
+
+# 新增待翻译条目
+
+msgid "F12打开开发者工具"
+msgstr "Press F12 to open Developer Tools"
+
+msgid "任意资料库的三个点"
+msgstr "Three dots of any library"
+
+msgid "媒体库"
+msgstr "Libraries"
+
+msgid "控制台"
+msgstr "Dashboard"
+
+msgid "新建 API 密钥"
+msgstr "Create API Key"
+
+msgid "查看载荷里的X-Plex-Token值"
+msgstr "Check X-Plex-Token value in payload"
+
+msgid "添加新的 API 密钥"
+msgstr "Add new API Key"
+
+msgid "点击授权访问"
+msgstr "Click Authorize"
+
+msgid "管理"
+msgstr "Manage"
+
+msgid "获取方式"
+msgstr "How to get"
+
+msgid "设置"
+msgstr "Settings"
+
+# 新增待翻译条目
+
+msgid "用户 {0} 完成首次设置"
+msgstr "User {0} completed initial setup"
+
+msgid "用户 {0} 已登出"
+msgstr "User {0} logged out"
+
+msgid "用户 {0} 登录失败"
+msgstr "User {0} login failed"
+
+msgid "用户 {0} 登录成功"
+msgstr "User {0} login successful"
+
+msgid "设置完成，欢迎使用Auto-Limit！"
+msgstr "Setup completed, welcome to Auto-Limit!"

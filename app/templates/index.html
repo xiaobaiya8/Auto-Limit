@@ -196,7 +196,15 @@
     'connectionFailed2': _('连接失败'),
     'networkError': _('网络错误'),
     'test': _('测试'),
-    'networkErrorDuringTest': _('连接测试时发生网络错误')
+    'networkErrorDuringTest': _('连接测试时发生网络错误'),
+    'actualNetworkSpeed': _('📊 实际网络传输速度'),
+    'reflectsBandwidth': _('✓ 反映真实带宽使用'),
+    'includedInGlobalStats': _('✓ 已计入全局速度统计'),
+    'mediaFileBitrate': _('📄 媒体文件编码比特率'),
+    'referenceOnly': _('⚠️ 仅作参考，不反映实际网络使用'),
+    'bitrateNotAvailable': _('⚠️ 未获取到比特率信息'),
+    'notRealNetworkSpeed': _('⚠️ 不反映实际网络传输速度'),
+    'suggestUsePlex': _('💡 建议使用Plex获取真实数据')
 } | tojson | safe }}</script>
 <script>
 // 翻译字符串
@@ -205,11 +213,36 @@ const translations = JSON.parse(document.getElementById('translations').textCont
 // 全局配置数据
 window.APP_CONFIG = JSON.parse(document.getElementById('app-config').textContent);
 
+// 通用错误处理函数
+function handleApiError(error, response = null) {
+    // 检查是否是401未授权错误
+    if (response && response.status === 401) {
+        window.location.href = '/login';
+        return true; // 表示已处理
+    }
+    
+    // 检查错误信息中是否包含401
+    if (error && (error.message.includes('401') || error.status === 401)) {
+        window.location.href = '/login';
+        return true; // 表示已处理
+    }
+    
+    return false; // 未处理，需要继续原有的错误处理
+}
+
 function updateStatus() {
     // 获取播放状态
     fetch('/api/media_server/sessions')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok && response.status === 401) {
+                handleApiError(null, response);
+                return;
+            }
+            return response.json();
+        })
         .then(data => {
+            if (!data) return; // 如果已经处理了401错误
+            
             const indicator = document.getElementById('playback-status-indicator');
             const statusText = document.getElementById('playback-status-text');
             const speedMode = document.getElementById('speed-mode');
@@ -228,6 +261,8 @@ function updateStatus() {
         })
         .catch(error => {
             console.error('Error fetching status:', error);
+            if (handleApiError(error)) return; // 如果是认证错误，已处理
+            
             document.getElementById('playback-status-text').textContent = translations.statusFetchFailed;
             document.getElementById('scheduler-status').className = 'badge bg-danger';
             document.getElementById('scheduler-status').textContent = translations.connectionFailed;
@@ -238,8 +273,16 @@ function updateStatus() {
     
     // 检查调度器状态
     fetch('/health')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok && response.status === 401) {
+                handleApiError(null, response);
+                return;
+            }
+            return response.json();
+        })
         .then(data => {
+            if (!data) return; // 如果已经处理了401错误
+            
             const schedulerStatus = document.getElementById('scheduler-status');
             if (data.status === 'healthy') {
                 schedulerStatus.className = 'badge bg-success';
@@ -250,6 +293,8 @@ function updateStatus() {
             }
         })
         .catch(error => {
+            if (handleApiError(error)) return; // 如果是认证错误，已处理
+            
             const schedulerStatus = document.getElementById('scheduler-status');
             schedulerStatus.className = 'badge bg-danger';
             schedulerStatus.textContent = translations.connectionFailed;
@@ -270,10 +315,27 @@ function cleanupTooltips(element) {
 function updateDownloadersStatus() {
     // 同时获取下载器状态和媒体服务器速度
     Promise.all([
-        fetch('/api/downloaders/status').then(response => response.json()),
-        fetch('/api/media_server/speeds').then(response => response.json())
+        fetch('/api/downloaders/status').then(response => {
+            if (!response.ok && response.status === 401) {
+                handleApiError(null, response);
+                return null;
+            }
+            return response.json();
+        }),
+        fetch('/api/media_server/speeds').then(response => {
+            if (!response.ok && response.status === 401) {
+                handleApiError(null, response);
+                return null;
+            }
+            return response.json();
+        })
     ])
     .then(([downloadersData, mediaServerData]) => {
+        // 检查是否有认证错误（数据为null）
+        if (!downloadersData || !mediaServerData) {
+            return; // 已经重定向到登录页面
+        }
+        
         if (downloadersData.status === 'success') {
             // 计算全局速度（下载器的真实网络速度 + Plex的真实传输速度）
             let totalDownloadSpeed = 0;
@@ -378,17 +440,17 @@ function updateDownloadersStatus() {
                                 // 根据服务器类型使用不同的格式化方式
                                 if (session.transfer_type === 'real_bandwidth') {
                                     // Plex的真实传输速度（KB/s）+ 媒体比特率
-                                    statusHtml += ` <span class="text-success fw-bold" title="📊 实际网络传输速度<br>✓ 反映真实带宽使用<br>✓ 已计入全局速度统计" style="border-bottom: 1px dotted currentColor; cursor: help;">(${formatActualSpeed(session.bitrate)}</span>`;
+                                    statusHtml += ` <span class="text-success fw-bold" title="${translations.actualNetworkSpeed}<br>${translations.reflectsBandwidth}<br>${translations.includedInGlobalStats}" style="border-bottom: 1px dotted currentColor; cursor: help;">(${formatActualSpeed(session.bitrate)}</span>`;
                                     // 始终显示媒体比特率信息
                                     if (session.media_bitrate && session.media_bitrate > 0) {
-                                        statusHtml += ` <span class="text-muted fst-italic" title="📄 媒体文件编码比特率<br>⚠️ 仅作参考，不反映实际网络使用" style="border-bottom: 1px dotted currentColor; cursor: help;">/ ${formatBitrate(session.media_bitrate)}</span>`;
+                                        statusHtml += ` <span class="text-muted fst-italic" title="${translations.mediaFileBitrate}<br>${translations.referenceOnly}" style="border-bottom: 1px dotted currentColor; cursor: help;">/ ${formatBitrate(session.media_bitrate)}</span>`;
                                     } else {
-                                        statusHtml += ` <span class="text-muted fst-italic" title="📄 媒体文件编码比特率<br>⚠️ 未获取到比特率信息" style="border-bottom: 1px dotted currentColor; cursor: help;">/ N/A</span>`;
+                                        statusHtml += ` <span class="text-muted fst-italic" title="${translations.mediaFileBitrate}<br>${translations.bitrateNotAvailable}" style="border-bottom: 1px dotted currentColor; cursor: help;">/ N/A</span>`;
                                     }
                                     statusHtml += `<span class="text-success">)</span>`;
                                 } else {
                                     // Emby/Jellyfin的媒体比特率（Kbps）
-                                    statusHtml += ` <span class="text-warning fst-italic" title="📄 媒体文件编码比特率<br>⚠️ 不反映实际网络传输速度<br>💡 建议使用Plex获取真实数据" style="border-bottom: 1px dotted currentColor; cursor: help;">(${formatBitrate(session.bitrate)})</span>`;
+                                    statusHtml += ` <span class="text-warning fst-italic" title="${translations.mediaFileBitrate}<br>${translations.notRealNetworkSpeed}<br>${translations.suggestUsePlex}" style="border-bottom: 1px dotted currentColor; cursor: help;">(${formatBitrate(session.bitrate)})</span>`;
                                 }
                             }
                             statusHtml += `</small></div>`;
@@ -433,6 +495,8 @@ function updateDownloadersStatus() {
     })
     .catch(error => {
         console.error('Error fetching status:', error);
+        if (handleApiError(error)) return; // 如果是认证错误，已处理
+        
         // 在错误情况下显示基本信息
         document.querySelectorAll('[id^="downloader-"][id$="-status"]').forEach(element => {
             // 清理可能存在的tooltip
@@ -487,8 +551,16 @@ function testInstance(button) {
             instance_type: instanceType
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok && response.status === 401) {
+            handleApiError(null, response);
+            return null;
+        }
+        return response.json();
+    })
     .then(data => {
+        if (!data) return; // 如果已经处理了401错误
+        
         if (data.status === 'success') {
             showToast(`${instanceConfig.name || instanceConfig.type} ${translations.connectionSuccess}`, 'success', translations.connectionTest);
         } else {
@@ -496,6 +568,7 @@ function testInstance(button) {
         }
     })
     .catch(error => {
+        if (handleApiError(error)) return; // 如果是认证错误，已处理
         showToast(`${instanceConfig.name || instanceConfig.type} ${translations.networkErrorDuringTest}: ${error.message}`, 'error', translations.networkError);
     })
     .finally(() => {
@@ -511,8 +584,16 @@ updateStatus();
 setInterval(() => {
     // 获取播放状态
     fetch('/api/media_server/sessions')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok && response.status === 401) {
+                handleApiError(null, response);
+                return null;
+            }
+            return response.json();
+        })
         .then(data => {
+            if (!data) return; // 如果已经处理了401错误
+            
             const indicator = document.getElementById('playback-status-indicator');
             const statusText = document.getElementById('playback-status-text');
             const speedMode = document.getElementById('speed-mode');
@@ -531,6 +612,8 @@ setInterval(() => {
         })
         .catch(error => {
             console.error('Error fetching status:', error);
+            if (handleApiError(error)) return; // 如果是认证错误，已处理
+            
             document.getElementById('playback-status-text').textContent = translations.statusFetchFailed;
             document.getElementById('scheduler-status').className = 'badge bg-danger';
             document.getElementById('scheduler-status').textContent = translations.connectionFailed;
@@ -538,8 +621,16 @@ setInterval(() => {
 
     // 检查调度器状态
     fetch('/health')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok && response.status === 401) {
+                handleApiError(null, response);
+                return null;
+            }
+            return response.json();
+        })
         .then(data => {
+            if (!data) return; // 如果已经处理了401错误
+            
             const schedulerStatus = document.getElementById('scheduler-status');
             if (data.status === 'healthy') {
                 schedulerStatus.className = 'badge bg-success';
@@ -550,6 +641,8 @@ setInterval(() => {
             }
         })
         .catch(error => {
+            if (handleApiError(error)) return; // 如果是认证错误，已处理
+            
             const schedulerStatus = document.getElementById('scheduler-status');
             schedulerStatus.className = 'badge bg-danger';
             schedulerStatus.textContent = translations.connectionFailed;
