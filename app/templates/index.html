@@ -207,7 +207,8 @@
     'referenceOnly': _('⚠️ 仅作参考，不反映实际网络使用'),
     'bitrateNotAvailable': _('⚠️ 未获取到比特率信息'),
     'notRealNetworkSpeed': _('⚠️ 不反映实际网络传输速度'),
-    'suggestUsePlex': _('💡 建议使用Plex获取真实数据')
+    'suggestUsePlex': _('💡 建议使用Plex获取真实数据'),
+    'speedLimit': _('限速')
 } | tojson | safe }}</script>
 <script>
 // 翻译字符串
@@ -374,18 +375,35 @@ function updateDownloadersStatus() {
                         
                         statusHtml += `<small class="${modeColor}">`;
                         statusHtml += `<i class="bi bi-speedometer2"></i> ${modeText}: `;
+                        
+                        if (downloader.type === 'sabnzbd') {
+                            // SABnzbd只显示下载百分比，不显示上传
+                            statusHtml += `<i class="bi bi-download"></i> ${formatSpeed(activeLimits.download, true)}`;
+                        } else {
+                            // 其他下载器显示KB/s格式的下载/上传
                         statusHtml += `<i class="bi bi-download"></i> ${formatSpeed(activeLimits.download)} / <i class="bi bi-upload"></i> ${formatSpeed(activeLimits.upload)}`;
+                        }
                         statusHtml += `</small>`;
                         
                         // 显示实际速度（如果支持）
-                        if (downloader.current_speeds && (downloader.type === 'qbittorrent' || downloader.type === 'transmission' || downloader.type === 'clouddrive2')) {
+                        if (downloader.current_speeds && (downloader.type === 'qbittorrent' || downloader.type === 'transmission' || downloader.type === 'clouddrive2' || downloader.type === 'sabnzbd')) {
                             const currentSpeeds = downloader.current_speeds;
                             statusHtml += '<br>';
                             statusHtml += `<small class="text-info">`;
                             statusHtml += `<i class="bi bi-activity"></i> ${translations.actualSpeed}: `;
-                            statusHtml += `<i class="bi bi-download"></i> ${formatActualSpeed(currentSpeeds.download_speed)} / <i class="bi bi-upload"></i> ${formatActualSpeed(currentSpeeds.upload_speed)}`;
+                            
+                            if (downloader.type === 'sabnzbd') {
+                                // SABnzbd显示实际下载速度和当前限速百分比
+                                statusHtml += `<i class="bi bi-download"></i> ${formatActualSpeed(currentSpeeds.download_speed)}`;
+                                if (currentSpeeds.current_limit_percentage !== undefined) {
+                                    statusHtml += ` (${translations.speedLimit}: ${currentSpeeds.current_limit_percentage}%)`;
+                                }
+                            } else {
+                                // 其他下载器显示标准的下载/上传格式
+                                statusHtml += `<i class="bi bi-download"></i> ${formatActualSpeed(currentSpeeds.download_speed)} / <i class="bi bi-upload"></i> ${formatActualSpeed(currentSpeeds.upload_speed)}`;
+                            }
                             statusHtml += `</small>`;
-                        } else if (downloader.type === 'qbittorrent' || downloader.type === 'transmission' || downloader.type === 'clouddrive2') {
+                        } else if (downloader.type === 'qbittorrent' || downloader.type === 'transmission' || downloader.type === 'clouddrive2' || downloader.type === 'sabnzbd') {
                             // 支持获取速度但当前无法获取
                             statusHtml += '<br>';
                             statusHtml += `<small class="text-muted">`;

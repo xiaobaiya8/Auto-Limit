@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-07-05 15:25+0800\n"
+"POT-Creation-Date: 2025-07-07 17:32+0800\n"
 "PO-Revision-Date: 2025-07-05 15:22+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: en\n"
@@ -18,39 +18,733 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
+#: app/routes.py:94
+msgid "配置已更新，调度器将重启以应用新设置"
+msgstr "Configuration updated, scheduler will restart to apply new settings"
+
+#: app/routes.py:140
+#, python-brace-format
+msgid "连接测试成功: {0}"
+msgstr "Connection test successful: {0}"
+
+#: app/downloaders/sabnzbd.py:246 app/routes.py:143
+#, python-brace-format
+msgid "连接测试失败: {0}"
+msgstr "Connection test failed: {0}"
+
+#: app/routes.py:321
+#, python-brace-format
+msgid "更新了{0}实例配置"
+msgstr "Updated {0} instance configuration"
+
+#: app/routes.py:324
+#, python-brace-format
+msgid "添加了新的{0}实例"
+msgstr "Added new {0} instance"
+
+#: app/routes.py:377
+#, python-brace-format
+msgid "删除了{0}实例"
+msgstr "Deleted {0} instance"
+
+#: app/routes.py:409
+msgid "请输入用户名和密码"
+msgstr "Please enter username and password"
+
+#: app/routes.py:414
+#, python-brace-format
+msgid "用户 {0} 登录成功"
+msgstr "User {0} login successful"
+
+#: app/routes.py:417
+#, python-brace-format
+msgid "用户 {0} 登录失败"
+msgstr "User {0} login failed"
+
+#: app/routes.py:418
+msgid "用户名或密码错误"
+msgstr "Invalid username or password"
+
+#: app/routes.py:427
+#, python-brace-format
+msgid "用户 {0} 已登出"
+msgstr "User {0} logged out"
+
+#: app/routes.py:451
+msgid "请填写所有字段"
+msgstr "Please fill in all fields"
+
+#: app/routes.py:455 app/templates/auth/setup.html:115
+msgid "两次密码输入不一致"
+msgstr "Passwords do not match"
+
+#: app/routes.py:459 app/templates/auth/setup.html:50
+msgid "密码长度至少6个字符"
+msgstr "Password must be at least 6 characters"
+
+# 新增待翻译条目
+#: app/routes.py:463
+#, python-brace-format
+msgid "用户 {0} 完成首次设置"
+msgstr "User {0} completed initial setup"
+
+#: app/routes.py:466
+msgid "设置完成，欢迎使用Auto-Limit！"
+msgstr "Setup completed, welcome to Auto-Limit!"
+
+#: app/routes.py:469
+msgid "设置失败，请重试"
+msgstr "Setup failed, please try again"
+
+#: app/downloaders/sabnzbd.py:24
+#, python-brace-format
+msgid "SABnzbd未配置最大带宽，使用默认值: {0} KB/s"
+msgstr "SABnzbd maximum bandwidth not configured, using default: {0} KB/s"
+
+#: app/downloaders/sabnzbd.py:62
+#, python-brace-format
+msgid "SABnzbd API请求失败: HTTP {0}"
+msgstr "SABnzbd API request failed: HTTP {0}"
+
+#: app/downloaders/sabnzbd.py:66
+#, python-brace-format
+msgid "SABnzbd API请求时出错: {0}"
+msgstr "Error in SABnzbd API request: {0}"
+
+#: app/downloaders/sabnzbd.py:124
+#, python-brace-format
+msgid "SABnzbd最大带宽设置成功: {0}"
+msgstr "SABnzbd maximum bandwidth set successfully: {0}"
+
+#: app/downloaders/sabnzbd.py:127
+#, python-brace-format
+msgid "SABnzbd最大带宽设置失败: {0}"
+msgstr "SABnzbd maximum bandwidth setting failed: {0}"
+
+#: app/downloaders/sabnzbd.py:130
+msgid "SABnzbd最大带宽设置响应不是有效JSON"
+msgstr "SABnzbd maximum bandwidth setting response is not valid JSON"
+
+#: app/downloaders/sabnzbd.py:133
+#, python-brace-format
+msgid "SABnzbd最大带宽设置请求失败: HTTP {0}"
+msgstr "SABnzbd maximum bandwidth setting request failed: HTTP {0}"
+
+#: app/downloaders/sabnzbd.py:137
+#, python-brace-format
+msgid "设置SABnzbd最大带宽时出错: {0}"
+msgstr "Error setting SABnzbd maximum bandwidth: {0}"
+
+#: app/downloaders/sabnzbd.py:181
+#, python-brace-format
+msgid "SABnzbd限速验证失败，期望: {0}%"
+msgstr "SABnzbd speed limit verification failed, expected: {0}%"
+
+#: app/downloaders/sabnzbd.py:184
+msgid "SABnzbd限速设置请求失败"
+msgstr "SABnzbd speed limit setting request failed"
+
+#: app/downloaders/sabnzbd.py:190
+#, python-brace-format
+msgid "设置SABnzbd速度限制时出错: {0}"
+msgstr "Error setting SABnzbd speed limit: {0}"
+
+#: app/downloaders/sabnzbd.py:216
+#, python-brace-format
+msgid "限速验证失败: 期望{0}%, 实际{1}%"
+msgstr "Speed limit verification failed: expected {0}%, actual {1}%"
+
+#: app/downloaders/sabnzbd.py:218
+#, python-brace-format
+msgid "无法解析当前限速值: {0}"
+msgstr "Unable to parse current speed limit value: {0}"
+
+#: app/downloaders/sabnzbd.py:223
+#, python-brace-format
+msgid "验证SABnzbd速度设置时出错: {0}"
+msgstr "Error verifying SABnzbd speed setting: {0}"
+
+#: app/downloaders/sabnzbd.py:229
+msgid "SABnzbd URL或API密钥未配置"
+msgstr "SABnzbd URL or API key not configured"
+
+#: app/downloaders/sabnzbd.py:233
+msgid "请配置SABnzbd的最大线路速度"
+msgstr "Please configure SABnzbd's maximum line speed"
+
+#: app/downloaders/sabnzbd.py:240
+#, fuzzy
+msgid "未知版本"
+msgstr "Unknown"
+
+#: app/downloaders/sabnzbd.py:241
+#, python-brace-format
+msgid "连接成功 (版本: {0}, 最大带宽: {1} KB/s)"
+msgstr "Connection successful (Version: {0}, Max bandwidth: {1} KB/s)"
+
+#: app/downloaders/sabnzbd.py:243
+msgid "连接失败，请检查URL和API密钥"
+msgstr "Connection failed, please check URL and API key"
+
+#: app/downloaders/sabnzbd.py:279
+#, python-brace-format
+msgid "获取SABnzbd速度信息时出错: {0}"
+msgstr "Error getting SABnzbd speed information: {0}"
+
+# 日志消息翻译
+#: app/services/scheduler.py:35
+msgid "调度器已启动"
+msgstr "Scheduler started"
+
+#: app/services/scheduler.py:54
+msgid "调度器已停止"
+msgstr "Scheduler stopped"
+
+# 复杂日志消息模板
+#: app/services/scheduler.py:97
+#, python-brace-format
+msgid "为服务器 {0} 设置 {1} 秒轮询间隔"
+msgstr "Set {1} second polling interval for server {0}"
+
+#: app/services/scheduler.py:140
+#, python-brace-format
+msgid "跳过限速 - 用户: {0}, 原因: {1}"
+msgstr "Skip Speed Limit - User: {0}, Reason: {1}"
+
+#: app/services/scheduler.py:158
+#, python-brace-format
+msgid "检测到 {0} 个需要限速的播放"
+msgstr "Detected {0} playbacks requiring speed limits"
+
+#: app/services/scheduler.py:160
+#, python-brace-format
+msgid "已跳过 {0} 个本地/白名单播放"
+msgstr "Skipped {0} local/whitelist playbacks"
+
+#: app/services/scheduler.py:162
+msgid "所有播放已停止"
+msgstr "All playback stopped"
+
+#: app/services/scheduler.py:183
+#, python-brace-format
+msgid "实例配置缺少'type'字段: {0}"
+msgstr "Instance configuration missing 'type' field: {0}"
+
+#: app/services/scheduler.py:208
+#, python-brace-format
+msgid "加载插件 {0} 失败: {1}"
+msgstr "Failed to load plugin {0}: {1}"
+
+#: app/services/scheduler.py:250
+#, python-brace-format
+msgid "{0} 速率限制设置成功: 下载 {1}%, 上传不支持"
+msgstr ""
+"{0} Speed limit set successfully: Download {1} percent, Upload not "
+"supported"
+
+#: app/services/scheduler.py:252
+#, python-brace-format
+msgid "{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"
+msgstr "{0} speed limit set successfully: download {1} KB/s, upload {2} KB/s"
+
+#: app/services/scheduler.py:256
+#, python-brace-format
+msgid "{0} 速率设置失败"
+msgstr "{0} speed setting failed"
+
 #: app/templates/base.html:6
 msgid "Auto-Limit控制器"
 msgstr "Auto-Limit Controller"
 
-#: app/templates/base.html:142
+#: app/templates/base.html:143
 msgid "首页"
 msgstr "Home"
 
-#: app/templates/base.html:145
+#: app/templates/base.html:146 app/templates/config.html:3
+#: app/templates/logs.html:39
 msgid "配置"
 msgstr "Configuration"
 
-#: app/templates/base.html:148
+#: app/templates/base.html:149 app/templates/logs.html:3
 msgid "日志"
 msgstr "Logs"
 
-#: app/templates/base.html:152
+#: app/templates/base.html:153
 msgid "语言"
 msgstr "Language"
 
-#: app/templates/base.html:191
+#: app/templates/base.html:166
+msgid "注销"
+msgstr "Logout"
+
+#: app/templates/base.html:206 app/templates/base.html:210
 msgid "无限制"
 msgstr "Unlimited"
 
-#: app/templates/base.html:208
+#: app/templates/base.html:227
 msgid "未知"
 msgstr "Unknown"
+
+# New translation entries
+#: app/templates/config.html:10
+msgid "系统配置"
+msgstr "System Configuration"
+
+#: app/templates/config.html:15 app/templates/index.html:28
+msgid "媒体服务器"
+msgstr "Media Servers"
+
+#: app/templates/config.html:17 app/templates/config.html:412
+msgid "添加媒体服务器"
+msgstr "Add Media Server"
+
+#: app/templates/config.html:40 app/templates/config.html:109
+#: app/templates/index.html:60 app/templates/index.html:100
+msgid "未命名"
+msgstr "Unnamed"
+
+#: app/templates/config.html:46 app/templates/config.html:115
+#: app/templates/index.html:63 app/templates/index.html:103
+msgid "URL未配置"
+msgstr "URL Not Configured"
+
+#: app/templates/config.html:49
+msgid "秒轮询"
+msgstr "s Polling"
+
+#: app/templates/config.html:51
+msgid "跳过本地"
+msgstr "Skip Local"
+
+#: app/templates/config.html:56 app/templates/config.html:125
+#: app/templates/config.html:348 app/templates/config.html:752
+#: app/templates/partials/instance_card.html:10
+msgid "测试连接"
+msgstr "Test Connection"
+
+#: app/templates/config.html:59 app/templates/config.html:128
+msgid "编辑"
+msgstr "Edit"
+
+#: app/templates/config.html:62 app/templates/config.html:131
+msgid "删除"
+msgstr "Delete"
+
+#: app/templates/config.html:74
+msgid "还没有配置媒体服务器"
+msgstr "No media servers configured yet"
+
+#: app/templates/config.html:75
+msgid "点击上方\"添加媒体服务器\"开始配置"
+msgstr "Click \"Add Media Server\" above to start configuration"
+
+#: app/templates/config.html:84 app/templates/index.html:37
+msgid "下载器"
+msgstr "Downloaders"
+
+#: app/templates/config.html:86 app/templates/config.html:412
+msgid "添加下载器"
+msgstr "Add Downloader"
+
+#: app/templates/config.html:119
+msgid "默认"
+msgstr "Default"
+
+#: app/templates/config.html:120
+msgid "播放"
+msgstr "Playing"
+
+#: app/templates/config.html:143
+msgid "还没有配置下载器"
+msgstr "No downloaders configured yet"
+
+#: app/templates/config.html:144
+msgid "点击上方\"添加下载器\"开始配置"
+msgstr "Click \"Add Downloader\" above to start configuration"
+
+#: app/templates/config.html:151
+msgid "配置说明"
+msgstr "Configuration Instructions"
+
+#: app/templates/config.html:153
+msgid "每个媒体服务器可以设置独立的轮询间隔"
+msgstr "Each media server can set independent polling intervals"
+
+#: app/templates/config.html:154
+msgid "每个下载器可以设置独立的限速策略"
+msgstr "Each downloader can set independent speed limit policies"
+
+#: app/templates/config.html:155
+msgid "系统会根据所有启用服务器的播放状态，统一控制所有启用下载器的速率"
+msgstr ""
+"The system will control all enabled downloaders based on the playback "
+"status of all enabled servers"
+
+#: app/templates/config.html:168
+msgid "添加实例"
+msgstr "Add Instance"
+
+#: app/templates/config.html:179 app/templates/partials/instance_card.html:27
+msgid "实例名称"
+msgstr "Instance Name"
+
+#: app/templates/config.html:180 app/templates/partials/instance_card.html:28
+msgid "例如：主服务器"
+msgstr "e.g.: Main Server"
+
+#: app/templates/config.html:183 app/templates/partials/instance_card.html:31
+msgid "插件类型"
+msgstr "Plugin Type"
+
+#: app/templates/config.html:196 app/templates/partials/instance_card.html:50
+msgid "服务器地址"
+msgstr "Server Address"
+
+#: app/templates/config.html:204 app/templates/config.html:209
+#: app/templates/config.html:213 app/templates/config.html:240
+#: app/templates/partials/instance_card.html:56
+#: app/templates/partials/instance_card.html:78
+msgid "API 密钥"
+msgstr "API Key"
+
+#: app/templates/config.html:209 app/templates/config.html:213
+#: app/templates/config.html:224 app/templates/config.html:244
+msgid "获取方式"
+msgstr "How to get"
+
+#: app/templates/config.html:209
+msgid "设置"
+msgstr "Settings"
+
+#: app/templates/config.html:209
+msgid "新建 API 密钥"
+msgstr "Create API Key"
+
+#: app/templates/config.html:213
+msgid "控制台"
+msgstr "Dashboard"
+
+#: app/templates/config.html:213
+msgid "添加新的 API 密钥"
+msgstr "Add new API Key"
+
+#: app/templates/config.html:224
+msgid "管理"
+msgstr "Manage"
+
+#: app/templates/config.html:224
+msgid "媒体库"
+msgstr "Libraries"
+
+#: app/templates/config.html:224
+msgid "任意资料库的三个点"
+msgstr "Three dots of any library"
+
+# 新增待翻译条目
+#: app/templates/config.html:224
+msgid "F12打开开发者工具"
+msgstr "Press F12 to open Developer Tools"
+
+#: app/templates/config.html:224
+msgid "点击授权访问"
+msgstr "Click Authorize"
+
+#: app/templates/config.html:224
+msgid "查看载荷里的X-Plex-Token值"
+msgstr "Check X-Plex-Token value in payload"
+
+#: app/templates/auth/login.html:37 app/templates/auth/setup.html:43
+#: app/templates/config.html:230 app/templates/partials/instance_card.html:68
+msgid "用户名"
+msgstr "Username"
+
+#: app/templates/auth/login.html:41 app/templates/auth/setup.html:48
+#: app/templates/config.html:234 app/templates/partials/instance_card.html:72
+msgid "密码"
+msgstr "Password"
+
+#: app/templates/config.html:244
+msgid "Config"
+msgstr ""
+
+#: app/templates/config.html:244
+msgid "General"
+msgstr ""
+
+#: app/templates/config.html:244
+#, fuzzy
+msgid "API Key"
+msgstr "API Key"
+
+#: app/templates/config.html:250 app/templates/partials/instance_card.html:87
+msgid "最大线路速度 (KB/s)"
+msgstr "Maximum Bandwidth (KB/s)"
+
+#: app/templates/config.html:254 app/templates/partials/instance_card.html:90
+msgid "SABnzbd必须先设置最大带宽，然后使用百分比进行限速控制，例如: 51200 (50MB/s)"
+msgstr ""
+"SABnzbd requires setting maximum bandwidth first, then uses percentage "
+"for speed control, e.g.: 51200 (50MB/s)"
+
+#: app/templates/config.html:263 app/templates/partials/instance_card.html:98
+msgid "轮询设置"
+msgstr "Polling Settings"
+
+#: app/templates/config.html:266 app/templates/partials/instance_card.html:102
+msgid "轮询间隔 (秒)"
+msgstr "Poll Interval (seconds)"
+
+#: app/templates/config.html:269 app/templates/partials/instance_card.html:105
+msgid "检查此服务器播放状态的频率，建议5-60秒"
+msgstr "Frequency to check this server's playback status, recommended 5-60 seconds"
+
+#: app/templates/config.html:276
+msgid "智能限速控制"
+msgstr "Smart Speed Control"
+
+#: app/templates/config.html:282
+msgid "跳过本地播放限速"
+msgstr "Skip Local Playback Speed Limits"
+
+#: app/templates/config.html:286
+msgid "启用后，本地网络播放不会触发下载限速"
+msgstr ""
+"When enabled, local network playback will not trigger download speed "
+"limits"
+
+#: app/templates/config.html:292
+msgid "自定义IP白名单"
+msgstr "Custom IP Whitelist"
+
+#: app/templates/config.html:293
+msgid ""
+"192.168.1.100\n"
+"10.0.0.0/8\n"
+"example.com"
+msgstr ""
+"192.168.1.100\n"
+"10.0.0.0/8\n"
+"example.com"
+
+#: app/templates/config.html:297
+msgid "支持单个IP、CIDR格式、域名，每行一个"
+msgstr "Supports individual IPs, CIDR format, domains, one per line"
+
+#: app/templates/config.html:301
+msgid "用户白名单"
+msgstr "User Whitelist"
+
+#: app/templates/config.html:302
+msgid ""
+"admin\n"
+"家庭成员*\n"
+"localuser"
+msgstr ""
+"admin\n"
+"family*\n"
+"localuser"
+
+#: app/templates/config.html:306
+msgid "支持完全匹配和通配符*，每行一个"
+msgstr "Supports exact match and wildcard *, one per line"
+
+#: app/templates/config.html:317 app/templates/config.html:651
+#: app/templates/partials/instance_card.html:116
+msgid "限速设置 (KB/s)"
+msgstr "Speed Limit Settings (KB/s)"
+
+#: app/templates/config.html:321 app/templates/config.html:654
+#: app/templates/partials/instance_card.html:124
+msgid "默认下载"
+msgstr "Default Download"
+
+#: app/templates/config.html:322 app/templates/config.html:326
+#: app/templates/config.html:664 app/templates/partials/instance_card.html:125
+#: app/templates/partials/instance_card.html:131
+msgid "0=无限制"
+msgstr "0=Unlimited"
+
+#: app/templates/config.html:325 app/templates/partials/instance_card.html:130
+msgid "默认上传"
+msgstr "Default Upload"
+
+#: app/templates/config.html:329 app/templates/config.html:657
+#: app/templates/partials/instance_card.html:138
+msgid "播放时下载"
+msgstr "Download During Playback"
+
+#: app/templates/config.html:333 app/templates/partials/instance_card.html:143
+msgid "播放时上传"
+msgstr "Upload During Playback"
+
+#: app/templates/config.html:338 app/templates/partials/instance_card.html:152
+msgid "当有媒体播放时，自动切换到\"播放时\"限速"
+msgstr ""
+"Automatically switch to \"During Playback\" speed limits when media is "
+"playing"
+
+#: app/templates/config.html:346
+msgid "取消"
+msgstr "Cancel"
+
+#: app/templates/config.html:351 app/templates/config.html:863
+msgid "保存"
+msgstr "Save"
+
+#: app/templates/config.html:441 app/templates/config.html:875
+#: app/templates/config.html:920 app/templates/config.html:965
+msgid "无法找到实例配置"
+msgstr "Instance configuration not found"
+
+#: app/templates/config.html:456
+msgid "编辑媒体服务器"
+msgstr "Edit Media Server"
+
+#: app/templates/config.html:456
+msgid "编辑下载器"
+msgstr "Edit Downloader"
+
+#: app/templates/config.html:612
+msgid "限速设置 (百分比)"
+msgstr "Speed Limit Settings (Percent)"
+
+#: app/templates/config.html:615 app/templates/partials/instance_card.html:121
+msgid "默认限速 (百分比)"
+msgstr "Default Speed Limit (Percent)"
+
+#: app/templates/config.html:618 app/templates/partials/instance_card.html:135
+msgid "播放时限速 (百分比)"
+msgstr "Playback Speed Limit (Percent)"
+
+#: app/templates/config.html:641 app/templates/partials/instance_card.html:150
+msgid "SABnzbd使用百分比控制限速，100为无限制，基于您设置的最大带宽"
+msgstr ""
+"SABnzbd uses percent for speed control, 100=unlimited, based on your "
+"maximum bandwidth setting"
+
+#: app/templates/config.html:674
+msgid "当有媒体播放时，自动切换到播放时限速"
+msgstr "Automatically switch to playback speed limits when media is playing"
+
+#: app/templates/config.html:703 app/templates/config.html:805
+msgid "请填写实例名称"
+msgstr "Please enter instance name"
+
+#: app/templates/config.html:708 app/templates/config.html:810
+msgid "请填写服务器地址"
+msgstr "Please enter server address"
+
+#: app/templates/config.html:720
+msgid "测试中..."
+msgstr "Testing..."
+
+#: app/templates/config.html:741 app/templates/config.html:901
+#: app/templates/index.html:197
+msgid "连接成功"
+msgstr "Connection successful"
+
+#: app/templates/config.html:741 app/templates/config.html:743
+#: app/templates/config.html:901 app/templates/config.html:903
+#: app/templates/index.html:198
+msgid "连接测试"
+msgstr "Connection Test"
+
+#: app/templates/config.html:743 app/templates/config.html:903
+#: app/templates/index.html:187 app/templates/index.html:199
+msgid "连接失败"
+msgstr "Connection failed"
+
+#: app/templates/config.html:748 app/templates/config.html:908
+#: app/templates/index.html:202
+msgid "连接测试时发生网络错误"
+msgstr "Network error occurred during connection test"
+
+#: app/templates/config.html:748 app/templates/config.html:859
+#: app/templates/config.html:908 app/templates/index.html:200
+msgid "网络错误"
+msgstr "Network Error"
+
+#: app/templates/config.html:822
+msgid "保存中..."
+msgstr "Saving..."
+
+#: app/templates/config.html:843
+msgid "保存成功"
+msgstr "Saved successfully"
+
+#: app/templates/config.html:843 app/templates/config.html:854
+msgid "配置保存"
+msgstr "Configuration Save"
+
+#: app/templates/config.html:854
+msgid "保存失败"
+msgstr "Save failed"
+
+#: app/templates/config.html:859
+msgid "保存时发生网络错误"
+msgstr "Network error occurred during save"
+
+#: app/templates/config.html:946
+msgid "已启用"
+msgstr "Enabled"
+
+#: app/templates/config.html:946
+msgid "已禁用"
+msgstr "Disabled"
+
+#: app/templates/config.html:948
+msgid "状态更新失败"
+msgstr "Status update failed"
+
+#: app/templates/config.html:954
+msgid "状态更新时发生网络错误"
+msgstr "Network error occurred during status update"
+
+#: app/templates/config.html:969
+msgid "确定要删除"
+msgstr "Are you sure you want to delete"
+
+#: app/templates/config.html:969
+msgid "吗？"
+msgstr "?"
+
+#: app/templates/config.html:989
+msgid "已删除"
+msgstr "Deleted"
+
+#: app/templates/config.html:1001
+msgid "删除失败"
+msgstr "Delete failed"
+
+#: app/templates/config.html:1006
+msgid "删除时发生网络错误"
+msgstr "Network error occurred during deletion"
+
+#: app/templates/config.html:1049 app/templates/config.html:1074
+msgid "请填写API密钥"
+msgstr "Please enter API key"
+
+#: app/templates/config.html:1055
+msgid "请填写X-Plex-Token"
+msgstr "Please enter X-Plex-Token"
+
+#: app/templates/config.html:1063
+msgid "请填写用户名"
+msgstr "Please enter username"
+
+#: app/templates/config.html:1068
+msgid "请填写密码"
+msgstr "Please enter password"
+
+#: app/templates/config.html:1079
+msgid "请填写最大线路速度"
+msgstr "Please enter maximum bandwidth"
 
 #: app/templates/index.html:9
 msgid "系统状态"
 msgstr "System Status"
 
-#: app/templates/index.html:19
+#: app/templates/index.html:19 app/templates/logs.html:35
 msgid "播放状态"
 msgstr "Playback Status"
 
@@ -58,29 +752,13 @@ msgstr "Playback Status"
 msgid "加载中..."
 msgstr "Loading..."
 
-#: app/templates/index.html:28
-msgid "媒体服务器"
-msgstr "Media Servers"
-
 #: app/templates/index.html:29 app/templates/index.html:38
 msgid "个已启用"
 msgstr " Enabled"
 
-#: app/templates/index.html:37
-msgid "下载器"
-msgstr "Downloaders"
-
 #: app/templates/index.html:49
 msgid "媒体服务器实例"
 msgstr "Media Server Instances"
-
-#: app/templates/index.html:60
-msgid "未命名"
-msgstr "Unnamed"
-
-#: app/templates/index.html:63
-msgid "URL未配置"
-msgstr "URL Not Configured"
 
 #: app/templates/index.html:64
 msgid "轮询间隔"
@@ -90,745 +768,504 @@ msgstr "Poll Interval"
 msgid "秒"
 msgstr "s"
 
-# New translation entries
-
-msgid "系统配置"
-msgstr "System Configuration"
-
-msgid "添加媒体服务器"
-msgstr "Add Media Server"
-
-msgid "秒轮询"
-msgstr "s Polling"
-
-msgid "测试连接"
-msgstr "Test Connection"
-
-msgid "编辑"
-msgstr "Edit"
-
-msgid "删除"
-msgstr "Delete"
-
-msgid "还没有配置媒体服务器"
-msgstr "No media servers configured yet"
-
-msgid "点击上方"添加媒体服务器"开始配置"
-msgstr "Click \"Add Media Server\" above to start configuration"
-
-msgid "添加下载器"
-msgstr "Add Downloader"
-
-msgid "默认"
-msgstr "Default"
-
-msgid "播放"
-msgstr "Playing"
-
-msgid "还没有配置下载器"
-msgstr "No downloaders configured yet"
-
-msgid "点击上方"添加下载器"开始配置"
-msgstr "Click \"Add Downloader\" above to start configuration"
-
-msgid "配置说明"
-msgstr "Configuration Instructions"
-
-msgid "每个媒体服务器可以设置独立的轮询间隔"
-msgstr "Each media server can set independent polling intervals"
-
-msgid "每个下载器可以设置独立的限速策略"
-msgstr "Each downloader can set independent speed limit policies"
-
-msgid "系统会根据所有启用服务器的播放状态，统一控制所有启用下载器的速率"
-msgstr "The system will control all enabled downloaders based on the playback status of all enabled servers"
-
-msgid "添加实例"
-msgstr "Add Instance"
-
-msgid "实例名称"
-msgstr "Instance Name"
-
-msgid "例如：主服务器"
-msgstr "e.g.: Main Server"
-
-msgid "插件类型"
-msgstr "Plugin Type"
-
-msgid "服务器地址"
-msgstr "Server Address"
-
-msgid "API 密钥"
-msgstr "API Key"
-
-msgid "用户名"
-msgstr "Username"
-
-msgid "密码"
-msgstr "Password"
-
-msgid "轮询设置"
-msgstr "Polling Settings"
-
-msgid "轮询间隔 (秒)"
-msgstr "Poll Interval (seconds)"
-
-msgid "检查此服务器播放状态的频率，建议5-60秒"
-msgstr "Frequency to check this server's playback status, recommended 5-60 seconds"
-
-msgid "限速设置 (KB/s)"
-msgstr "Speed Limit Settings (KB/s)"
-
-msgid "默认下载"
-msgstr "Default Download"
-
-msgid "0=无限制"
-msgstr "0=Unlimited"
-
-msgid "默认上传"
-msgstr "Default Upload"
-
-msgid "播放时下载"
-msgstr "Download During Playback"
-
-msgid "播放时上传"
-msgstr "Upload During Playback"
-
-msgid "当有媒体播放时，自动切换到"播放时"限速"
-msgstr "Automatically switch to \"During Playback\" speed limits when media is playing"
-
-msgid "智能限速控制"
-msgstr "Smart Speed Control"
-
-msgid "跳过本地播放限速"
-msgstr "Skip Local Playback Speed Limits"
-
-msgid "启用后，本地网络播放不会触发下载限速"
-msgstr "When enabled, local network playback will not trigger download speed limits"
-
-msgid "自定义IP白名单"
-msgstr "Custom IP Whitelist"
-
-msgid "192.168.1.100\n10.0.0.0/8\nexample.com"
-msgstr "192.168.1.100\n10.0.0.0/8\nexample.com"
-
-msgid "支持单个IP、CIDR格式、域名，每行一个"
-msgstr "Supports individual IPs, CIDR format, domains, one per line"
-
-msgid "用户白名单"
-msgstr "User Whitelist"
-
-msgid "admin\n家庭成员*\nlocaluser"
-msgstr "admin\nfamily*\nlocaluser"
-
-msgid "支持完全匹配和通配符*，每行一个"
-msgstr "Supports exact match and wildcard *, one per line"
-
-msgid "跳过本地"
-msgstr "Skip Local"
-
+#: app/templates/index.html:66
 msgid "已启用本地播放跳过"
 msgstr "Local Playback Skip Enabled"
 
-msgid "跳过限速 - 用户: {0}, 原因: {1}"
-msgstr "Skip Speed Limit - User: {0}, Reason: {1}"
-
-msgid "检测到 {0} 个需要限速的播放"
-msgstr "Detected {0} playbacks requiring speed limits"
-
-msgid "已跳过 {0} 个本地/白名单播放"
-msgstr "Skipped {0} local/whitelist playbacks"
-
-msgid "取消"
-msgstr "Cancel"
-
-# Authentication related translations
-msgid "登录"
-msgstr "Login"
-
-msgid "注销"
-msgstr "Logout"
-
-msgid "首次设置"
-msgstr "First Setup"
-
-msgid "用户名"
-msgstr "Username"
-
-msgid "密码"
-msgstr "Password"
-
-msgid "确认密码"
-msgstr "Confirm Password"
-
-msgid "请输入用户名和密码"
-msgstr "Please enter username and password"
-
-msgid "用户名或密码错误"
-msgstr "Invalid username or password"
-
-msgid "欢迎使用Auto-Limit！"
-msgstr "Welcome to Auto-Limit!"
-
-msgid "检测到这是首次运行，请设置管理员账户以保护您的系统安全。"
-msgstr "This is your first run. Please set up an admin account to secure your system."
-
-msgid "建议使用admin或您的常用用户名"
-msgstr "Recommended to use admin or your usual username"
-
-msgid "密码长度至少6个字符"
-msgstr "Password must be at least 6 characters"
-
-msgid "两次密码输入不一致"
-msgstr "Passwords do not match"
-
-msgid "请填写所有字段"
-msgstr "Please fill in all fields"
-
-msgid "完成设置"
-msgstr "Complete Setup"
-
-msgid "安全提示"
-msgstr "Security Tips"
-
-msgid "设置强密码以保护您的系统"
-msgstr "Set a strong password to protect your system"
-
-msgid "请妥善保管账户信息"
-msgstr "Please keep your account information safe"
-
-msgid "配置完成后需要登录才能访问系统"
-msgstr "You need to login to access the system after setup"
-
-msgid "设置完成，请登录"
-msgstr "Setup completed, please login"
-
-msgid "设置失败，请重试"
-msgstr "Setup failed, please try again"
-
-msgid "控制器"
-msgstr "Controller"
-
-msgid "需要登录"
-msgstr "Login required"
-
-msgid "保存"
-msgstr "Save"
-
-msgid "无法找到实例配置"
-msgstr "Instance configuration not found"
-
-msgid "编辑媒体服务器"
-msgstr "Edit Media Server"
-
-msgid "编辑下载器"
-msgstr "Edit Downloader"
-
-msgid "请填写实例名称"
-msgstr "Please enter instance name"
-
-msgid "请填写服务器地址"
-msgstr "Please enter server address"
-
-msgid "测试中..."
-msgstr "Testing..."
-
-msgid "连接成功"
-msgstr "Connection successful"
-
-msgid "连接测试"
-msgstr "Connection Test"
-
-msgid "连接失败"
-msgstr "Connection failed"
-
-msgid "连接测试时发生网络错误"
-msgstr "Network error occurred during connection test"
-
-msgid "网络错误"
-msgstr "Network Error"
-
-msgid "保存中..."
-msgstr "Saving..."
-
-msgid "保存成功"
-msgstr "Saved successfully"
-
-msgid "配置保存"
-msgstr "Configuration Save"
-
-msgid "保存失败"
-msgstr "Save failed"
-
-msgid "保存时发生网络错误"
-msgstr "Network error occurred during save"
-
-msgid "已启用"
-msgstr "Enabled"
-
-msgid "已禁用"
-msgstr "Disabled"
-
-msgid "状态更新失败"
-msgstr "Status update failed"
-
-msgid "状态更新时发生网络错误"
-msgstr "Network error occurred during status update"
-
-msgid "确定要删除"
-msgstr "Are you sure you want to delete"
-
-msgid "吗？"
-msgstr "?"
-
-msgid "已删除"
-msgstr "Deleted"
-
-msgid "删除失败"
-msgstr "Delete failed"
-
-msgid "删除时发生网络错误"
-msgstr "Network error occurred during deletion"
-
-msgid "请填写API密钥"
-msgstr "Please enter API key"
-
-msgid "请填写X-Plex-Token"
-msgstr "Please enter X-Plex-Token"
-
-msgid "请填写用户名"
-msgstr "Please enter username"
-
-msgid "请填写密码"
-msgstr "Please enter password"
-
-# Log page
-msgid "系统日志 (最近500条)"
-msgstr "System Logs (Last 500 entries)"
-
-msgid "刷新"
-msgstr "Refresh"
-
-msgid "时间"
-msgstr "Time"
-
-msgid "类型"
-msgstr "Type"
-
-msgid "消息"
-msgstr "Message"
-
-msgid "速率变更"
-msgstr "Speed Change"
-
-msgid "错误"
-msgstr "Error"
-
-msgid "测试"
-msgstr "Test"
-
-msgid "暂无日志记录"
-msgstr "No log records"
-
-msgid "系统运行一段时间后会自动生成日志"
-msgstr "Logs will be generated automatically after the system runs for a while"
-
 # Homepage additions
+#: app/templates/index.html:69 app/templates/index.html:105
 msgid "加载状态中..."
 msgstr "Loading status..."
 
+#: app/templates/index.html:73 app/templates/index.html:109
+#: app/templates/index.html:201 app/templates/logs.html:49
+msgid "测试"
+msgstr "Test"
+
+#: app/templates/index.html:80
 msgid "没有已启用的媒体服务器"
 msgstr "No enabled media servers"
 
+#: app/templates/index.html:82 app/templates/index.html:118
 msgid "前往配置"
 msgstr "Go to Configuration"
 
+#: app/templates/index.html:89
 msgid "下载器实例"
 msgstr "Downloader Instances"
 
+#: app/templates/index.html:116
 msgid "没有已启用的下载器"
 msgstr "No enabled downloaders"
 
+#: app/templates/index.html:133
 msgid "调度器状态"
 msgstr "Scheduler Status"
 
+#: app/templates/index.html:134 app/templates/index.html:188
 msgid "运行中"
 msgstr "Running"
 
+#: app/templates/index.html:142
 msgid "当前限速模式"
 msgstr "Current Speed Limit Mode"
 
+#: app/templates/index.html:143
 msgid "检测中"
 msgstr "Detecting"
 
+#: app/templates/index.html:151
 msgid "全局速度"
 msgstr "Global Speed"
 
+#: app/templates/index.html:163
 msgid "快速操作"
 msgstr "Quick Actions"
 
+#: app/templates/index.html:165
 msgid "查看日志"
 msgstr "View Logs"
 
+#: app/templates/index.html:181
 msgid "有"
 msgstr "There are"
 
+#: app/templates/index.html:182
 msgid "个活跃播放"
 msgstr " active playback sessions"
 
+#: app/templates/index.html:183
 msgid "播放时限速"
 msgstr "Playback Speed Limit"
 
+#: app/templates/index.html:184
 msgid "无播放活动"
 msgstr "No playback activity"
 
+#: app/templates/index.html:185
 msgid "默认限速"
 msgstr "Default Speed Limit"
 
+#: app/templates/index.html:186
 msgid "状态获取失败"
 msgstr "Failed to fetch status"
 
-msgid "连接失败"
-msgstr "Connection failed"
-
+#: app/templates/index.html:189
 msgid "异常"
 msgstr "Abnormal"
 
+#: app/templates/index.html:190
 msgid "实际速度"
 msgstr "Actual Speed"
 
+#: app/templates/index.html:191
 msgid "获取中..."
 msgstr "Fetching..."
 
+#: app/templates/index.html:192
 msgid "活跃播放"
 msgstr "Active Playback"
 
+#: app/templates/index.html:193
 msgid "个会话"
 msgstr " sessions"
 
+#: app/templates/index.html:194
 msgid "注：显示媒体文件比特率，非实时网络速度"
 msgstr "Note: Shows media file bitrate, not real-time network speed"
 
+#: app/templates/index.html:195
 msgid "无法在配置中找到该实例"
 msgstr "Instance not found in configuration"
 
+#: app/templates/index.html:196
 msgid "配置错误"
 msgstr "Configuration Error"
 
-# Instance cards
-msgid "新实例"
-msgstr "New Instance"
-
-msgid "保存此实例"
-msgstr "Save This Instance"
-
-msgid "删除实例"
-msgstr "Delete Instance"
-
-# 日志消息翻译
-msgid "调度器已启动"
-msgstr "Scheduler started"
-
-msgid "调度器已停止"
-msgstr "Scheduler stopped"
-
-msgid "所有播放已停止"
-msgstr "All playback stopped"
-
-msgid "速率限制设置成功"
-msgstr "Speed limit set successfully"
-
-msgid "速率设置失败"
-msgstr "Speed setting failed"
-
-msgid "连接测试成功"
-msgstr "Connection test successful"
-
-msgid "连接测试失败"
-msgstr "Connection test failed"
-
-msgid "配置已更新，调度器将重启以应用新设置"
-msgstr "Configuration updated, scheduler will restart to apply new settings"
-
-msgid "qBittorrent登录失败"
-msgstr "qBittorrent login failed"
-
-msgid "qBittorrent连接错误"
-msgstr "qBittorrent connection error"
-
-msgid "速率限制设置失败"
-msgstr "Speed limit setting failed"
-
-msgid "设置速率限制时出错"
-msgstr "Error setting speed limit"
-
-msgid "获取qBittorrent速度信息失败"
-msgstr "Failed to get qBittorrent speed information"
-
-msgid "获取qBittorrent速度信息时出错"
-msgstr "Error getting qBittorrent speed information"
-
-msgid "获取Transmission会话ID失败"
-msgstr "Failed to get Transmission session ID"
-
-msgid "获取Transmission会话ID时出错"
-msgstr "Error getting Transmission session ID"
-
-msgid "Transmission响应不是有效的JSON"
-msgstr "Transmission response is not valid JSON"
-
-msgid "Transmission RPC请求失败"
-msgstr "Transmission RPC request failed"
-
-msgid "Transmission RPC请求时出错"
-msgstr "Error in Transmission RPC request"
-
-msgid "Transmission速率限制设置失败"
-msgstr "Transmission speed limit setting failed"
-
-msgid "Transmission设置速率限制时出错"
-msgstr "Error setting Transmission speed limit"
-
-msgid "获取Transmission统计信息时出错"
-msgstr "Error getting Transmission statistics"
-
-msgid "获取Transmission速度信息失败"
-msgstr "Failed to get Transmission speed information"
-
-msgid "获取Transmission速度信息时出错"
-msgstr "Error getting Transmission speed information"
-
-msgid "CloudDrive2 token已过期，需要重新登录"
-msgstr "CloudDrive2 token expired, need to login again"
-
-msgid "gRPC请求失败"
-msgstr "gRPC request failed"
-
-msgid "保存CloudDrive2 token时出错"
-msgstr "Error saving CloudDrive2 token"
-
-msgid "CloudDrive2重新登录成功"
-msgstr "CloudDrive2 re-login successful"
-
-msgid "CloudDrive2登录成功"
-msgstr "CloudDrive2 login successful"
-
-msgid "CloudDrive2登录失败"
-msgstr "CloudDrive2 login failed"
-
-msgid "CloudDrive2登录异常"
-msgstr "CloudDrive2 login exception"
-
-msgid "CloudDrive2速率限制设置失败"
-msgstr "CloudDrive2 speed limit setting failed"
-
-msgid "CloudDrive2设置速率限制时出错"
-msgstr "Error setting CloudDrive2 speed limit"
-
-msgid "获取CloudDrive2速度信息时出错"
-msgstr "Error getting CloudDrive2 speed information"
-
-msgid "获取Emby会话失败"
-msgstr "Failed to get Emby sessions"
-
-msgid "获取Emby会话时出错"
-msgstr "Error getting Emby sessions"
-
-msgid "获取Emby网络速度失败"
-msgstr "Failed to get Emby network speed"
-
-msgid "获取Emby网络速度时出错"
-msgstr "Error getting Emby network speed"
-
-msgid "实例配置缺少'type'字段"
-msgstr "Instance configuration missing 'type' field"
-
-msgid "加载插件失败"
-msgstr "Failed to load plugin"
-
-# 复杂日志消息模板
-msgid "为服务器 {0} 设置 {1} 秒轮询间隔"
-msgstr "Set {1} second polling interval for server {0}"
-
-msgid "检测到 {0} 个总活跃播放"
-msgstr "Detected {0} total active playbacks"
-
-msgid "{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"
-msgstr "{0} speed limit set successfully: download {1} KB/s, upload {2} KB/s"
-
-msgid "{0} 速率设置失败"
-msgstr "{0} speed setting failed"
-
-msgid "连接测试成功: {0}"
-msgstr "Connection test successful: {0}"
-
-msgid "连接测试失败: {0}"
-msgstr "Connection test failed: {0}"
-
-msgid "更新了{0}实例配置"
-msgstr "Updated {0} instance configuration"
-
-msgid "添加了新的{0}实例"
-msgstr "Added new {0} instance"
-
-msgid "删除了{0}实例"
-msgstr "Deleted {0} instance"
-
-msgid "获取Emby会话失败: HTTP {0}"
-msgstr "Failed to get Emby sessions: HTTP {0}"
-
-msgid "获取Emby会话时出错: {0}"
-msgstr "Error getting Emby sessions: {0}"
-
-msgid "获取Emby网络速度失败: HTTP {0}"
-msgstr "Failed to get Emby network speed: HTTP {0}"
-
-msgid "获取Emby网络速度时出错: {0}"
-msgstr "Error getting Emby network speed: {0}"
-
-msgid "实例配置缺少'type'字段: {0}"
-msgstr "Instance configuration missing 'type' field: {0}"
-
-msgid "加载插件 {0} 失败: {1}"
-msgstr "Failed to load plugin {0}: {1}"
-
-msgid "qBittorrent登录失败: {0}"
-msgstr "qBittorrent login failed: {0}"
-
-msgid "qBittorrent连接错误: {0}"
-msgstr "qBittorrent connection error: {0}"
-
-msgid "速率限制设置失败: {0}"
-msgstr "Speed limit setting failed: {0}"
-
-msgid "设置速率限制时出错: {0}"
-msgstr "Error setting speed limit: {0}"
-
-msgid "获取qBittorrent速度信息失败: HTTP {0}"
-msgstr "Failed to get qBittorrent speed information: HTTP {0}"
-
-msgid "获取qBittorrent速度信息时出错: {0}"
-msgstr "Error getting qBittorrent speed information: {0}"
-
-msgid "获取Transmission会话ID失败: HTTP {0}"
-msgstr "Failed to get Transmission session ID: HTTP {0}"
-
-msgid "获取Transmission会话ID时出错: {0}"
-msgstr "Error getting Transmission session ID: {0}"
-
-msgid "Transmission RPC请求失败: HTTP {0}"
-msgstr "Transmission RPC request failed: HTTP {0}"
-
-msgid "Transmission RPC请求时出错: {0}"
-msgstr "Error in Transmission RPC request: {0}"
-
-msgid "Transmission速率限制设置失败: {0}"
-msgstr "Transmission speed limit setting failed: {0}"
-
-msgid "Transmission设置速率限制时出错: {0}"
-msgstr "Error setting Transmission speed limit: {0}"
-
-msgid "获取Transmission统计信息时出错: {0}"
-msgstr "Error getting Transmission statistics: {0}"
-
-msgid "获取Transmission速度信息失败: {0}"
-msgstr "Failed to get Transmission speed information: {0}"
-
-msgid "获取Transmission速度信息时出错: {0}"
-msgstr "Error getting Transmission speed information: {0}"
-
-msgid "gRPC请求失败: {0}"
-msgstr "gRPC request failed: {0}"
-
-msgid "保存CloudDrive2 token时出错: {0}"
-msgstr "Error saving CloudDrive2 token: {0}"
-
-msgid "CloudDrive2登录失败: {0}"
-msgstr "CloudDrive2 login failed: {0}"
-
-msgid "CloudDrive2登录异常: {0}"
-msgstr "CloudDrive2 login exception: {0}"
-
-msgid "CloudDrive2设置速率限制时出错: {0}"
-msgstr "Error setting CloudDrive2 speed limit: {0}"
-
-msgid "获取CloudDrive2速度信息时出错: {0}"
-msgstr "Error getting CloudDrive2 speed information: {0}"
-
-# 新增待翻译条目
-
-msgid "⚠️ 不反映实际网络传输速度"
-msgstr "⚠️ Does not reflect actual network transfer speed"
-
-msgid "⚠️ 仅作参考，不反映实际网络使用"
-msgstr "⚠️ Reference only, does not reflect actual network usage"
-
-msgid "⚠️ 未获取到比特率信息"
-msgstr "⚠️ Bitrate information not available"
-
-msgid "✓ 反映真实带宽使用"
-msgstr "✓ Reflects real bandwidth usage"
-
-msgid "✓ 已计入全局速度统计"
-msgstr "✓ Included in global speed statistics"
-
-msgid "💡 建议使用Plex获取真实数据"
-msgstr "💡 Recommend using Plex for real data"
-
-msgid "📄 媒体文件编码比特率"
-msgstr "📄 Media file encoded bitrate"
-
+#: app/templates/index.html:203
 msgid "📊 实际网络传输速度"
 msgstr "📊 Actual network transfer speed"
 
-# 新增待翻译条目
+#: app/templates/index.html:204
+msgid "✓ 反映真实带宽使用"
+msgstr "✓ Reflects real bandwidth usage"
 
-msgid "F12打开开发者工具"
-msgstr "Press F12 to open Developer Tools"
+#: app/templates/index.html:205
+msgid "✓ 已计入全局速度统计"
+msgstr "✓ Included in global speed statistics"
 
-msgid "任意资料库的三个点"
-msgstr "Three dots of any library"
+#: app/templates/index.html:206
+msgid "📄 媒体文件编码比特率"
+msgstr "📄 Media file encoded bitrate"
 
-msgid "媒体库"
-msgstr "Libraries"
+#: app/templates/index.html:207
+msgid "⚠️ 仅作参考，不反映实际网络使用"
+msgstr "⚠️ Reference only, does not reflect actual network usage"
 
-msgid "控制台"
-msgstr "Dashboard"
-
-msgid "新建 API 密钥"
-msgstr "Create API Key"
-
-msgid "查看载荷里的X-Plex-Token值"
-msgstr "Check X-Plex-Token value in payload"
-
-msgid "添加新的 API 密钥"
-msgstr "Add new API Key"
-
-msgid "点击授权访问"
-msgstr "Click Authorize"
-
-msgid "管理"
-msgstr "Manage"
-
-msgid "获取方式"
-msgstr "How to get"
-
-msgid "设置"
-msgstr "Settings"
+#: app/templates/index.html:208
+msgid "⚠️ 未获取到比特率信息"
+msgstr "⚠️ Bitrate information not available"
 
 # 新增待翻译条目
+#: app/templates/index.html:209
+msgid "⚠️ 不反映实际网络传输速度"
+msgstr "⚠️ Does not reflect actual network transfer speed"
 
-msgid "用户 {0} 完成首次设置"
-msgstr "User {0} completed initial setup"
+#: app/templates/index.html:210
+msgid "💡 建议使用Plex获取真实数据"
+msgstr "💡 Recommend using Plex for real data"
 
-msgid "用户 {0} 已登出"
-msgstr "User {0} logged out"
+#: app/templates/index.html:211
+msgid "限速"
+msgstr "Speed Limit"
 
-msgid "用户 {0} 登录失败"
-msgstr "User {0} login failed"
+# Log page
+#: app/templates/logs.html:11
+msgid "系统日志 (最近500条)"
+msgstr "System Logs (Last 500 entries)"
 
-msgid "用户 {0} 登录成功"
-msgstr "User {0} login successful"
+#: app/templates/logs.html:14
+msgid "刷新"
+msgstr "Refresh"
 
-msgid "设置完成，欢迎使用Auto-Limit！"
-msgstr "Setup completed, welcome to Auto-Limit!"
+#: app/templates/logs.html:23
+msgid "时间"
+msgstr "Time"
+
+#: app/templates/logs.html:24
+msgid "类型"
+msgstr "Type"
+
+#: app/templates/logs.html:25
+msgid "消息"
+msgstr "Message"
+
+#: app/templates/logs.html:37
+msgid "速率变更"
+msgstr "Speed Change"
+
+#: app/templates/logs.html:41
+msgid "认证"
+msgstr "Authentication"
+
+#: app/templates/logs.html:43
+msgid "调度器"
+msgstr "Scheduler"
+
+#: app/templates/logs.html:45
+msgid "系统"
+msgstr "System"
+
+#: app/templates/logs.html:47
+msgid "错误"
+msgstr "Error"
+
+#: app/templates/logs.html:77
+msgid "暂无日志记录"
+msgstr "No log records"
+
+#: app/templates/logs.html:78
+msgid "系统运行一段时间后会自动生成日志"
+msgstr "Logs will be generated automatically after the system runs for a while"
+
+# Authentication related translations
+#: app/templates/auth/login.html:3 app/templates/auth/login.html:11
+#: app/templates/auth/login.html:46
+msgid "登录"
+msgstr "Login"
+
+#: app/templates/auth/login.html:52 app/templates/auth/setup.html:77
+msgid "控制器"
+msgstr "Controller"
+
+#: app/templates/auth/setup.html:3 app/templates/auth/setup.html:11
+msgid "首次设置"
+msgstr "First Setup"
+
+#: app/templates/auth/setup.html:26
+msgid "欢迎使用Auto-Limit！"
+msgstr "Welcome to Auto-Limit!"
+
+#: app/templates/auth/setup.html:27
+msgid "检测到这是首次运行，请设置管理员账户以保护您的系统安全。"
+msgstr ""
+"This is your first run. Please set up an admin account to secure your "
+"system."
+
+#: app/templates/auth/setup.html:45
+msgid "建议使用admin或您的常用用户名"
+msgstr "Recommended to use admin or your usual username"
+
+#: app/templates/auth/setup.html:53
+msgid "确认密码"
+msgstr "Confirm Password"
+
+#: app/templates/auth/setup.html:58
+msgid "完成设置"
+msgstr "Complete Setup"
+
+#: app/templates/auth/setup.html:66
+msgid "安全提示"
+msgstr "Security Tips"
+
+#: app/templates/auth/setup.html:68
+msgid "设置强密码以保护您的系统"
+msgstr "Set a strong password to protect your system"
+
+#: app/templates/auth/setup.html:69
+msgid "请妥善保管账户信息"
+msgstr "Please keep your account information safe"
+
+#: app/templates/auth/setup.html:70
+msgid "配置完成后需要登录才能访问系统"
+msgstr "You need to login to access the system after setup"
+
+# Instance cards
+#: app/templates/partials/instance_card.html:6
+msgid "新实例"
+msgstr "New Instance"
+
+#: app/templates/partials/instance_card.html:13
+msgid "保存此实例"
+msgstr "Save This Instance"
+
+#: app/templates/partials/instance_card.html:16
+msgid "删除实例"
+msgstr "Delete Instance"
+
+#: app/templates/partials/instance_card.html:81
+msgid "在SABnzbd的Config → General → API Key中获取"
+msgstr ""
+
+#~ msgid "设置完成，请登录"
+#~ msgstr "Setup completed, please login"
+
+#~ msgid "需要登录"
+#~ msgstr "Login required"
+
+#~ msgid "速率限制设置成功"
+#~ msgstr "Speed limit set successfully"
+
+#~ msgid "速率设置失败"
+#~ msgstr "Speed setting failed"
+
+#~ msgid "连接测试成功"
+#~ msgstr "Connection test successful"
+
+#~ msgid "连接测试失败"
+#~ msgstr "Connection test failed"
+
+#~ msgid "qBittorrent登录失败"
+#~ msgstr "qBittorrent login failed"
+
+#~ msgid "qBittorrent连接错误"
+#~ msgstr "qBittorrent connection error"
+
+#~ msgid "速率限制设置失败"
+#~ msgstr "Speed limit setting failed"
+
+#~ msgid "设置速率限制时出错"
+#~ msgstr "Error setting speed limit"
+
+#~ msgid "获取qBittorrent速度信息失败"
+#~ msgstr "Failed to get qBittorrent speed information"
+
+#~ msgid "获取qBittorrent速度信息时出错"
+#~ msgstr "Error getting qBittorrent speed information"
+
+#~ msgid "获取Transmission会话ID失败"
+#~ msgstr "Failed to get Transmission session ID"
+
+#~ msgid "获取Transmission会话ID时出错"
+#~ msgstr "Error getting Transmission session ID"
+
+#~ msgid "Transmission响应不是有效的JSON"
+#~ msgstr "Transmission response is not valid JSON"
+
+#~ msgid "Transmission RPC请求失败"
+#~ msgstr "Transmission RPC request failed"
+
+#~ msgid "Transmission RPC请求时出错"
+#~ msgstr "Error in Transmission RPC request"
+
+#~ msgid "Transmission速率限制设置失败"
+#~ msgstr "Transmission speed limit setting failed"
+
+#~ msgid "Transmission设置速率限制时出错"
+#~ msgstr "Error setting Transmission speed limit"
+
+#~ msgid "获取Transmission统计信息时出错"
+#~ msgstr "Error getting Transmission statistics"
+
+#~ msgid "获取Transmission速度信息失败"
+#~ msgstr "Failed to get Transmission speed information"
+
+#~ msgid "获取Transmission速度信息时出错"
+#~ msgstr "Error getting Transmission speed information"
+
+#~ msgid "CloudDrive2 token已过期，需要重新登录"
+#~ msgstr "CloudDrive2 token expired, need to login again"
+
+#~ msgid "gRPC请求失败"
+#~ msgstr "gRPC request failed"
+
+#~ msgid "保存CloudDrive2 token时出错"
+#~ msgstr "Error saving CloudDrive2 token"
+
+#~ msgid "CloudDrive2重新登录成功"
+#~ msgstr "CloudDrive2 re-login successful"
+
+#~ msgid "CloudDrive2登录成功"
+#~ msgstr "CloudDrive2 login successful"
+
+#~ msgid "CloudDrive2登录失败"
+#~ msgstr "CloudDrive2 login failed"
+
+#~ msgid "CloudDrive2登录异常"
+#~ msgstr "CloudDrive2 login exception"
+
+#~ msgid "CloudDrive2速率限制设置失败"
+#~ msgstr "CloudDrive2 speed limit setting failed"
+
+#~ msgid "CloudDrive2设置速率限制时出错"
+#~ msgstr "Error setting CloudDrive2 speed limit"
+
+#~ msgid "获取CloudDrive2速度信息时出错"
+#~ msgstr "Error getting CloudDrive2 speed information"
+
+#~ msgid "获取Emby会话失败"
+#~ msgstr "Failed to get Emby sessions"
+
+#~ msgid "获取Emby会话时出错"
+#~ msgstr "Error getting Emby sessions"
+
+#~ msgid "获取Emby网络速度失败"
+#~ msgstr "Failed to get Emby network speed"
+
+#~ msgid "获取Emby网络速度时出错"
+#~ msgstr "Error getting Emby network speed"
+
+#~ msgid "实例配置缺少'type'字段"
+#~ msgstr "Instance configuration missing 'type' field"
+
+#~ msgid "加载插件失败"
+#~ msgstr "Failed to load plugin"
+
+#~ msgid "检测到 {0} 个总活跃播放"
+#~ msgstr "Detected {0} total active playbacks"
+
+#~ msgid "获取Emby会话失败: HTTP {0}"
+#~ msgstr "Failed to get Emby sessions: HTTP {0}"
+
+#~ msgid "获取Emby会话时出错: {0}"
+#~ msgstr "Error getting Emby sessions: {0}"
+
+#~ msgid "获取Emby网络速度失败: HTTP {0}"
+#~ msgstr "Failed to get Emby network speed: HTTP {0}"
+
+#~ msgid "获取Emby网络速度时出错: {0}"
+#~ msgstr "Error getting Emby network speed: {0}"
+
+#~ msgid "qBittorrent登录失败: {0}"
+#~ msgstr "qBittorrent login failed: {0}"
+
+#~ msgid "qBittorrent连接错误: {0}"
+#~ msgstr "qBittorrent connection error: {0}"
+
+#~ msgid "速率限制设置失败: {0}"
+#~ msgstr "Speed limit setting failed: {0}"
+
+#~ msgid "设置速率限制时出错: {0}"
+#~ msgstr "Error setting speed limit: {0}"
+
+#~ msgid "获取qBittorrent速度信息失败: HTTP {0}"
+#~ msgstr "Failed to get qBittorrent speed information: HTTP {0}"
+
+#~ msgid "获取qBittorrent速度信息时出错: {0}"
+#~ msgstr "Error getting qBittorrent speed information: {0}"
+
+#~ msgid "获取Transmission会话ID失败: HTTP {0}"
+#~ msgstr "Failed to get Transmission session ID: HTTP {0}"
+
+#~ msgid "获取Transmission会话ID时出错: {0}"
+#~ msgstr "Error getting Transmission session ID: {0}"
+
+#~ msgid "Transmission RPC请求失败: HTTP {0}"
+#~ msgstr "Transmission RPC request failed: HTTP {0}"
+
+#~ msgid "Transmission RPC请求时出错: {0}"
+#~ msgstr "Error in Transmission RPC request: {0}"
+
+#~ msgid "Transmission速率限制设置失败: {0}"
+#~ msgstr "Transmission speed limit setting failed: {0}"
+
+#~ msgid "Transmission设置速率限制时出错: {0}"
+#~ msgstr "Error setting Transmission speed limit: {0}"
+
+#~ msgid "获取Transmission统计信息时出错: {0}"
+#~ msgstr "Error getting Transmission statistics: {0}"
+
+#~ msgid "获取Transmission速度信息失败: {0}"
+#~ msgstr "Failed to get Transmission speed information: {0}"
+
+#~ msgid "获取Transmission速度信息时出错: {0}"
+#~ msgstr "Error getting Transmission speed information: {0}"
+
+#~ msgid "gRPC请求失败: {0}"
+#~ msgstr "gRPC request failed: {0}"
+
+#~ msgid "保存CloudDrive2 token时出错: {0}"
+#~ msgstr "Error saving CloudDrive2 token: {0}"
+
+#~ msgid "CloudDrive2登录失败: {0}"
+#~ msgstr "CloudDrive2 login failed: {0}"
+
+#~ msgid "CloudDrive2登录异常: {0}"
+#~ msgstr "CloudDrive2 login exception: {0}"
+
+#~ msgid "CloudDrive2设置速率限制时出错: {0}"
+#~ msgstr "Error setting CloudDrive2 speed limit: {0}"
+
+#~ msgid "获取CloudDrive2速度信息时出错: {0}"
+#~ msgstr "Error getting CloudDrive2 speed information: {0}"
+
+# SABnzbd related translations
+#~ msgid "SABnzbd连接失败"
+#~ msgstr "SABnzbd connection failed"
+
+#~ msgid "SABnzbd连接错误"
+#~ msgstr "SABnzbd connection error"
+
+#~ msgid "SABnzbd API请求时出错"
+#~ msgstr "Error in SABnzbd API request"
+
+#~ msgid "SABnzbd设置速率限制时出错"
+#~ msgstr "Error setting SABnzbd speed limit"
+
+#~ msgid "获取SABnzbd速度信息失败"
+#~ msgstr "Failed to get SABnzbd speed information"
+
+#~ msgid "获取SABnzbd速度信息时出错"
+#~ msgstr "Error getting SABnzbd speed information"
+
+#~ msgid "SABnzbd连接错误: {0}"
+#~ msgstr "SABnzbd connection error: {0}"
+
+#~ msgid "获取SABnzbd速度信息失败: HTTP {0}"
+#~ msgstr "Failed to get SABnzbd speed information: HTTP {0}"
+
+#~ msgid "SABnzbd Usenet下载器，输入API密钥连接"
+#~ msgstr "SABnzbd Usenet downloader, enter API key to connect"
+
+#~ msgid "SABnzbd作为Usenet下载器，仅支持下载限速"
+#~ msgstr "SABnzbd as a Usenet downloader only supports download speed limiting"
+
+#~ msgid "0=自动检测"
+#~ msgstr "0=Auto Detect"
+
+#~ msgid "设置您的网络最大带宽，用于优化限速计算，可选配置"
+#~ msgstr ""
+#~ "Set your network maximum bandwidth for"
+#~ " optimized speed calculations, optional "
+#~ "configuration"
+

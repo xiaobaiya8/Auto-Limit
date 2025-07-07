@@ -31,16 +31,36 @@
                                 <td class="text-nowrap"><small>{{ log.timestamp }}</small></td>
                                 <td>
                                     {% set type = log.type %}
-                                    {% if type == 'PLAY_START' or type == 'PLAY_STOP' %}
+                                    {% if type == 'PLAY_START' or type == 'PLAY_STOP' or type == 'PLAY_STATUS' %}
                                         <span class="badge bg-primary">{{ _('播放状态') }}</span>
                                     {% elif type == 'SPEED_CHANGE' %}
                                         <span class="badge bg-info">{{ _('速率变更') }}</span>
                                     {% elif type == 'CONFIG' %}
                                         <span class="badge bg-secondary">{{ _('配置') }}</span>
-                                    {% elif type == 'EMBY_ERROR' or type == 'QB_ERROR' or type == 'TEST_ERROR' %}
+                                    {% elif type == 'AUTH' %}
+                                        <span class="badge bg-warning">{{ _('认证') }}</span>
+                                    {% elif type == 'SCHEDULER' %}
+                                        <span class="badge bg-info">{{ _('调度器') }}</span>
+                                    {% elif type == 'SYSTEM' %}
+                                        <span class="badge bg-secondary">{{ _('系统') }}</span>
+                                    {% elif type.endswith('_ERROR') or type == 'ERROR' or type == 'SPEED_ERROR' %}
                                         <span class="badge bg-danger">{{ _('错误') }}</span>
-                                    {% elif type == 'TEST' %}
+                                    {% elif type.startswith('TEST_') or type == 'TEST' %}
                                         <span class="badge bg-success">{{ _('测试') }}</span>
+                                    {% elif type.startswith('SABNZBD') %}
+                                        <span class="badge bg-info text-white">SABnzbd</span>
+                                    {% elif type.startswith('QB') %}
+                                        <span class="badge bg-success">qBittorrent</span>
+                                    {% elif type.startswith('TRANSMISSION') %}
+                                        <span class="badge bg-dark">Transmission</span>
+                                    {% elif type.startswith('CLOUDDRIVE2') %}
+                                        <span class="badge bg-primary">CloudDrive2</span>
+                                    {% elif type.startswith('EMBY') %}
+                                        <span class="badge bg-success">Emby</span>
+                                    {% elif type.startswith('JELLYFIN') %}
+                                        <span class="badge bg-primary">Jellyfin</span>
+                                    {% elif type.startswith('PLEX') %}
+                                        <span class="badge bg-warning text-dark">Plex</span>
                                     {% else %}
                                         <span class="badge bg-light text-dark">{{ type }}</span>
                                     {% endif %}

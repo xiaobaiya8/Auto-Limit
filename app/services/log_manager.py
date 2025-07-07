@@ -1,6 +1,7 @@
 import json
 import os
 import shutil
+import tempfile
 from datetime import datetime
 from threading import RLock
 from flask import current_app, has_request_context, has_app_context
@@ -9,12 +10,14 @@ from flask_babel import gettext as _, force_locale
 class LogManager:
     """
     管理JSON格式的日志文件。
+    使用原子写入和优化的锁机制来防止并发写入时的数据损坏。
     """
     def __init__(self, max_entries=500):
         self.log_path = None
         self.max_entries = max_entries
         self._app = None  # 存储应用实例的引用
         self._lock = RLock()  # 线程安全锁
+        self._write_lock = RLock()  # 专门用于文件写入的锁
 
     def init_app(self, app):
         """用Flask app实例来初始化"""
@@ -38,7 +41,7 @@ class LogManager:
                 if recovered_logs is not None:
                     # 如果恢复成功，重新写入文件
                     self._backup_corrupted_log_file()
-                    self._write_logs(recovered_logs)
+                    self._atomic_write_logs(recovered_logs)
                     return recovered_logs
                 else:
                     # 恢复失败，备份并重新创建
@@ -104,7 +107,35 @@ class LogManager:
                 except:
                     pass
                 
-                # 如果还是失败，返回空列表
+                # 尝试逐行解析，构建有效的日志条目
+                try:
+                    lines = content.split('\n')
+                    valid_logs = []
+                    current_entry = ""
+                    brace_count = 0
+                    
+                    for line in lines:
+                        current_entry += line
+                        brace_count += line.count('{') - line.count('}')
+                        
+                        # 如果大括号平衡，尝试解析当前条目
+                        if brace_count == 0 and current_entry.strip():
+                            try:
+                                # 移除可能的逗号和括号
+                                entry_text = current_entry.strip().rstrip(',').strip('[]')
+                                if entry_text:
+                                    entry = json.loads(entry_text)
+                                    if isinstance(entry, dict) and 'timestamp' in entry:
+                                        valid_logs.append(entry)
+                            except:
+                                pass
+                            current_entry = ""
+                    
+                    return valid_logs if valid_logs else []
+                except:
+                    pass
+                
+                # 如果所有修复尝试都失败，返回空列表
                 return []
         
         except Exception as e:
@@ -125,42 +156,81 @@ class LogManager:
         """创建新的日志文件"""
         try:
             initial_log = {
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],  # 毫秒精度
                 "type": "SYSTEM",
                 "message": "日志系统已重新初始化"
             }
-            with open(self.log_path, 'w', encoding='utf-8') as f:
-                json.dump([initial_log], f, indent=4, ensure_ascii=False)
-        except IOError as e:
+            self._atomic_write_logs([initial_log])
+        except Exception as e:
             self._safe_log_error(f"创建新日志文件失败: {e}")
 
-    def _write_logs(self, logs):
-        """写入日志文件"""
+    def _atomic_write_logs(self, logs):
+        """使用原子操作写入日志文件"""
         if not logs:
             return False
             
-        try:
-            # 确保所有日志条目都是有效的UTF-8字符串
-            cleaned_logs = []
-            for log in logs:
-                cleaned_log = {}
-                for key, value in log.items():
-                    if isinstance(value, str):
-                        # 清理无效的UTF-8字符
-                        try:
-                            cleaned_log[key] = value.encode('utf-8', errors='replace').decode('utf-8')
-                        except:
-                            cleaned_log[key] = str(value)
-                    else:
-                        cleaned_log[key] = value
-                cleaned_logs.append(cleaned_log)
-            
-            with open(self.log_path, 'w', encoding='utf-8') as f:
-                json.dump(cleaned_logs, f, indent=4, ensure_ascii=False)
-            return True
-        except Exception as e:
-            self._safe_log_error(f"写入日志文件失败: {e}")
-            return False
+        with self._write_lock:
+            try:
+                # 确保所有日志条目都是有效的UTF-8字符串
+                cleaned_logs = []
+                for log in logs:
+                    cleaned_log = {}
+                    for key, value in log.items():
+                        if isinstance(value, str):
+                            # 清理无效的UTF-8字符
+                            try:
+                                cleaned_log[key] = value.encode('utf-8', errors='replace').decode('utf-8')
+                            except:
+                                cleaned_log[key] = str(value)
+                        else:
+                            cleaned_log[key] = value
+                    cleaned_logs.append(cleaned_log)
+                
+                # 获取日志文件所在目录
+                log_dir = os.path.dirname(self.log_path)
+                
+                # 创建临时文件在同一目录下
+                with tempfile.NamedTemporaryFile(
+                    mode='w', 
+                    encoding='utf-8', 
+                    dir=log_dir,
+                    suffix='.tmp',
+                    prefix='logs_',
+                    delete=False
+                ) as temp_file:
+                    temp_path = temp_file.name
+                    # 使用紧凑JSON格式减少写入时间
+                    json.dump(cleaned_logs, temp_file, ensure_ascii=False, separators=(',', ':'))
+                    temp_file.flush()
+                    os.fsync(temp_file.fileno())  # 强制写入磁盘
+                
+                # 原子替换：在Unix系统上rename是原子操作
+                os.rename(temp_path, self.log_path)
+                return True
+                
+            except Exception as e:
+                # 清理临时文件
+                try:
+                    if 'temp_path' in locals() and os.path.exists(temp_path):
+                        os.unlink(temp_path)
+                except:
+                    pass
+                
+                self._safe_log_error(f"原子写入日志文件失败: {e}")
+                
+                # 回退到直接写入
+                try:
+                    with open(self.log_path, 'w', encoding='utf-8') as f:
+                        json.dump(cleaned_logs, f, ensure_ascii=False, separators=(',', ':'))
+                    return True
+                except Exception as fallback_e:
+                    self._safe_log_error(f"回退写入日志文件也失败: {fallback_e}")
+                    return False
+
+    # 保持向后兼容
+    def _write_logs(self, logs):
+        """向后兼容的写入方法"""
+        return self._atomic_write_logs(logs)
 
     def _translate(self, message):
         """
@@ -221,9 +291,19 @@ class LogManager:
         self._safe_log_info(f"[{event_type}] {translated_message}")
         
         with self._lock:
-            logs = self.get_logs()
+            # 避免嵌套锁调用，直接读取日志
+            try:
+                if os.path.exists(self.log_path):
+                    with open(self.log_path, 'r', encoding='utf-8') as f:
+                        logs = json.load(f)
+                else:
+                    logs = []
+            except (json.JSONDecodeError, IOError, UnicodeDecodeError):
+                # 如果读取失败，从恢复机制获取日志
+                logs = self.get_logs()
+            
             log_entry = {
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],  # 毫秒精度
                 "type": event_type,
                 "message": translated_message
             }
@@ -231,8 +311,8 @@ class LogManager:
             
             trimmed_logs = logs[:self.max_entries]
             
-            # 直接写入
-            if not self._write_logs(trimmed_logs):
+            # 使用原子写入
+            if not self._atomic_write_logs(trimmed_logs):
                 self._safe_log_error(f"保存日志文件失败")
 
     def log_formatted_event(self, event_type, message_template, *args, **kwargs):
@@ -268,10 +348,19 @@ class LogManager:
         self._safe_log_info(f"[{event_type}] {formatted_message}")
         
         with self._lock:
-            logs = self.get_logs()
+            # 避免嵌套锁调用，直接读取日志
+            try:
+                if os.path.exists(self.log_path):
+                    with open(self.log_path, 'r', encoding='utf-8') as f:
+                        logs = json.load(f)
+                else:
+                    logs = []
+            except (json.JSONDecodeError, IOError, UnicodeDecodeError):
+                # 如果读取失败，从恢复机制获取日志
+                logs = self.get_logs()
             
             log_entry = {
-                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],  # 毫秒精度
                 "type": event_type,
                 "message": formatted_message
             }
@@ -280,8 +369,8 @@ class LogManager:
             
             trimmed_logs = logs[:self.max_entries]
             
-            # 直接写入
-            if not self._write_logs(trimmed_logs):
+            # 使用原子写入
+            if not self._atomic_write_logs(trimmed_logs):
                 self._safe_log_error(f"保存日志文件失败")
 
 log_manager = LogManager() 

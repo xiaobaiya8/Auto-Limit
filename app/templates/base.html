@@ -192,14 +192,21 @@
                 'plex': '/static/img/logos/plex.png',
                 'qbittorrent': '/static/img/logos/qbittorrent.png',
                 'transmission': '/static/img/logos/transmission.png',
-                'clouddrive2': '/static/img/logos/clouddrive2.png'
+                'clouddrive2': '/static/img/logos/clouddrive2.png',
+                'sabnzbd': '/static/img/logos/sabnzbd.png'
             };
             
             return logoMap[type.toLowerCase()] || null;
         }
 
         // 格式化速度显示（用于限速配置）
-        function formatSpeed(kbps) {
+        function formatSpeed(kbps, isPercentage = false) {
+            if (isPercentage) {
+                // SABnzbd的百分比模式
+                if (!kbps || kbps == 100) return '{{ _("无限制") }}';
+                return kbps + '%';
+            }
+            
             if (!kbps || kbps == 0) return '{{ _("无限制") }}';
             
             const kb = parseInt(kbps);

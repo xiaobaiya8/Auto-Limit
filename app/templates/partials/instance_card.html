@@ -38,6 +38,7 @@
                     <option value="qbittorrent" {% if instance.type == 'qbittorrent' %}selected{% endif %}>qBittorrent</option>
                     <option value="transmission" {% if instance.type == 'transmission' %}selected{% endif %}>Transmission</option>
                     <option value="clouddrive2" {% if instance.type == 'clouddrive2' %}selected{% endif %}>CloudDrive2</option>
+                    <option value="sabnzbd" {% if instance.type == 'sabnzbd' %}selected{% endif %}>SABnzbd</option>
                     {% endif %}
                 </select>
             </div>
@@ -62,7 +63,7 @@
                 <input type="text" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][token]" value="{{ instance.token }}">
             </div>
             
-            <!-- qBittorrent/Transmission 特有字段 -->
+            <!-- qBittorrent/Transmission/CloudDrive2 特有字段 -->
             <div class="mb-3 field-username" style="display: none;">
                 <label class="form-label small fw-bold">{{ _('用户名') }}</label>
                 <input type="text" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][username]" value="{{ instance.username }}">
@@ -70,6 +71,24 @@
             <div class="mb-3 field-password" style="display: none;">
                 <label class="form-label small fw-bold">{{ _('密码') }}</label>
                 <input type="password" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][password]" value="{{ instance.password }}">
+            </div>
+            
+            <!-- SABnzbd 特有字段 -->
+            <div class="mb-3 field-api_key_sabnzbd" style="display: none;">
+                <label class="form-label small fw-bold">{{ _('API 密钥') }}</label>
+                <input type="text" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][api_key]" value="{{ instance.api_key }}">
+                <div class="form-text small text-muted">
+                    <i class="bi bi-info-circle"></i> {{ _('在SABnzbd的Config → General → API Key中获取') }}
+                </div>
+            </div>
+            
+            <!-- SABnzbd 最大线路速度配置 -->
+            <div class="mb-3 field-max_bandwidth_sabnzbd" style="display: none;">
+                <label class="form-label small fw-bold">{{ _('最大线路速度 (KB/s)') }} <span class="text-danger">*</span></label>
+                <input type="number" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][max_bandwidth_kb]" value="{{ instance.max_bandwidth_kb or '' }}" min="1" placeholder="51200" required>
+                <div class="form-text small text-muted">
+                    <i class="bi bi-info-circle"></i> {{ _('SABnzbd必须先设置最大带宽，然后使用百分比进行限速控制，例如: 51200 (50MB/s)') }}
+                </div>
             </div>
 
             <!-- 媒体服务器轮询设置 -->
@@ -98,24 +117,40 @@
                 </h6>
                 <div class="row g-2">
                     <div class="col-6">
+                        {% if instance.type == 'sabnzbd' %}
+                        <label class="form-label small">{{ _('默认限速 (百分比)') }}</label>
+                        <input type="number" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][default_download_limit]" value="{{ instance.default_download_limit or 100 }}" min="1" max="100" placeholder="100">
+                        {% else %}
                         <label class="form-label small">{{ _('默认下载') }}</label>
                         <input type="number" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][default_download_limit]" value="{{ instance.default_download_limit or 0 }}" min="0" placeholder="{{ _('0=无限制') }}">
+                        {% endif %}
                     </div>
-                    <div class="col-6">
+                    <!-- SABnzbd不支持上传，隐藏上传选项 -->
+                    <div class="col-6 upload-limit-field" {% if instance.type == 'sabnzbd' %}style="display: none;"{% endif %}>
                         <label class="form-label small">{{ _('默认上传') }}</label>
                         <input type="number" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][default_upload_limit]" value="{{ instance.default_upload_limit or 0 }}" min="0" placeholder="{{ _('0=无限制') }}">
                     </div>
                     <div class="col-6">
+                        {% if instance.type == 'sabnzbd' %}
+                        <label class="form-label small">{{ _('播放时限速 (百分比)') }}</label>
+                        <input type="number" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][backup_download_limit]" value="{{ instance.backup_download_limit or 50 }}" min="1" max="100" placeholder="50">
+                        {% else %}
                         <label class="form-label small">{{ _('播放时下载') }}</label>
                         <input type="number" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][backup_download_limit]" value="{{ instance.backup_download_limit or 1024 }}" min="0">
+                        {% endif %}
                     </div>
-                    <div class="col-6">
+                    <div class="col-6 upload-limit-field" {% if instance.type == 'sabnzbd' %}style="display: none;"{% endif %}>
                         <label class="form-label small">{{ _('播放时上传') }}</label>
                         <input type="number" class="form-control form-control-sm" name="{{ instance_type }}[{{ index }}][backup_upload_limit]" value="{{ instance.backup_upload_limit or 512 }}" min="0">
                     </div>
                 </div>
                 <div class="form-text small text-muted mt-1">
-                    <i class="bi bi-info-circle"></i> {{ _('当有媒体播放时，自动切换到"播放时"限速') }}
+                    <i class="bi bi-info-circle"></i> 
+                    {% if instance.type == 'sabnzbd' %}
+                        {{ _('SABnzbd使用百分比控制限速，100为无限制，基于您设置的最大带宽') }}
+                    {% else %}
+                        {{ _('当有媒体播放时，自动切换到"播放时"限速') }}
+                    {% endif %}
                 </div>
             </div>
             {% endif %}

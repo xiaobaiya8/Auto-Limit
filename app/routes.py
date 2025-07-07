@@ -99,7 +99,7 @@ def config():
     # 为模板提供一些上下文，例如可用的插件类型
     available_plugins = {
         'media_servers': ['emby', 'jellyfin', 'plex'],
-        'downloaders': ['qbittorrent', 'transmission', 'clouddrive2']
+        'downloaders': ['qbittorrent', 'transmission', 'clouddrive2', 'sabnzbd']
     }
     return render_template('config.html', settings=settings, available_plugins=available_plugins)
 
@@ -304,6 +304,11 @@ def save_instance():
             for rate_field in ['default_download_limit', 'default_upload_limit', 'backup_download_limit', 'backup_upload_limit']:
                 value = instance_config.get(rate_field, 0)
                 instance_config[rate_field] = int(value) if str(value).isdigit() else 0
+            
+            # 为SABnzbd处理最大带宽设置
+            if instance_config.get('type') == 'sabnzbd':
+                max_bandwidth_value = instance_config.get('max_bandwidth_kb', 0)
+                instance_config['max_bandwidth_kb'] = int(max_bandwidth_value) if str(max_bandwidth_value).isdigit() else 0
         
         # 为媒体服务器处理轮询间隔设置
         if instance_type == 'media_servers':

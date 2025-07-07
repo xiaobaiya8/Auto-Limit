@@ -116,8 +116,8 @@
                                     </div>
                                     <div class="col-md-2">
                                         <small class="text-success">
-                                            <div>{{ _('默认') }}：<span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}"></span></div>
-                                            <div>{{ _('播放') }}：<span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}"></span></div>
+                                            <div>{{ _('默认') }}：<span class="speed-display" data-download="{{ downloader.default_download_limit or 0 }}" data-upload="{{ downloader.default_upload_limit or 0 }}" data-type="{{ downloader.type }}"></span></div>
+                                            <div>{{ _('播放') }}：<span class="speed-display" data-download="{{ downloader.backup_download_limit or 1024 }}" data-upload="{{ downloader.backup_upload_limit or 512 }}" data-type="{{ downloader.type }}"></span></div>
                                         </small>
                                     </div>
                                     <div class="col-md-2 text-end">
@@ -225,7 +225,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Username/Password (qBittorrent/Transmission) -->
+                            <!-- Username/Password (qBittorrent/Transmission/CloudDrive2) -->
                             <div class="mb-3 field-username" style="display: none;">
                                 <label class="form-label fw-bold">{{ _('用户名') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="instanceUsername" name="username">
@@ -233,6 +233,26 @@
                             <div class="mb-3 field-password" style="display: none;">
                                 <label class="form-label fw-bold">{{ _('密码') }} <span class="text-danger">*</span></label>
                                 <input type="password" class="form-control" id="instancePassword" name="password">
+                            </div>
+                            
+                            <!-- API Key (SABnzbd) -->
+                            <div class="mb-3 field-api_key_sabnzbd" style="display: none;">
+                                <label class="form-label fw-bold">{{ _('API 密钥') }} <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="instanceApiKeySabnzbd" name="api_key_sabnzbd">
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle text-info"></i>
+                                    <strong>SABnzbd {{ _('获取方式') }}:</strong> {{ _('Config') }} → {{ _('General') }} → {{ _('API Key') }}
+                                </div>
+                            </div>
+                            
+                            <!-- 最大线路速度 (SABnzbd) -->
+                            <div class="mb-3 field-max_bandwidth_sabnzbd" style="display: none;">
+                                <label class="form-label fw-bold">{{ _('最大线路速度 (KB/s)') }} <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="instanceMaxBandwidthSabnzbd" name="max_bandwidth_kb" min="1" placeholder="51200" required>
+                                <div class="form-text">
+                                    <i class="bi bi-info-circle text-info"></i>
+                                    {{ _('SABnzbd必须先设置最大带宽，然后使用百分比进行限速控制，例如: 51200 (50MB/s)') }}
+                                </div>
                             </div>
                         </div>
 
@@ -293,28 +313,28 @@ localuser') }}"></textarea>
                         <!-- 下载器特有设置 -->
                         <div id="downloaderSettings" style="display: none;">
                             <div class="speed-settings bg-light p-3 rounded">
-                                <h6 class="fw-bold text-primary mb-2">
+                                <h6 class="fw-bold text-primary mb-2" id="speedLimitTitle">
                                     <i class="bi bi-speedometer2"></i> {{ _('限速设置 (KB/s)') }}
                                 </h6>
                                 <div class="row g-2">
                                     <div class="col-6">
-                                        <label class="form-label">{{ _('默认下载') }}</label>
+                                        <label class="form-label" id="defaultDownloadLabel">{{ _('默认下载') }}</label>
                                         <input type="number" class="form-control" id="instanceDefaultDownload" name="default_download_limit" value="0" min="0" placeholder="{{ _('0=无限制') }}">
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-6 upload-setting" id="defaultUploadSetting">
                                         <label class="form-label">{{ _('默认上传') }}</label>
                                         <input type="number" class="form-control" id="instanceDefaultUpload" name="default_upload_limit" value="0" min="0" placeholder="{{ _('0=无限制') }}">
                                     </div>
                                     <div class="col-6">
-                                        <label class="form-label">{{ _('播放时下载') }}</label>
+                                        <label class="form-label" id="backupDownloadLabel">{{ _('播放时下载') }}</label>
                                         <input type="number" class="form-control" id="instanceBackupDownload" name="backup_download_limit" value="1024" min="0">
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-6 upload-setting" id="backupUploadSetting">
                                         <label class="form-label">{{ _('播放时上传') }}</label>
                                         <input type="number" class="form-control" id="instanceBackupUpload" name="backup_upload_limit" value="512" min="0">
                                     </div>
                                 </div>
-                                <div class="form-text mt-2">
+                                <div class="form-text mt-2" id="speedLimitHelpText">
                                     <i class="bi bi-info-circle"></i> {{ _('当有媒体播放时，自动切换到"播放时"限速') }}
                                 </div>
                             </div>
@@ -349,7 +369,8 @@ const PLUGIN_FIELDS = {
     downloaders: {
         qbittorrent: ['url', 'username', 'password'],
         transmission: ['url', 'username', 'password'],
-        clouddrive2: ['url', 'username', 'password']
+        clouddrive2: ['url', 'username', 'password'],
+        sabnzbd: ['url', 'api_key_sabnzbd', 'max_bandwidth_sabnzbd']
     }
 };
 
@@ -363,7 +384,8 @@ const PLUGIN_TYPES = {
     downloaders: [
         { value: 'qbittorrent', label: 'qBittorrent' },
         { value: 'transmission', label: 'Transmission' },
-        { value: 'clouddrive2', label: 'CloudDrive2' }
+        { value: 'clouddrive2', label: 'CloudDrive2' },
+        { value: 'sabnzbd', label: 'SABnzbd' }
     ]
 };
 
@@ -445,10 +467,16 @@ function editInstance(button, instanceType, instanceId) {
     document.getElementById('instanceTypeSelect').value = instanceConfig.type || '';
     
     // 填充特定字段
-    if (instanceConfig.api_key) document.getElementById('instanceApiKey').value = instanceConfig.api_key;
+    if (instanceConfig.api_key) {
+        // Emby/Jellyfin的API Key
+        document.getElementById('instanceApiKey').value = instanceConfig.api_key;
+        // SABnzbd的API Key
+        document.getElementById('instanceApiKeySabnzbd').value = instanceConfig.api_key;
+    }
     if (instanceConfig.token) document.getElementById('instanceToken').value = instanceConfig.token;
     if (instanceConfig.username) document.getElementById('instanceUsername').value = instanceConfig.username;
     if (instanceConfig.password) document.getElementById('instancePassword').value = instanceConfig.password;
+    if (instanceConfig.max_bandwidth_kb) document.getElementById('instanceMaxBandwidthSabnzbd').value = instanceConfig.max_bandwidth_kb;
     
     // 填充特定设置
     if (instanceType === 'media_servers') {
@@ -458,10 +486,17 @@ function editInstance(button, instanceType, instanceId) {
         document.getElementById('instanceIpWhitelist').value = instanceConfig.ip_whitelist || '';
         document.getElementById('instanceUserWhitelist').value = instanceConfig.user_whitelist || '';
     } else {
+        // 为SABnzbd设置百分比默认值，其他下载器设置KB/s默认值
+        if (instanceConfig.type === 'sabnzbd') {
+            document.getElementById('instanceDefaultDownload').value = instanceConfig.default_download_limit || 100;
+            document.getElementById('instanceBackupDownload').value = instanceConfig.backup_download_limit || 50;
+            // SABnzbd不使用上传设置
+    } else {
         document.getElementById('instanceDefaultDownload').value = instanceConfig.default_download_limit || 0;
         document.getElementById('instanceDefaultUpload').value = instanceConfig.default_upload_limit || 0;
         document.getElementById('instanceBackupDownload').value = instanceConfig.backup_download_limit || 1024;
         document.getElementById('instanceBackupUpload').value = instanceConfig.backup_upload_limit || 512;
+        }
     }
     
     // 显示对应的设置区域
@@ -524,7 +559,7 @@ function updateModalFields() {
     }
     
     // 首先隐藏所有特有字段
-    const allFields = ['api_key', 'token', 'username', 'password'];
+    const allFields = ['api_key', 'token', 'username', 'password', 'api_key_sabnzbd', 'max_bandwidth_sabnzbd'];
     allFields.forEach(field => {
         const fieldContainer = document.querySelector(`.field-${field}`);
         if (fieldContainer) fieldContainer.style.display = 'none';
@@ -555,6 +590,91 @@ function updateModalFields() {
             if (jellyfinHelp) jellyfinHelp.style.display = 'block';
         }
     }
+    
+    // 处理下载器的字段显示和标签调整
+    if (instanceType === 'downloaders') {
+        const uploadSettings = document.querySelectorAll('.upload-setting');
+        const helpText = document.getElementById('speedLimitHelpText');
+        const speedLimitTitle = document.getElementById('speedLimitTitle');
+        const defaultDownloadLabel = document.getElementById('defaultDownloadLabel');
+        const backupDownloadLabel = document.getElementById('backupDownloadLabel');
+        const defaultDownloadInput = document.getElementById('instanceDefaultDownload');
+        const backupDownloadInput = document.getElementById('instanceBackupDownload');
+        
+        if (selectedType === 'sabnzbd') {
+            // SABnzbd不支持上传，隐藏上传相关设置
+            uploadSettings.forEach(setting => {
+                setting.style.display = 'none';
+            });
+            
+            // 更改标题和标签为百分比模式
+            if (speedLimitTitle) {
+                speedLimitTitle.innerHTML = '<i class="bi bi-speedometer2"></i> {{ _("限速设置 (百分比)") }}';
+            }
+            if (defaultDownloadLabel) {
+                defaultDownloadLabel.textContent = '{{ _("默认限速 (百分比)") }}';
+            }
+            if (backupDownloadLabel) {
+                backupDownloadLabel.textContent = '{{ _("播放时限速 (百分比)") }}';
+            }
+            
+            // 调整输入框属性为百分比
+            if (defaultDownloadInput) {
+                defaultDownloadInput.min = "1";
+                defaultDownloadInput.max = "100";
+                defaultDownloadInput.placeholder = "100";
+                if (!defaultDownloadInput.value || defaultDownloadInput.value == "0") {
+                    defaultDownloadInput.value = "100";
+                }
+            }
+            if (backupDownloadInput) {
+                backupDownloadInput.min = "1";
+                backupDownloadInput.max = "100";
+                backupDownloadInput.placeholder = "50";
+                if (!backupDownloadInput.value || backupDownloadInput.value == "1024") {
+                    backupDownloadInput.value = "50";
+                }
+            }
+            
+            // 更改帮助文本
+            if (helpText) {
+                helpText.innerHTML = '<i class="bi bi-info-circle"></i> {{ _("SABnzbd使用百分比控制限速，100为无限制，基于您设置的最大带宽") }}';
+            }
+        } else {
+            // 其他下载器显示上传设置
+            uploadSettings.forEach(setting => {
+                setting.style.display = 'block';
+            });
+            
+            // 恢复原标题和标签
+            if (speedLimitTitle) {
+                speedLimitTitle.innerHTML = '<i class="bi bi-speedometer2"></i> {{ _("限速设置 (KB/s)") }}';
+            }
+            if (defaultDownloadLabel) {
+                defaultDownloadLabel.textContent = '{{ _("默认下载") }}';
+            }
+            if (backupDownloadLabel) {
+                backupDownloadLabel.textContent = '{{ _("播放时下载") }}';
+            }
+            
+            // 恢复输入框属性为KB/s
+            if (defaultDownloadInput) {
+                defaultDownloadInput.min = "0";
+                defaultDownloadInput.removeAttribute('max');
+                defaultDownloadInput.placeholder = '{{ _("0=无限制") }}';
+            }
+            if (backupDownloadInput) {
+                backupDownloadInput.min = "0";
+                backupDownloadInput.removeAttribute('max');
+                backupDownloadInput.placeholder = "";
+            }
+            
+            // 恢复原帮助文本
+            if (helpText) {
+                helpText.innerHTML = '<i class="bi bi-info-circle"></i> {{ _("当有媒体播放时，自动切换到播放时限速") }}';
+            }
+        }
+    }
 }
 
 // 弹框中测试连接
@@ -571,6 +691,12 @@ function testConnectionInModal() {
         username: formData.get('username'),
         password: formData.get('password')
     };
+    
+    // 特殊处理SABnzbd的字段
+    if (instanceConfig.type === 'sabnzbd') {
+        instanceConfig.api_key = formData.get('api_key_sabnzbd');
+        instanceConfig.max_bandwidth_kb = parseInt(formData.get('max_bandwidth_kb')) || 0;
+    }
     
     // 基本验证
     if (!instanceConfig.name.trim()) {
@@ -644,6 +770,12 @@ function saveInstanceFromModal() {
         enabled: true
     };
     
+    // 特殊处理SABnzbd的字段
+    if (instanceConfig.type === 'sabnzbd') {
+        instanceConfig.api_key = formData.get('api_key_sabnzbd');
+        instanceConfig.max_bandwidth_kb = parseInt(formData.get('max_bandwidth_kb')) || 0;
+    }
+    
     // 添加特定设置
     if (currentModal.type === 'media_servers') {
         instanceConfig.poll_interval = parseInt(formData.get('poll_interval')) || 15;
@@ -652,10 +784,20 @@ function saveInstanceFromModal() {
         instanceConfig.ip_whitelist = formData.get('ip_whitelist') || '';
         instanceConfig.user_whitelist = formData.get('user_whitelist') || '';
     } else {
-        instanceConfig.default_download_limit = parseInt(formData.get('default_download_limit')) || 0;
-        instanceConfig.default_upload_limit = parseInt(formData.get('default_upload_limit')) || 0;
-        instanceConfig.backup_download_limit = parseInt(formData.get('backup_download_limit')) || 1024;
-        instanceConfig.backup_upload_limit = parseInt(formData.get('backup_upload_limit')) || 512;
+        // 下载器配置，需要区分SABnzbd和其他下载器的默认值
+        if (instanceConfig.type === 'sabnzbd') {
+            // SABnzbd使用百分比，默认值不同
+            instanceConfig.default_download_limit = parseInt(formData.get('default_download_limit')) || 100;
+            instanceConfig.default_upload_limit = 0; // SABnzbd不支持上传
+            instanceConfig.backup_download_limit = parseInt(formData.get('backup_download_limit')) || 50;
+            instanceConfig.backup_upload_limit = 0; // SABnzbd不支持上传
+        } else {
+            // 其他下载器使用KB/s
+            instanceConfig.default_download_limit = parseInt(formData.get('default_download_limit')) || 0;
+            instanceConfig.default_upload_limit = parseInt(formData.get('default_upload_limit')) || 0;
+            instanceConfig.backup_download_limit = parseInt(formData.get('backup_download_limit')) || 1024;
+            instanceConfig.backup_upload_limit = parseInt(formData.get('backup_upload_limit')) || 512;
+        }
     }
     
     // 基本验证
@@ -927,6 +1069,17 @@ function validateRequiredFields(instanceConfig) {
                 document.getElementById('instancePassword').focus();
                 return false;
             }
+        } else if (selectedType === 'sabnzbd') {
+            if (!instanceConfig.api_key || !instanceConfig.api_key.trim()) {
+                showToast('{{ _("请填写API密钥") }}', 'warning');
+                document.getElementById('instanceApiKeySabnzbd').focus();
+                return false;
+            }
+            if (!instanceConfig.max_bandwidth_kb || instanceConfig.max_bandwidth_kb <= 0) {
+                showToast('{{ _("请填写最大线路速度") }}', 'warning');
+                document.getElementById('instanceMaxBandwidthSabnzbd').focus();
+                return false;
+            }
         }
     }
     
@@ -953,11 +1106,18 @@ function formatSpeedDisplays() {
     document.querySelectorAll('.speed-display').forEach(element => {
         const downloadSpeed = element.getAttribute('data-download');
         const uploadSpeed = element.getAttribute('data-upload');
+        const type = element.getAttribute('data-type');
         
+        if (type === 'sabnzbd') {
+            // SABnzbd只显示下载百分比，不显示上传
+            const formattedDownload = formatSpeed(downloadSpeed, true);
+            element.textContent = formattedDownload;
+        } else {
+            // 其他下载器显示KB/s格式的下载/上传
         const formattedDownload = formatSpeed(downloadSpeed);
         const formattedUpload = formatSpeed(uploadSpeed);
-        
         element.textContent = `${formattedDownload} / ${formattedUpload}`;
+        }
     });
 }
 </script>

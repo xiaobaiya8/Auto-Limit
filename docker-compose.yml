@@ -2,7 +2,7 @@ version: "3.8"
 services:
   controller:
     build: .
-    container_name: autolimit_controller
+    container_name: auto_limit
     environment:
       - TZ=Asia/Shanghai
       # FLASK_ENV=development # 取消注释以开启Debug模式

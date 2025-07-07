@@ -1,5 +1,6 @@
 import importlib
 from threading import Timer, RLock
+from time import time
 from flask import current_app
 from flask_babel import _
 from .config_manager import config_manager
@@ -15,6 +16,9 @@ class Scheduler:
         self.timers = {}  # 存储每个媒体服务器的定时器 {server_id: timer}
         self.active_session_ids = set()  # 所有活跃会话的合并集合
         self.last_speed_state = {}  # 记录每个下载器的最后速率状态 {downloader_id: (dl_limit, ul_limit)}
+        self.last_session_count = 0  # 记录上次的会话数量
+        self.last_status_log_time = 0  # 上次记录状态日志的时间
+        self.last_skip_log_time = {}  # 记录每个用户上次跳过日志的时间 {user_name: timestamp}
         self.running = False
         self.lock = RLock()
         self.app = None
@@ -46,6 +50,9 @@ class Scheduler:
             # 清理状态记录
             self.last_speed_state.clear()
             self.active_session_ids.clear()
+            self.last_session_count = 0
+            self.last_status_log_time = 0
+            self.last_skip_log_time.clear()
             self.running = False
         
         # 仅在app上下文可用时记录日志
@@ -126,7 +133,9 @@ class Scheduler:
                 
                 # 计算该服务器的会话ID（只计算不被跳过的会话）
                 server_session_ids = set()
-                skipped_sessions = []
+                current_time = time()
+                skipped_count = 0
+                
                 if current_sessions:
                     for session in current_sessions:
                         session['source_server'] = server_instance.get('name', server_id)
@@ -134,11 +143,15 @@ class Scheduler:
                         
                         # 检查是否应该跳过此会话的限速
                         if should_skip_speed_limit(session, server_instance):
-                            skipped_sessions.append(session)
-                            # 记录跳过的会话
-                            reason = "本地播放" if session.get('client_ip') and session.get('client_ip') != '' else "白名单用户"
-                            log_manager.log_formatted_event("SKIP_LIMIT", _("跳过限速 - 用户: {0}, 原因: {1}"), 
-                                                           session.get('user_name', 'Unknown'), reason)
+                            skipped_count += 1
+                            # 减少SKIP_LIMIT日志频率：同一用户60秒内只记录一次
+                            user_name = session.get('user_name', 'Unknown')
+                            last_log_time = self.last_skip_log_time.get(user_name, 0)
+                            if current_time - last_log_time > 60:  # 60秒间隔
+                                reason = "本地播放" if session.get('client_ip') and session.get('client_ip') != '' else "白名单用户"
+                                log_manager.log_formatted_event("SKIP_LIMIT", _("跳过限速 - 用户: {0}, 原因: {1}"), 
+                                                               user_name, reason)
+                                self.last_skip_log_time[user_name] = current_time
                         else:
                             server_session_ids.add(session_id)
                 
@@ -151,17 +164,34 @@ class Scheduler:
                     # 添加该服务器的新会话（不包括跳过的）
                     self.active_session_ids.update(server_session_ids)
                     
-                    # 检查是否需要更新下载器速率
+                    # 检查是否需要更新下载器速率和记录日志
                     total_sessions = len(self.active_session_ids)
-                    if old_server_sessions != server_session_ids:
+                    session_changed = old_server_sessions != server_session_ids
+                    count_changed = total_sessions != self.last_session_count
+                    
+                    # 只在会话数量实际变化或30秒无状态更新时记录日志
+                    if session_changed and (count_changed or current_time - self.last_status_log_time > 30):
                         if total_sessions > 0:
                             log_manager.log_formatted_event("PLAY_STATUS", _("检测到 {0} 个需要限速的播放"), total_sessions)
-                            if skipped_sessions:
-                                log_manager.log_formatted_event("PLAY_STATUS", _("已跳过 {0} 个本地/白名单播放"), len(skipped_sessions))
+                            if skipped_count > 0:
+                                log_manager.log_formatted_event("PLAY_STATUS", _("已跳过 {0} 个本地/白名单播放"), skipped_count)
                         else:
                             log_manager.log_event("PLAY_STATUS", _("所有播放已停止"))
                         
+                        self.last_session_count = total_sessions
+                        self.last_status_log_time = current_time
+                        
                         self._update_speed(settings)
+                    elif session_changed:
+                        # 会话变化但数量未变，仍需更新速率但不记录重复日志
+                        self._update_speed(settings)
+                    
+                    # 定期清理过期的跳过日志时间戳（每10分钟清理一次）
+                    if current_time - self.last_status_log_time > 600:  # 10分钟
+                        expired_users = [user for user, timestamp in self.last_skip_log_time.items() 
+                                       if current_time - timestamp > 3600]  # 1小时过期
+                        for user in expired_users:
+                            del self.last_skip_log_time[user]
             
             # 重新安排下次检查
             if self.running:
@@ -216,15 +246,25 @@ class Scheduler:
                 downloader_id = downloader_instance.get('id')
                 downloader_name = downloader_instance.get('name', downloader_id)
                 
-                # 根据是否有播放活动确定要使用的速率
+                # 根据是否有播放活动确定要使用的速率，需要考虑不同下载器的特性
+                downloader_type = downloader_instance.get('type', '')
+                
                 if len(self.active_session_ids) > 0:
-                    # 使用播放时的速率
-                    dl_limit = downloader_instance.get('backup_download_limit', 1024)
-                    ul_limit = downloader_instance.get('backup_upload_limit', 512)
+                    # 使用播放时的速率，需要为SABnzbd设置不同的默认值
+                    if downloader_type == 'sabnzbd':
+                        dl_limit = downloader_instance.get('backup_download_limit', 50)  # SABnzbd默认50%
+                        ul_limit = 0  # SABnzbd不支持上传
+                    else:
+                        dl_limit = downloader_instance.get('backup_download_limit', 1024)
+                        ul_limit = downloader_instance.get('backup_upload_limit', 512)
                 else:
-                    # 使用默认速率
-                    dl_limit = downloader_instance.get('default_download_limit', 0)
-                    ul_limit = downloader_instance.get('default_upload_limit', 0)
+                    # 使用默认速率，需要为SABnzbd设置不同的默认值
+                    if downloader_type == 'sabnzbd':
+                        dl_limit = downloader_instance.get('default_download_limit', 100)  # SABnzbd默认100%
+                        ul_limit = 0  # SABnzbd不支持上传
+                    else:
+                        dl_limit = downloader_instance.get('default_download_limit', 0)
+                        ul_limit = downloader_instance.get('default_upload_limit', 0)
                 
                 # 检查速率是否有变化，避免重复设置
                 current_speed = (dl_limit, ul_limit)
@@ -235,8 +275,11 @@ class Scheduler:
                     if downloader:
                         success = downloader.set_speed_limits(dl_limit, ul_limit)
                         if success:
-                            # 记录成功日志，使用实例名称
-                            log_manager.log_formatted_event("SPEED_CHANGE", _("{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"), downloader_name, dl_limit, ul_limit)
+                            # 记录成功日志，使用实例名称，区分SABnzbd的百分比显示
+                            if downloader_type == 'sabnzbd':
+                                log_manager.log_formatted_event("SPEED_CHANGE", _("{0} 速率限制设置成功: 下载 {1}%, 上传不支持"), downloader_name, dl_limit)
+                            else:
+                                log_manager.log_formatted_event("SPEED_CHANGE", _("{0} 速率限制设置成功: 下载 {1} KB/s, 上传 {2} KB/s"), downloader_name, dl_limit, ul_limit)
                             # 只有成功设置后才更新状态记录
                             self.last_speed_state[downloader_id] = current_speed
                         else:
